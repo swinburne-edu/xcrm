@@ -1,0 +1,843 @@
+// =====================================================================
+// xcrm — Schema chuẩn (nguồn sự thật cho migration)
+// Xem trực quan: dán toàn bộ file vào https://dbdiagram.io
+//
+// QUY ƯỚC CHUNG (không lặp lại trong từng bảng nghiệp vụ, nhưng PHẢI có):
+//   organization_id bigint FK organizations
+//   created_by, updated_by bigint FK users (nullable)
+//   created_at, updated_at timestamp
+//   deleted_at timestamp (soft delete)
+// Bảng có ghi chú [custom] có thêm cột custom_data json (custom field).
+// Bảng danh mục hệ thống (provinces, wards, priority_areas, subjects,
+// subject_combinations, admission_methods) KHÔNG có organization_id.
+// Enum lưu varchar + PHP backed enum.
+// =====================================================================
+
+Project xcrm {
+  database_type: 'MySQL'
+  Note: 'CRM tuyển sinh đại học/cao đẳng'
+}
+
+// ---------------------------------------------------------------------
+// 1. HỆ THỐNG & PHÂN QUYỀN
+// ---------------------------------------------------------------------
+
+Table organizations {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  code varchar(50) [unique]
+  settings json
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table users {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255) [not null]
+  email varchar(255) [unique, not null]
+  phone varchar(20)
+  password varchar(255)
+  avatar_path varchar(500)
+  is_active boolean [default: true]
+  data_scope varchar(20) [default: 'own', note: 'own | team | territory | all']
+  last_login_at timestamp
+  remember_token varchar(100)
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table teams {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255) [not null]
+  leader_id bigint [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table team_user {
+  team_id bigint [ref: > teams.id]
+  user_id bigint [ref: > users.id]
+  indexes { (team_id, user_id) [pk] }
+}
+
+// roles, permissions, model_has_roles, model_has_permissions, role_has_permissions
+// => do spatie/laravel-permission tạo, không định nghĩa ở đây.
+
+Table territories {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255) [not null, note: 'VD: Cụm Bắc Trung Bộ']
+  user_id bigint [ref: > users.id, null, note: 'Người phụ trách (hoặc team)']
+  team_id bigint [ref: > teams.id, null]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table territory_assignments {
+  id bigint [pk, increment]
+  territory_id bigint [ref: > territories.id, not null]
+  assignable_type varchar(100) [not null, note: 'Province | HighSchool']
+  assignable_id bigint [not null]
+  indexes {
+    (territory_id, assignable_type, assignable_id) [unique]
+    (assignable_type, assignable_id)
+  }
+}
+
+// activity_log => spatie/laravel-activitylog (audit log)
+
+// ---------------------------------------------------------------------
+// 2. DANH MỤC
+// ---------------------------------------------------------------------
+
+Table provinces {
+  id bigint [pk, increment]
+  code varchar(10) [unique, not null]
+  name varchar(255) [not null]
+  type varchar(20) [note: 'tinh | thanh_pho']
+  is_active boolean [default: true]
+}
+
+Table wards {
+  id bigint [pk, increment]
+  province_id bigint [ref: > provinces.id, not null]
+  code varchar(10) [unique, not null]
+  name varchar(255) [not null]
+  type varchar(20) [note: 'xa | phuong | dac_khu']
+  is_active boolean [default: true]
+}
+
+Table ward_mappings {
+  id bigint [pk, increment]
+  old_province_name varchar(255)
+  old_district_name varchar(255)
+  old_ward_name varchar(255)
+  new_ward_id bigint [ref: > wards.id]
+  Note: 'Ánh xạ địa giới cũ (trước 7/2025) sang mới'
+}
+
+Table priority_areas {
+  id bigint [pk, increment]
+  code varchar(10) [unique, note: 'KV1 | KV2-NT | KV2 | KV3']
+  name varchar(100)
+  bonus_score decimal(4,2) [note: 'Điểm ưu tiên khu vực (thang 30), cấu hình theo quy chế']
+}
+
+Table priority_groups {
+  id bigint [pk, increment]
+  code varchar(10) [unique, note: 'UT1 (01-04), UT2 (05-07)...']
+  name varchar(255)
+  bonus_score decimal(4,2)
+}
+
+Table subjects {
+  id bigint [pk, increment]
+  code varchar(20) [unique, note: 'TOAN, VAN, ANH, LY, HOA, SINH, SU, DIA, GDKTPL, TIN, CN...']
+  name varchar(100)
+  is_core boolean [default: false, note: 'true với Toán, Ngữ văn']
+}
+
+Table subject_combinations {
+  id bigint [pk, increment]
+  code varchar(10) [unique, note: 'A00, A01, D01...']
+  name varchar(255)
+  is_active boolean [default: true]
+}
+
+Table combination_subjects {
+  combination_id bigint [ref: > subject_combinations.id]
+  subject_id bigint [ref: > subjects.id]
+  weight decimal(4,2) [default: 1]
+  indexes { (combination_id, subject_id) [pk] }
+  Note: 'Đúng 3 môn; phải có TOAN hoặc VAN với weight >= 1/3 tổng weight'
+}
+
+Table admission_methods {
+  id bigint [pk, increment]
+  code varchar(10) [unique, note: 'Mã Bộ: 100, 200, 301, 401, 402...']
+  name varchar(255)
+  score_source varchar(30) [note: 'thpt_exam | transcript | competency_exam | direct | talent | combined']
+}
+
+Table lead_sources {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  code varchar(50)
+  name varchar(255) [note: 'Facebook Ads, Website, Tư vấn tại trường, Giới thiệu, Hotline, Zalo...']
+  channel varchar(30) [note: 'online | offline | referral']
+  is_active boolean [default: true]
+}
+
+Table lost_reasons {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255) [note: 'Trúng trường khác, Không đủ điểm, Học phí, Không liên lạc được...']
+  sort_order int
+  is_active boolean [default: true]
+}
+
+Table call_results {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255) [note: 'Không nghe máy, Thuê bao, Sai số, Hẹn gọi lại, Quan tâm, Không quan tâm']
+  is_contacted boolean [note: 'true = liên hệ thành công (dùng cho first_contacted_at)']
+  sort_order int
+}
+
+Table tags {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(100)
+  color varchar(20)
+}
+
+Table taggables {
+  tag_id bigint [ref: > tags.id]
+  taggable_type varchar(100)
+  taggable_id bigint
+  indexes { (tag_id, taggable_type, taggable_id) [pk] }
+}
+
+// ---------------------------------------------------------------------
+// 3. TRƯỜNG THPT
+// ---------------------------------------------------------------------
+
+Table high_schools {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  code varchar(20) [note: 'Mã trường THPT (mã tỉnh + mã trường của Bộ)']
+  name varchar(255) [not null]
+  type varchar(30) [note: 'public | private | specialized | gifted | continuing_edu | international']
+  province_id bigint [ref: > provinces.id]
+  ward_id bigint [ref: > wards.id, null]
+  address varchar(500)
+  priority_area_id bigint [ref: > priority_areas.id]
+  lat decimal(10,7)
+  lng decimal(10,7)
+  grade12_students int
+  grade12_classes int
+  strong_combinations json [note: '["A00","D01"]']
+  tier char(1) [note: 'A | B | C']
+  partnership_status varchar(30) [default: 'not_contacted', note: 'not_contacted | contacting | partner | mou_signed']
+  mou_signed_at date
+  owner_id bigint [ref: > users.id, null, note: 'Cán bộ phụ trách']
+  phone varchar(20)
+  email varchar(255)
+  website varchar(255)
+  note text
+  custom_data json
+  indexes {
+    (organization_id, code) [unique]
+    (province_id, tier)
+  }
+  Note: '[custom]'
+}
+
+Table school_contacts {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  high_school_id bigint [ref: > high_schools.id, not null]
+  full_name varchar(255) [not null]
+  role varchar(30) [note: 'principal | vice_principal | career_counselor | homeroom_teacher | youth_union | other']
+  homeroom_class varchar(20)
+  phone varchar(20)
+  email varchar(255)
+  zalo varchar(50)
+  relationship_level tinyint [note: '1-5']
+  is_primary boolean [default: false]
+  note text
+  custom_data json
+}
+
+Table school_activities {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  cycle_id bigint [ref: > admission_cycles.id, not null]
+  high_school_id bigint [ref: > high_schools.id, null, note: 'null = sự kiện tại campus']
+  campaign_id bigint [ref: > campaigns.id, null]
+  type varchar(30) [note: 'school_counseling | career_fair | campus_tour | scholarship | principal_meeting']
+  title varchar(255) [not null]
+  start_at datetime
+  end_at datetime
+  location varchar(255)
+  status varchar(20) [default: 'planned', note: 'planned | confirmed | done | cancelled']
+  expected_attendees int
+  actual_attendees int
+  cost decimal(15,0)
+  checkin_token varchar(64) [unique]
+  result_note text
+}
+
+Table school_activity_user {
+  school_activity_id bigint [ref: > school_activities.id]
+  user_id bigint [ref: > users.id]
+  role varchar(30) [note: 'lead | member']
+  indexes { (school_activity_id, user_id) [pk] }
+}
+
+Table activity_attendees {
+  id bigint [pk, increment]
+  school_activity_id bigint [ref: > school_activities.id, not null]
+  applicant_id bigint [ref: > applicants.id, not null]
+  checked_in_at datetime
+  form_data json
+  indexes { (school_activity_id, applicant_id) [unique] }
+}
+
+// ---------------------------------------------------------------------
+// 4. NGÀNH
+// ---------------------------------------------------------------------
+
+Table faculties {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  code varchar(20)
+  name varchar(255)
+}
+
+Table campuses {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  code varchar(20)
+  name varchar(255)
+  province_id bigint [ref: > provinces.id]
+  address varchar(500)
+}
+
+Table majors {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  moet_code char(7) [note: 'Mã ngành theo danh mục của Bộ']
+  admission_code varchar(20) [not null, note: 'Mã xét tuyển của trường']
+  name varchar(255) [not null]
+  faculty_id bigint [ref: > faculties.id]
+  campus_id bigint [ref: > campuses.id]
+  program_type varchar(30) [note: 'standard | high_quality | advanced | joint']
+  level varchar(30) [note: 'university | college | transfer | second_degree']
+  duration_years decimal(3,1)
+  description text
+  career_info text
+  faq json
+  is_active boolean [default: true]
+  custom_data json
+  indexes { (organization_id, admission_code) [unique] }
+  Note: '[custom]'
+}
+
+Table major_quotas {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  major_id bigint [ref: > majors.id, not null]
+  cycle_id bigint [ref: > admission_cycles.id, not null]
+  quota_total int [not null]
+  quota_direct int [default: 0]
+  target_enrolled int
+  tuition_fee decimal(15,0)
+  min_threshold decimal(5,2)
+  previous_cutoffs json [note: '[{"year":2026,"method":"100","score":24.5}]']
+  scholarship_info text
+  indexes { (major_id, cycle_id) [unique] }
+}
+
+Table major_combinations {
+  id bigint [pk, increment]
+  major_id bigint [ref: > majors.id, not null]
+  combination_id bigint [ref: > subject_combinations.id, not null]
+  cycle_id bigint [ref: > admission_cycles.id, not null]
+  indexes { (major_id, combination_id, cycle_id) [unique] }
+}
+
+Table major_cycle_methods {
+  id bigint [pk, increment]
+  major_id bigint [ref: > majors.id, not null]
+  cycle_method_id bigint [ref: > cycle_methods.id, not null]
+  indexes { (major_id, cycle_method_id) [unique] }
+}
+
+// ---------------------------------------------------------------------
+// 5. MÙA TUYỂN SINH & CHIẾN DỊCH
+// ---------------------------------------------------------------------
+
+Table admission_cycles {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255) [not null, note: 'Tuyển sinh 2027']
+  year smallint [not null]
+  level varchar(30) [note: 'university | college | transfer']
+  start_date date
+  end_date date
+  status varchar(20) [default: 'preparing', note: 'preparing | active | closed']
+  target_enrolled int
+  regulation_ref varchar(255)
+  is_current boolean [default: false]
+  indexes { (organization_id, year, level) [unique] }
+}
+
+Table admission_rounds {
+  id bigint [pk, increment]
+  cycle_id bigint [ref: > admission_cycles.id, not null]
+  name varchar(255) [note: 'Xét sớm, Đợt 1, Bổ sung đợt 1']
+  type varchar(30) [note: 'early_school | moet_system | supplementary']
+  apply_start datetime
+  apply_end datetime
+  result_date date
+  confirm_deadline datetime
+  sort_order int
+}
+
+Table cycle_methods {
+  id bigint [pk, increment]
+  cycle_id bigint [ref: > admission_cycles.id, not null]
+  method_id bigint [ref: > admission_methods.id, not null]
+  display_name varchar(255)
+  is_direct boolean [default: false, note: 'Xét thẳng - không tính vào giới hạn 5']
+  score_formula json [note: 'Xem 04-database.md mục Công thức điểm']
+  conditions json
+  required_documents json
+  indexes { (cycle_id, method_id) [unique] }
+  Note: 'Tối đa 5 dòng is_direct=false mỗi cycle'
+}
+
+Table campaigns {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  cycle_id bigint [ref: > admission_cycles.id, not null]
+  parent_id bigint [ref: > campaigns.id, null]
+  code varchar(50) [note: 'utm_campaign']
+  name varchar(255) [not null]
+  type varchar(30) [note: 'school_tour | open_day | digital_ads | scholarship | referral | post_admission_care']
+  channel varchar(30) [note: 'facebook | tiktok | google | zalo | email | offline | other']
+  start_date date
+  end_date date
+  budget decimal(15,0)
+  actual_cost decimal(15,0)
+  target_leads int
+  target_applications int
+  target_enrolled int
+  owner_id bigint [ref: > users.id]
+  status varchar(20) [default: 'draft', note: 'draft | pending_approval | running | paused | ended']
+  approved_by bigint [ref: > users.id, null]
+  approved_at datetime
+  landing_url varchar(500)
+  description text
+  custom_data json
+  indexes { (organization_id, code) [unique] }
+  Note: '[custom]'
+}
+
+Table campaign_targets {
+  id bigint [pk, increment]
+  campaign_id bigint [ref: > campaigns.id, not null]
+  targetable_type varchar(100) [note: 'Major | Province | HighSchool']
+  targetable_id bigint
+  indexes { (campaign_id, targetable_type, targetable_id) [unique] }
+}
+
+Table campaign_costs {
+  id bigint [pk, increment]
+  campaign_id bigint [ref: > campaigns.id, not null]
+  date date
+  amount decimal(15,0)
+  note varchar(255)
+}
+
+Table forms {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  uuid char(36) [unique]
+  name varchar(255)
+  campaign_id bigint [ref: > campaigns.id, null]
+  source_id bigint [ref: > lead_sources.id, null]
+  fields json [note: 'Danh sách trường hiển thị']
+  success_message text
+  is_active boolean [default: true]
+}
+
+// ---------------------------------------------------------------------
+// 6. THÍ SINH & HỒ SƠ
+// ---------------------------------------------------------------------
+
+Table applicants {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  uuid char(36) [unique]
+  code varchar(20) [note: 'TS000123 - tự sinh']
+  full_name varchar(255) [not null]
+  gender varchar(10) [note: 'male | female | other']
+  dob date
+  phone varchar(20)
+  phone_normalized varchar(15) [note: '84xxxxxxxxx']
+  email varchar(255)
+  citizen_id text [note: 'encrypted cast']
+  citizen_id_hash char(64) [note: 'sha256 để kiểm tra trùng']
+  zalo_id varchar(100)
+  facebook_id varchar(100)
+  province_id bigint [ref: > provinces.id]
+  ward_id bigint [ref: > wards.id]
+  address varchar(500)
+  high_school_id bigint [ref: > high_schools.id, null]
+  class_name varchar(20)
+  current_grade tinyint [note: '10 | 11 | 12 | 13 (=đã tốt nghiệp)']
+  graduation_year smallint
+  priority_area_id bigint [ref: > priority_areas.id]
+  priority_group_id bigint [ref: > priority_groups.id, null]
+  interests json
+  first_source_id bigint [ref: > lead_sources.id]
+  first_campaign_id bigint [ref: > campaigns.id]
+  referred_by_user_id bigint [ref: > users.id, null, note: 'Cộng tác viên/đại sứ']
+  consent_marketing boolean [default: false]
+  consent_at datetime
+  merged_into_id bigint [ref: > applicants.id, null, note: 'Bản ghi đã bị gộp vào bản nào']
+  custom_data json
+  indexes {
+    (organization_id, phone_normalized)
+    (organization_id, email)
+    (organization_id, citizen_id_hash)
+    (organization_id, code) [unique]
+    high_school_id
+    graduation_year
+  }
+  Note: '[custom]'
+}
+
+Table guardians {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  full_name varchar(255) [not null]
+  phone varchar(20)
+  phone_normalized varchar(15)
+  email varchar(255)
+  zalo_id varchar(100)
+  occupation varchar(255)
+  note text
+}
+
+Table applicant_guardian {
+  applicant_id bigint [ref: > applicants.id]
+  guardian_id bigint [ref: > guardians.id]
+  relationship varchar(20) [note: 'father | mother | grandparent | sibling | guardian']
+  is_decision_maker boolean [default: false]
+  is_primary_contact boolean [default: false]
+  indexes { (applicant_id, guardian_id) [pk] }
+}
+
+Table applicant_scores {
+  id bigint [pk, increment]
+  applicant_id bigint [ref: > applicants.id, not null]
+  score_type varchar(30) [note: 'transcript | thpt_exam | competency_exam | thinking_exam | talent']
+  subject_id bigint [ref: > subjects.id, null, note: 'null nếu là điểm tổng (ĐGNL)']
+  term varchar(10) [note: '10-1, 10-2, 11-1, 11-2, 12-1, 12-2, 10, 11, 12']
+  exam_name varchar(100) [note: 'HSA, V-ACT, TSA...']
+  score decimal(6,2)
+  max_score decimal(6,2) [default: 10]
+  year smallint
+  verified boolean [default: false]
+  verified_by bigint [ref: > users.id, null]
+  indexes { (applicant_id, score_type, subject_id, term) [unique] }
+}
+
+Table applicant_certificates {
+  id bigint [pk, increment]
+  applicant_id bigint [ref: > applicants.id, not null]
+  type varchar(30) [note: 'IELTS | TOEFL | TOEIC | SAT | ACT | VSTEP | OTHER']
+  score varchar(20)
+  issued_at date
+  expires_at date
+  verified boolean [default: false]
+}
+
+Table applicant_documents {
+  id bigint [pk, increment]
+  applicant_id bigint [ref: > applicants.id, not null]
+  case_id bigint [ref: > admission_cases.id, null]
+  doc_type varchar(30) [note: 'transcript | citizen_id | priority_proof | certificate | photo | other']
+  status varchar(20) [default: 'pending', note: 'pending | approved | rejected']
+  reviewed_by bigint [ref: > users.id, null]
+  reviewed_at datetime
+  note varchar(500)
+  Note: 'File lưu qua spatie/medialibrary (collection documents)'
+}
+
+Table pipelines {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255)
+  level varchar(30)
+  is_default boolean [default: false]
+}
+
+Table pipeline_stages {
+  id bigint [pk, increment]
+  pipeline_id bigint [ref: > pipelines.id, not null]
+  code varchar(50)
+  name varchar(255)
+  color varchar(20)
+  sort_order int
+  type varchar(10) [note: 'open | won | lost']
+  probability tinyint [note: '0-100']
+  sla_hours int
+  required_fields json
+}
+
+Table admission_cases {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  uuid char(36) [unique]
+  applicant_id bigint [ref: > applicants.id, not null]
+  cycle_id bigint [ref: > admission_cycles.id, not null]
+  pipeline_id bigint [ref: > pipelines.id, not null]
+  stage_id bigint [ref: > pipeline_stages.id, not null]
+  status varchar(10) [default: 'open', note: 'open | won | lost - đồng bộ theo stage.type']
+  owner_id bigint [ref: > users.id, null, note: 'null = kho chung']
+  team_id bigint [ref: > teams.id, null]
+  source_id bigint [ref: > lead_sources.id]
+  campaign_id bigint [ref: > campaigns.id, null]
+  school_activity_id bigint [ref: > school_activities.id, null]
+  utm_source varchar(100)
+  utm_medium varchar(100)
+  utm_campaign varchar(100)
+  utm_content varchar(100)
+  primary_major_id bigint [ref: > majors.id, null]
+  temperature varchar(10) [note: 'hot | warm | cold']
+  score int [default: 0, note: 'lead scoring']
+  our_preference_rank tinyint [note: 'Trường mình là NV thứ mấy']
+  assigned_at datetime
+  first_contacted_at datetime
+  last_activity_at datetime
+  next_action_at datetime
+  lost_reason_id bigint [ref: > lost_reasons.id, null]
+  lost_note text
+  enrolled_major_id bigint [ref: > majors.id, null]
+  enrolled_at datetime
+  custom_data json
+  indexes {
+    (applicant_id, cycle_id) [unique]
+    (cycle_id, stage_id, owner_id)
+    (cycle_id, campaign_id)
+    (cycle_id, source_id)
+    next_action_at
+  }
+  Note: '[custom] Đối tượng trung tâm của pipeline'
+}
+
+Table case_stage_histories {
+  id bigint [pk, increment]
+  case_id bigint [ref: > admission_cases.id, not null]
+  from_stage_id bigint [ref: > pipeline_stages.id, null]
+  to_stage_id bigint [ref: > pipeline_stages.id, not null]
+  user_id bigint [ref: > users.id, null]
+  hours_in_previous decimal(10,2)
+  changed_at datetime
+}
+
+Table case_touches {
+  id bigint [pk, increment]
+  case_id bigint [ref: > admission_cases.id, not null]
+  source_id bigint [ref: > lead_sources.id]
+  campaign_id bigint [ref: > campaigns.id, null]
+  school_activity_id bigint [ref: > school_activities.id, null]
+  form_id bigint [ref: > forms.id, null]
+  utm json
+  payload json [note: 'Dữ liệu gốc form/webhook']
+  touched_at datetime
+}
+
+Table case_interested_majors {
+  case_id bigint [ref: > admission_cases.id]
+  major_id bigint [ref: > majors.id]
+  priority tinyint
+  indexes { (case_id, major_id) [pk] }
+}
+
+Table applications {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  case_id bigint [ref: > admission_cases.id, not null]
+  major_id bigint [ref: > majors.id, not null]
+  cycle_method_id bigint [ref: > cycle_methods.id, not null]
+  combination_id bigint [ref: > subject_combinations.id, null]
+  round_id bigint [ref: > admission_rounds.id, not null]
+  preference_order tinyint [note: '1-15']
+  raw_score decimal(5,2)
+  priority_bonus decimal(5,2)
+  encourage_bonus decimal(5,2)
+  final_score decimal(5,2)
+  score_breakdown json
+  status varchar(30) [default: 'draft', note: 'draft | submitted | eligible | ineligible | conditional_admit | admitted | rejected | confirmed | withdrawn']
+  submitted_at datetime
+  decided_at datetime
+  confirmed_at datetime
+  moet_synced_at datetime
+  indexes {
+    (case_id, round_id, preference_order) [unique]
+    (major_id, round_id, status)
+  }
+}
+
+// ---------------------------------------------------------------------
+// 7. TƯƠNG TÁC
+// ---------------------------------------------------------------------
+
+Table activities {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  subject_type varchar(100) [note: 'Applicant | AdmissionCase | HighSchool | SchoolContact | Campaign']
+  subject_id bigint
+  type varchar(30) [note: 'call | note | sms | zalo | email | meeting | stage_changed | owner_changed | system']
+  direction varchar(5) [note: 'in | out']
+  title varchar(255)
+  body text
+  call_result_id bigint [ref: > call_results.id, null]
+  duration_sec int
+  recording_url varchar(500)
+  meta json
+  occurred_at datetime
+  user_id bigint [ref: > users.id, null]
+  indexes { (subject_type, subject_id, occurred_at) }
+}
+
+Table tasks {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  subject_type varchar(100)
+  subject_id bigint
+  title varchar(255) [not null]
+  type varchar(30) [note: 'call_back | send_info | remind_documents | other']
+  priority varchar(10) [note: 'low | normal | high']
+  assignee_id bigint [ref: > users.id]
+  due_at datetime
+  status varchar(20) [default: 'todo', note: 'todo | done | cancelled']
+  completed_at datetime
+  indexes {
+    (assignee_id, status, due_at)
+    (subject_type, subject_id)
+  }
+}
+
+Table appointments {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  case_id bigint [ref: > admission_cases.id, not null]
+  type varchar(30) [note: 'counseling | campus_tour | interview | talent_exam']
+  start_at datetime
+  end_at datetime
+  location varchar(255)
+  host_id bigint [ref: > users.id]
+  attendance varchar(20) [default: 'scheduled', note: 'scheduled | attended | no_show | cancelled']
+  result text
+}
+
+Table message_templates {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  channel varchar(20) [note: 'zns | sms | email']
+  name varchar(255)
+  subject varchar(255)
+  body text [note: 'Có biến {{applicant.full_name}}']
+  provider_template_id varchar(100)
+  is_active boolean [default: true]
+}
+
+Table message_logs {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  template_id bigint [ref: > message_templates.id, null]
+  channel varchar(20)
+  recipient varchar(255)
+  applicant_id bigint [ref: > applicants.id, null]
+  status varchar(20) [note: 'queued | sent | delivered | failed']
+  provider_message_id varchar(100)
+  error text
+  sent_at datetime
+}
+
+// ---------------------------------------------------------------------
+// 8. MỞ RỘNG KIỂU TWENTY
+// ---------------------------------------------------------------------
+
+Table custom_field_definitions {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  object varchar(50) [note: 'applicants | admission_cases | high_schools | majors | campaigns | school_contacts']
+  key varchar(64) [note: 'snake_case, là key trong custom_data']
+  label varchar(255)
+  type varchar(20) [note: 'text | textarea | number | date | boolean | select | multiselect | url | phone | email']
+  options json
+  is_required boolean [default: false]
+  is_filterable boolean [default: true]
+  sort_order int
+  indexes { (organization_id, object, key) [unique] }
+}
+
+Table saved_views {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  object varchar(50)
+  name varchar(255)
+  user_id bigint [ref: > users.id, null, note: 'null = view chia sẻ']
+  is_shared boolean [default: false]
+  view_type varchar(10) [note: 'table | kanban | calendar']
+  config json [note: '{columns, filters, sorts, group_by, page_size}']
+  sort_order int
+}
+
+Table assignment_rules {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255)
+  priority int
+  conditions json
+  strategy varchar(20) [note: 'territory | round_robin | load_balance | fixed']
+  user_ids json
+  team_id bigint [ref: > teams.id, null]
+  is_active boolean [default: true]
+}
+
+Table workflows {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  name varchar(255)
+  object varchar(50)
+  trigger json [note: '{type: created|updated|stage_changed|schedule, field?, cron?}']
+  conditions json
+  actions json [note: '[{type: assign|create_task|send_message|update_field|webhook, ...}]']
+  is_active boolean [default: false]
+}
+
+Table workflow_runs {
+  id bigint [pk, increment]
+  workflow_id bigint [ref: > workflows.id]
+  subject_type varchar(100)
+  subject_id bigint
+  status varchar(20)
+  log json
+  ran_at datetime
+}
+
+Table import_jobs {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  object varchar(50)
+  file_path varchar(500)
+  mapping json
+  status varchar(20) [note: 'pending | processing | done | failed']
+  total_rows int
+  success_rows int
+  error_rows int
+  errors json
+  user_id bigint [ref: > users.id]
+}
+
+Table webhooks {
+  id bigint [pk, increment]
+  organization_id bigint [ref: > organizations.id]
+  url varchar(500)
+  events json
+  secret varchar(100)
+  is_active boolean [default: true]
+}
