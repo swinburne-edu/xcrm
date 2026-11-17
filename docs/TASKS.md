@@ -17,7 +17,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
   - `.env`: `APP_NAME=xcrm`, `APP_URL=http://xcrm.test`, `APP_LOCALE=vi`, `APP_TIMEZONE=UTC`, DB MySQL `xcrm` (user `root`, mật khẩu rỗng của Laragon), `QUEUE_CONNECTION=database`.
   - `npm install`, `php artisan migrate`, `npm run build`. Mở `http://xcrm.test` đăng nhập được.
   - `git init` + commit đầu tiên.
-- [ ] **0.2 Cài package** theo CLAUDE.md mục 4: spatie/laravel-permission, spatie/laravel-activitylog, spatie/laravel-medialibrary, maatwebsite/excel, giggsey/libphonenumber-for-php, pestphp/pest (nếu starter kit chưa có); frontend: @tanstack/vue-table, vuedraggable. Publish config + migration của spatie.
+- [x] **0.2 Cài package** theo CLAUDE.md mục 4: spatie/laravel-permission, spatie/laravel-activitylog, spatie/laravel-medialibrary, maatwebsite/excel, giggsey/libphonenumber-for-php, pestphp/pest (nếu starter kit chưa có); frontend: @tanstack/vue-table, vuedraggable. Publish config + migration của spatie.
 - [ ] **0.3 Nền tảng code**
   - Tạo cấu trúc `app/Domain/*` (CLAUDE.md mục 5).
   - Traits `BelongsToOrganization` (global scope + tự gán khi tạo), `HasAuditColumns`, `HasCustomData`.
