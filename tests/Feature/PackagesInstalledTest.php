@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
 it('creates the tables published by spatie packages', function (string $table) {
@@ -19,7 +20,7 @@ it('creates the tables published by spatie packages', function (string $table) {
 ]);
 
 it('registers the Excel facade', function () {
-    expect(class_exists(\Maatwebsite\Excel\Facades\Excel::class))->toBeTrue();
+    expect(class_exists(Excel::class))->toBeTrue();
 });
 
 it('creates roles with spatie permission', function () {

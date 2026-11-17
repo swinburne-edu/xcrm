@@ -67,6 +67,9 @@ return [
 
     'timezone' => env('APP_TIMEZONE', 'UTC'),
 
+    // Times are stored in UTC (timezone above) and shown to users in this timezone.
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Asia/Ho_Chi_Minh'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

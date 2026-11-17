@@ -67,6 +67,10 @@ app/
     Admission/      # pipelines, stages, admission_cases, applications
     Activity/       # activities, tasks, appointments
     Platform/       # custom fields, saved views, assignment rules, workflows
+    Organization/   # organizations, teams (User vẫn ở app/Models/User.php — Fortify dùng)
+    Shared/         # dùng chung: Concerns/ (BelongsToOrganization, HasAuditColumns, HasCustomData),
+                    # Scopes/OrganizationScope, Services/ (CurrentOrganization, PhoneNormalizer),
+                    # Support/BlueprintMacros ($table->organizationId(), $table->auditColumns())
   Each domain:  Models/  Enums/  Actions/  Services/  Observers/  Policies/  Data/
 app/Http/Controllers/{Domain}/...   # mỏng, gọi Action
 app/Http/Requests/{Domain}/...      # validate ở đây
