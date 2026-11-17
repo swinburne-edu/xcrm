@@ -91,6 +91,8 @@ app/Http/Requests/{Domain}/...      # validate ở đây
 11. Không dùng `eval`. Công thức điểm là JSON, thực thi bằng `ScoreCalculator`.
 12. Mỗi tính năng: migration + model + factory + seeder (nếu là danh mục) + Form Request + Policy + controller + trang Vue + **test Pest**.
 13. Frontend: trang ở `resources/js/pages/{Domain}/{Index,Show,Form}.vue`; component dùng chung ở `resources/js/components/crm/` (DataTable, KanbanBoard, Timeline, FilterBar, SavedViewMenu, RecordDrawer).
+14. **Màn hình danh sách** luôn dùng chuẩn chung: backend `ListQuery::for(...)->filters(Filter::...)->sorts([...])->toProps(fn)` (`app/Domain/Shared/Support/Listing`), frontend `useListQuery(() => props.x)` + `<FilterBar>` + `<DataTable>`. Không tự viết phân trang/lọc riêng. Mẫu đầy đủ: `/dev/components` (`ComponentsDemoController`, chỉ local).
+15. **Chọn bản ghi liên kết** (người phụ trách, trường THPT, ngành…) dùng `<EntityPicker entity="...">`; nguồn dữ liệu là một lớp `EloquentLookup` đăng ký trong `config/lookups.php` (phải giới hạn theo tổ chức/quyền). Màn hình mới thêm vào menu: sửa `config/navigation.php` (bỏ cờ `placeholder`).
 
 ## 6. Quy tắc nghiệp vụ không được vi phạm
 
