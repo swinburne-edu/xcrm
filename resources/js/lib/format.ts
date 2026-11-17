@@ -14,7 +14,9 @@ const config: FormatConfig = {
     timeZone: 'Asia/Ho_Chi_Minh',
 };
 
-export function configureFormatting(options: Partial<{ locale: string | null; timeZone: string | null }>): void {
+export function configureFormatting(
+    options: Partial<{ locale: string | null; timeZone: string | null }>,
+): void {
     if (options.locale) {
         config.locale = options.locale === 'vi' ? 'vi-VN' : options.locale;
     }
@@ -81,7 +83,8 @@ export function formatDateTime(value: DateInput, fallback = ''): string {
         timeZone: config.timeZone,
     }).formatToParts(date);
 
-    const get = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? '';
+    const get = (type: Intl.DateTimeFormatPartTypes) =>
+        parts.find((p) => p.type === type)?.value ?? '';
 
     return `${get('day')}/${get('month')}/${get('year')} ${get('hour')}:${get('minute')}`;
 }
@@ -103,7 +106,11 @@ export function formatTime(value: DateInput, fallback = ''): string {
 }
 
 /** "3 ngày trước", "trong 2 giờ nữa" */
-export function formatRelative(value: DateInput, fallback = '', now: Date = new Date()): string {
+export function formatRelative(
+    value: DateInput,
+    fallback = '',
+    now: Date = new Date(),
+): string {
     const date = toDate(value);
 
     if (!date) {
@@ -131,7 +138,11 @@ export function formatRelative(value: DateInput, fallback = '', now: Date = new 
 }
 
 /** 1.250.000 */
-export function formatNumber(value: number | string | null | undefined, fallback = '', maximumFractionDigits = 2): string {
+export function formatNumber(
+    value: number | string | null | undefined,
+    fallback = '',
+    maximumFractionDigits = 2,
+): string {
     if (value === null || value === undefined || value === '') {
         return fallback;
     }
@@ -142,23 +153,34 @@ export function formatNumber(value: number | string | null | undefined, fallback
         return fallback;
     }
 
-    return new Intl.NumberFormat(config.locale, { maximumFractionDigits }).format(number);
+    return new Intl.NumberFormat(config.locale, {
+        maximumFractionDigits,
+    }).format(number);
 }
 
 /** 1.250.000 ₫ (VNĐ, no decimals — DB stores decimal(15,0)) */
-export function formatMoney(value: number | string | null | undefined, fallback = ''): string {
+export function formatMoney(
+    value: number | string | null | undefined,
+    fallback = '',
+): string {
     const formatted = formatNumber(value, '', 0);
 
     return formatted === '' ? fallback : `${formatted} ₫`;
 }
 
 /** 24,50 — exam scores, decimal(5,2) */
-export function formatScore(value: number | string | null | undefined, fallback = ''): string {
+export function formatScore(
+    value: number | string | null | undefined,
+    fallback = '',
+): string {
     const number = typeof value === 'string' ? Number(value) : value;
 
     if (number === null || number === undefined || Number.isNaN(number)) {
         return fallback;
     }
 
-    return new Intl.NumberFormat(config.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(number);
+    return new Intl.NumberFormat(config.locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(number);
 }

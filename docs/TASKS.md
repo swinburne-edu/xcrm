@@ -24,7 +24,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
   - Service `PhoneNormalizer`. Morph map. Timezone hiển thị `Asia/Ho_Chi_Minh`.
   - Tiếng Việt: `lang/vi` (validation, auth, pagination), helper format ngày/tiền ở frontend.
   - Migration `organizations`, thêm cột vào `users` (organization_id, phone, is_active, data_scope…), `teams`, `team_user`.
-- [ ] **0.4 Layout CRM** — Sidebar theo `06-giao-dien.md` (các mục chưa làm hiển thị trang "Đang phát triển"), header có bộ chọn mùa (tạm rỗng), ô tìm kiếm, user menu. Breadcrumb.
+- [x] **0.4 Layout CRM** — Sidebar theo `06-giao-dien.md` (các mục chưa làm hiển thị trang "Đang phát triển"), header có bộ chọn mùa (tạm rỗng), ô tìm kiếm, user menu. Breadcrumb.
 - [ ] **0.5 Component dùng chung bản đầu** — `DataTable`, `FilterBar` (text/select/date), `EntityPicker`, `ProvinceWardSelect`, `RecordDrawer`, badge. Kèm một chuẩn backend cho list (filter/sort/paginate) dùng lại cho mọi resource.
 
 ## Giai đoạn 1 — MVP (P0)

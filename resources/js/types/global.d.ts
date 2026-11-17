@@ -1,5 +1,10 @@
 import type { Directive } from 'vue';
 import type { Auth } from '@/types/auth';
+import type {
+    BreadcrumbItem,
+    CrmNavItem,
+    CycleOption,
+} from '@/types/navigation';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -21,6 +26,12 @@ declare module '@inertiajs/core' {
             locale: string;
             timezone: string;
             auth: Auth;
+            navigation: CrmNavItem[];
+            /** Set by pages rendered straight from routes (e.g. placeholders). */
+            breadcrumbs?: BreadcrumbItem[];
+            /** Shared from task 1.5 (admission cycle selector). */
+            cycles?: CycleOption[];
+            currentCycle?: CycleOption | null;
             sidebarOpen: boolean;
             [key: string]: unknown;
         };
