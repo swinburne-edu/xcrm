@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Catalog;
 
+use App\Domain\Shared\Services\CurrentOrganization;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -45,6 +46,14 @@ abstract class CatalogRequest extends FormRequest
         return Rule::unique($table, 'code')->ignore($this->recordId());
     }
 
+    /** Unique among the rows of the current organization (per-organization catalogs). */
+    protected function uniqueInOrganization(string $table, string $column): Unique
+    {
+        return Rule::unique($table, $column)
+            ->where('organization_id', app(CurrentOrganization::class)->id())
+            ->ignore($this->recordId());
+    }
+
     public function attributes(): array
     {
         return [
@@ -57,6 +66,10 @@ abstract class CatalogRequest extends FormRequest
             'new_ward_id' => 'xã/phường mới',
             'score_source' => 'nguồn điểm',
             'subjects' => 'môn trong tổ hợp',
+            'channel' => 'kênh',
+            'sort_order' => 'thứ tự',
+            'is_contacted' => 'liên hệ thành công',
+            'color' => 'màu',
         ];
     }
 }

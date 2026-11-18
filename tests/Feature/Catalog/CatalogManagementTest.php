@@ -49,12 +49,12 @@ it('shows every catalog tab to a viewer, read-only', function (string $key) {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Catalog/Index')
-            ->has('tabs', 8)
+            ->has('tabs', 12)
             ->where('catalog.key', $key)
             ->where('can.manage', false)
             ->has('items.data')
             ->has('breadcrumbs', 3));
-})->with(['provinces', 'wards', 'ward-mappings', 'priority-areas', 'priority-groups', 'subjects', 'combinations', 'admission-methods']);
+})->with(['provinces', 'wards', 'ward-mappings', 'priority-areas', 'priority-groups', 'subjects', 'combinations', 'admission-methods', 'lead-sources', 'lost-reasons', 'call-results', 'tags']);
 
 it('opens the first tab at /settings/catalogs and 404s unknown tabs', function () {
     $this->actingAs($this->viewer)->get('/settings/catalogs')

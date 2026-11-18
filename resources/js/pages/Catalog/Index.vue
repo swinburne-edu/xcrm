@@ -11,6 +11,7 @@ import type {
 import DataTable from '@/components/crm/DataTable.vue';
 import FilterBar from '@/components/crm/FilterBar.vue';
 import ToneBadge from '@/components/crm/ToneBadge.vue';
+import type { BadgeTone } from '@/components/crm/ToneBadge.vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -41,8 +42,17 @@ const props = defineProps<{
 
 const query = useListQuery(() => props.items, { only: ['items'] });
 
-function renderCell(column: CatalogColumn, value: unknown) {
+function renderCell(column: CatalogColumn, value: unknown, row: CatalogRow) {
     switch (column.type) {
+        case 'tag':
+            return h(
+                ToneBadge,
+                {
+                    tone:
+                        (row[column.toneKey ?? 'color'] as BadgeTone) ?? 'gray',
+                },
+                () => String(value ?? ''),
+            );
         case 'code':
             return h(
                 'span',
@@ -76,7 +86,7 @@ const columns = computed<CrmColumn<CatalogRow>[]>(() => [
         accessorKey: column.key,
         header: column.label,
         enableSorting: column.sortable ?? false,
-        cell: (ctx) => renderCell(column, ctx.getValue()),
+        cell: (ctx) => renderCell(column, ctx.getValue(), ctx.row.original),
         meta: {
             class: column.type === 'number' ? 'text-right' : undefined,
         },

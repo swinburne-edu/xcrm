@@ -5,8 +5,10 @@ import type { FilterDefinition, FilterOption } from '@/types';
 export type CatalogColumn = {
     key: string;
     label: string;
-    type?: 'text' | 'code' | 'number' | 'boolean' | 'badge';
+    type?: 'text' | 'code' | 'number' | 'boolean' | 'badge' | 'tag';
     sortable?: boolean;
+    /** For type 'tag': row key holding the tone (gray, blue…). */
+    toneKey?: string;
     trueLabel?: string;
     falseLabel?: string;
 };

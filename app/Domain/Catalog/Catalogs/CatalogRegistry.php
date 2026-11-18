@@ -20,6 +20,11 @@ class CatalogRegistry
         SubjectCatalog::class,
         SubjectCombinationCatalog::class,
         AdmissionMethodCatalog::class,
+        // Per-organization catalogs (rows scoped by organization_id).
+        LeadSourceCatalog::class,
+        LostReasonCatalog::class,
+        CallResultCatalog::class,
+        TagCatalog::class,
     ];
 
     /** @return list<CatalogDefinition> */

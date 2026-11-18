@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domain\Catalog\Actions\SeedOrganizationCatalogs;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -26,6 +27,12 @@ class DatabaseSeeder extends Seeder
                 ]);
 
             $user->givePermissionTo(PermissionSeeder::PERMISSIONS);
+
+            // Per-organization defaults (sources, lost reasons, call results). New organizations
+            // created later must call this action too (organization setup, task 1.3).
+            if ($user->organization) {
+                app(SeedOrganizationCatalogs::class)->handle($user->organization);
+            }
         }
     }
 }
