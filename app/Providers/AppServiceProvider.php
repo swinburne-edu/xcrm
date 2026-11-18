@@ -38,10 +38,13 @@ use App\Domain\Shared\Services\PhoneNormalizer;
 use App\Domain\Shared\Support\BlueprintMacros;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use libphonenumber\PhoneNumberUtil;
@@ -73,6 +76,19 @@ class AppServiceProvider extends ServiceProvider
         $this->configureMorphMap();
 
         $this->configurePolicies();
+
+        $this->configureRateLimiting();
+    }
+
+    /**
+     * Public lead endpoint: per IP per minute, and a tighter cap per IP + form so one site cannot flood a form.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('public-leads', fn (Request $request) => [
+            Limit::perMinute(60)->by('leads:'.$request->ip()),
+            Limit::perMinute(10)->by('leads:'.$request->ip().':'.$request->input('form_uuid')),
+        ]);
     }
 
     /**

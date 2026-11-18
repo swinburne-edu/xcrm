@@ -61,7 +61,7 @@ class ApplicantController extends Controller
         return Inertia::render('Applicants/Index', [
             'applicants' => $applicants,
             'options' => $this->options(),
-            'can' => ['create' => $request->user()->can('create', Applicant::class)],
+            'can' => ['create' => $request->user()->can('create', Applicant::class), 'import' => $request->user()->can('import', Applicant::class)],
         ]);
     }
 

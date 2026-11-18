@@ -11,15 +11,16 @@ function xsrfToken(): string {
 }
 
 export async function requestJson<T>(method: 'GET' | 'POST', url: string, body?: unknown): Promise<T> {
+    const isForm = body instanceof FormData;
     const response = await fetch(url, {
         method,
         credentials: 'same-origin',
         headers: {
             Accept: 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
-            ...(method === 'POST' ? { 'Content-Type': 'application/json', 'X-XSRF-TOKEN': xsrfToken() } : {}),
+            ...(method === 'POST' ? { ...(isForm ? {} : { 'Content-Type': 'application/json' }), 'X-XSRF-TOKEN': xsrfToken() } : {}),
         },
-        body: body === undefined ? undefined : JSON.stringify(body),
+        body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
     });
 
     if (!response.ok) {

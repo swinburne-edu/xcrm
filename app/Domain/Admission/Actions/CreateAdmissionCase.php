@@ -32,7 +32,7 @@ class CreateAdmissionCase
     public function __construct(private readonly TerritoryResolver $territories) {}
 
     /**
-     * @param  array<string, mixed>  $data  optional: owner_id (null = pool), team_id, source_id, campaign_id, school_activity_id, utm_*, primary_major_id, temperature, payload
+     * @param  array<string, mixed>  $data  optional: owner_id (null = pool), team_id, source_id, campaign_id, school_activity_id, form_id, utm_*, primary_major_id, temperature, payload
      */
     public function handle(Applicant $applicant, AdmissionCycle $cycle, array $data = [], ?User $by = null): AdmissionCase
     {
@@ -80,6 +80,7 @@ class CreateAdmissionCase
                     'source_id' => $case->source_id,
                     'campaign_id' => $case->campaign_id,
                     'school_activity_id' => $case->school_activity_id,
+                    'form_id' => $data['form_id'] ?? null,
                     'utm' => array_filter(['source' => $case->utm_source, 'medium' => $case->utm_medium, 'campaign' => $case->utm_campaign, 'content' => $case->utm_content]) ?: null,
                     'payload' => $data['payload'] ?? null,
                     'touched_at' => $now,

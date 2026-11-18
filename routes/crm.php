@@ -9,6 +9,7 @@ use App\Http\Controllers\Admission\PipelineController;
 use App\Http\Controllers\Applicant\ApplicantCertificateController;
 use App\Http\Controllers\Applicant\ApplicantController;
 use App\Http\Controllers\Applicant\ApplicantGuardianController;
+use App\Http\Controllers\Applicant\ApplicantImportController;
 use App\Http\Controllers\Applicant\ApplicantScoreController;
 use App\Http\Controllers\Campaign\CampaignController;
 use App\Http\Controllers\Catalog\CatalogController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Cycle\CycleRoundController;
 use App\Http\Controllers\Cycle\CycleSelectionController;
 use App\Http\Controllers\HighSchool\HighSchoolController;
 use App\Http\Controllers\HighSchool\SchoolContactController;
+use App\Http\Controllers\Intake\FormController;
 use App\Http\Controllers\Major\MajorController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\LookupController;
@@ -121,6 +123,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('applicants', [ApplicantController::class, 'index'])->name('applicants.index');
     Route::post('applicants', [ApplicantController::class, 'store'])->name('applicants.store');
+    Route::post('applicants/import/preview', [ApplicantImportController::class, 'preview'])->name('applicants.import.preview');
+    Route::post('applicants/import', [ApplicantImportController::class, 'store'])->name('applicants.import');
+    Route::get('imports/{id}', [ApplicantImportController::class, 'show'])->whereNumber('id')->name('imports.show');
     Route::get('applicants/check-duplicate', [ApplicantController::class, 'checkDuplicate'])->name('applicants.check-duplicate');
     Route::get('applicants/{uuid}', [ApplicantController::class, 'show'])->whereUuid('uuid')->name('applicants.show');
     Route::put('applicants/{uuid}', [ApplicantController::class, 'update'])->whereUuid('uuid')->name('applicants.update');
@@ -164,6 +169,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('appointments/{id}', [AppointmentController::class, 'update'])->whereNumber('id')->name('appointments.update');
     Route::post('appointments/{id}/attendance', [AppointmentController::class, 'attendance'])->whereNumber('id')->name('appointments.attendance');
     Route::delete('appointments/{id}', [AppointmentController::class, 'destroy'])->whereNumber('id')->name('appointments.destroy');
+});
+
+// Lead intake forms (task 1.14); the public endpoint is in routes/api.php.
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('forms', [FormController::class, 'index'])->name('forms.index');
+    Route::post('forms', [FormController::class, 'store'])->name('forms.store');
+    Route::put('forms/{id}', [FormController::class, 'update'])->whereNumber('id')->name('forms.update');
+    Route::delete('forms/{id}', [FormController::class, 'destroy'])->whereNumber('id')->name('forms.destroy');
 });
 
 // Header cycle selector (task 1.5): remembers the choice in the session.

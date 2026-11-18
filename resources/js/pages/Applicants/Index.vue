@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Plus } from '@lucide/vue';
+import { Plus, Upload } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import ApplicantImportWizard from '@/components/applicants/ImportWizard.vue';
 import ApplicantFormDialog from '@/components/applicants/ApplicantFormDialog.vue';
 import type { ApplicantOptions, ApplicantRow } from '@/components/applicants/types';
 import DataTable from '@/components/crm/DataTable.vue';
@@ -14,7 +15,7 @@ import type { FilterDefinition, ListResult } from '@/types';
 const props = defineProps<{
     applicants: ListResult<ApplicantRow>;
     options: ApplicantOptions;
-    can: { create: boolean };
+    can: { create: boolean; import: boolean };
 }>();
 
 const query = useListQuery(() => props.applicants, { only: ['applicants'] });
@@ -49,6 +50,7 @@ const columns: CrmColumn<ApplicantRow>[] = [
 ];
 
 const formOpen = ref(false);
+const importOpen = ref(false);
 
 function open(row: ApplicantRow): void {
     router.visit(`/applicants/${row.uuid}`);
@@ -70,10 +72,16 @@ function date(value: string | null): string {
                     Thí sinh tiềm năng và hồ sơ cá nhân. Số điện thoại và CCCD bị che nếu bạn không có quyền xem đầy đủ.
                 </p>
             </div>
+            <div class="flex gap-2">
+            <Button v-if="can.import" variant="outline" data-test="import" @click="importOpen = true">
+                <Upload class="size-4" />
+                Nhập Excel
+            </Button>
             <Button v-if="can.create" data-test="create" @click="formOpen = true">
                 <Plus class="size-4" />
                 Thêm thí sinh
             </Button>
+            </div>
         </div>
 
         <DataTable :list="applicants" :query="query" :columns="columns" row-clickable storage-key="applicants" @row-click="open">
@@ -97,4 +105,5 @@ function date(value: string | null): string {
     </div>
 
     <ApplicantFormDialog v-model:open="formOpen" :record="null" :options="options" />
+    <ApplicantImportWizard v-model:open="importOpen" />
 </template>
