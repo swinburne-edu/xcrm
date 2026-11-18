@@ -7,7 +7,9 @@ use App\Domain\Catalog\Models\Province;
 use App\Domain\Catalog\Policies\CatalogPolicy;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
+use App\Domain\Organization\Models\Territory;
 use App\Domain\Organization\Policies\TeamPolicy;
+use App\Domain\Organization\Policies\TerritoryPolicy;
 use App\Domain\Organization\Policies\UserPolicy;
 use App\Domain\Shared\Services\CurrentOrganization;
 use App\Domain\Shared\Services\PhoneNormalizer;
@@ -61,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Team::class, TeamPolicy::class);
+        Gate::policy(Territory::class, TerritoryPolicy::class);
     }
 
     /**
@@ -77,6 +80,7 @@ class AppServiceProvider extends ServiceProvider
             'role' => Role::class,
             'permission' => Permission::class,
             'province' => Province::class,
+            'territory' => Territory::class,
         ]);
     }
 

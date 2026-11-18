@@ -6,6 +6,7 @@ use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\LookupController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TeamController;
+use App\Http\Controllers\Settings\TerritoryController;
 use App\Http\Controllers\Settings\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,12 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::post('users', [UserController::class, 'store'])->name('users.store');
     Route::put('users/{id}', [UserController::class, 'update'])->whereNumber('id')->name('users.update');
     Route::delete('users/{id}', [UserController::class, 'destroy'])->whereNumber('id')->name('users.destroy');
+    // Responsibility areas (task 1.4). Authorization: TerritoryPolicy.
+    Route::get('territories', [TerritoryController::class, 'index'])->name('territories.index');
+    Route::post('territories', [TerritoryController::class, 'store'])->name('territories.store');
+    Route::put('territories/{id}', [TerritoryController::class, 'update'])->whereNumber('id')->name('territories.update');
+    Route::delete('territories/{id}', [TerritoryController::class, 'destroy'])->whereNumber('id')->name('territories.destroy');
+
     Route::post('teams', [TeamController::class, 'store'])->name('teams.store');
     Route::put('teams/{id}', [TeamController::class, 'update'])->whereNumber('id')->name('teams.update');
     Route::delete('teams/{id}', [TeamController::class, 'destroy'])->whereNumber('id')->name('teams.destroy');

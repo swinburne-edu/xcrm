@@ -85,7 +85,7 @@ return [
                 ['title' => 'Mùa tuyển sinh', 'url' => '/settings/cycles', 'route' => 'settings.cycles.index', 'placeholder' => true],
                 ['title' => 'Pipeline', 'url' => '/settings/pipelines', 'route' => 'settings.pipelines.index', 'placeholder' => true],
                 ['title' => 'Danh mục', 'url' => '/settings/catalogs', 'route' => 'settings.catalogs.index', 'permission' => 'catalog.view'],
-                ['title' => 'Vùng phụ trách', 'url' => '/settings/territories', 'route' => 'settings.territories.index', 'placeholder' => true],
+                ['title' => 'Vùng phụ trách', 'url' => '/settings/territories', 'route' => 'settings.territories.index', 'permission' => 'territory.view'],
                 ['title' => 'Người dùng & vai trò', 'url' => '/settings/users', 'route' => 'settings.users.index', 'permission' => 'user.view'],
                 ['title' => 'Trường tuỳ chỉnh', 'url' => '/settings/custom-fields', 'route' => 'settings.custom-fields.index', 'phase' => 'P1', 'placeholder' => true],
                 ['title' => 'Quy tắc phân bổ', 'url' => '/settings/assignment-rules', 'route' => 'settings.assignment-rules.index', 'phase' => 'P1', 'placeholder' => true],
