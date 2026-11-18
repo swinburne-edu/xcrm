@@ -17,6 +17,7 @@ use App\Domain\Shared\Concerns\BelongsToOrganization;
 use App\Domain\Shared\Concerns\HasAuditColumns;
 use App\Domain\Shared\Concerns\HasCustomData;
 use App\Domain\Shared\Concerns\HasDataScope;
+use App\Domain\Shared\Concerns\HasTags;
 use App\Models\User;
 use Database\Factories\AdmissionCaseFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -69,7 +70,7 @@ use Illuminate\Support\Str;
 class AdmissionCase extends Model
 {
     /** @use HasFactory<AdmissionCaseFactory> */
-    use BelongsToOrganization, HasAuditColumns, HasCustomData, HasDataScope, HasFactory, SoftDeletes;
+    use BelongsToOrganization, HasAuditColumns, HasCustomData, HasDataScope, HasFactory, HasTags, SoftDeletes;
 
     protected $attributes = ['status' => 'open', 'score' => 0];
 

@@ -81,7 +81,7 @@ it('shares the sidebar menu in the order of the docs', function () {
                 'title' => 'Hồ sơ tuyển sinh',
                 'url' => '/cases',
                 'phase' => null,
-                'placeholder' => true,
+                'placeholder' => false,
             ])
             ->where('navigation.2.title', 'Công việc của tôi')
             ->where('navigation.3.title', 'Trường THPT')

@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Platform\Services\NavigationMenu;
+use App\Http\Controllers\Admission\CaseController;
 use App\Http\Controllers\Admission\PipelineController;
 use App\Http\Controllers\Applicant\ApplicantCertificateController;
 use App\Http\Controllers\Applicant\ApplicantController;
@@ -128,6 +129,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('applicants/{uuid}/certificates', [ApplicantCertificateController::class, 'store'])->whereUuid('uuid')->name('applicants.certificates.store');
     Route::put('applicants/{uuid}/certificates/{certificateId}', [ApplicantCertificateController::class, 'update'])->whereUuid('uuid')->whereNumber('certificateId')->name('applicants.certificates.update');
     Route::delete('applicants/{uuid}/certificates/{certificateId}', [ApplicantCertificateController::class, 'destroy'])->whereUuid('uuid')->whereNumber('certificateId')->name('applicants.certificates.destroy');
+});
+
+// Admission cases (task 1.12). Authorization: CasePolicy + data scope; the rules are in the Admission actions.
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('cases', [CaseController::class, 'index'])->name('cases.index');
+    Route::get('cases/table', [CaseController::class, 'table'])->name('cases.table');
+    Route::get('cases/column', [CaseController::class, 'column'])->name('cases.column');
+    Route::post('cases', [CaseController::class, 'store'])->name('cases.store');
+    Route::post('cases/bulk', [CaseController::class, 'bulk'])->name('cases.bulk');
+    Route::get('cases/{uuid}', [CaseController::class, 'show'])->whereUuid('uuid')->name('cases.show');
+    Route::put('cases/{uuid}', [CaseController::class, 'update'])->whereUuid('uuid')->name('cases.update');
+    Route::post('cases/{uuid}/move', [CaseController::class, 'move'])->whereUuid('uuid')->name('cases.move');
+    Route::post('cases/{uuid}/assign', [CaseController::class, 'assign'])->whereUuid('uuid')->name('cases.assign');
+    Route::post('cases/{uuid}/claim', [CaseController::class, 'claim'])->whereUuid('uuid')->name('cases.claim');
 });
 
 // Header cycle selector (task 1.5): remembers the choice in the session.
