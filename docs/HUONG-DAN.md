@@ -36,6 +36,13 @@ Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển s
 - **Lịch hẹn** (`/appointments`): đặt lịch tư vấn, tham quan, phỏng vấn, thi năng khiếu; sau buổi hẹn ghi nhận *có đến / vắng / huỷ* (ghi xong không sửa được).
 - Chuyển sang giai đoạn **Thất bại** bắt buộc chọn lý do. Mùa đã đóng chỉ đọc.
 
+## 3b. Phân bổ hồ sơ và SLA
+
+- **Cài đặt → Quy tắc phân bổ**: mỗi quy tắc có *độ ưu tiên* (số nhỏ chạy trước), *điều kiện* (nguồn, chiến dịch, tỉnh, trường THPT, hạng trường, ngành — để trống là áp dụng mọi hồ sơ) và *cách phân bổ*: **cố định** một người, **xoay vòng** (người nhận hồ sơ cách đây lâu nhất), **theo tải** (ít hồ sơ đang mở nhất) hoặc **theo vùng phụ trách**. Có thể chọn danh sách người hoặc một nhóm (lấy thành viên). Hồ sơ mới từ form, import hay nhập tay (không chọn người) được thử lần lượt với các quy tắc; quy tắc đầu tiên khớp và tìm được người nhận sẽ quyết định, không có thì dùng vùng phụ trách, rồi kho chung. Người đã ngừng hoạt động bị bỏ qua.
+- **SLA**: mỗi giai đoạn có SLA riêng (Cài đặt → Pipeline; mặc định *Mới* 24 giờ, *Đã liên hệ* 72 giờ). Hồ sơ đã có người phụ trách mà quá hạn SLA kể từ lúc vào giai đoạn/được giao và chưa có cuộc gọi, ghi chú, tin nhắn hay cuộc gặp nào → **trưởng nhóm nhận thông báo** (không có trưởng nhóm thì quản lý), mỗi lần chỉ một thông báo.
+- **Thu hồi tự động** (tắt mặc định): bật trong cùng trang, đặt số ngày; hồ sơ không có hoạt động trong N ngày về **kho chung** của nhóm, người phụ trách cũ và trưởng nhóm được báo. Không động tới hồ sơ đã nhập học/thất bại, mùa đã đóng, hay hồ sơ có ngày hành động tiếp theo trong tương lai.
+- Thông báo hiện ở **biểu tượng chuông** trên cùng. Việc kiểm tra SLA chạy mỗi 15 phút nhờ lịch của Laravel: chạy `php artisan schedule:work` (hoặc cron `php artisan schedule:run` mỗi phút); kiểm tra ngay bằng `php artisan crm:check-sla`.
+
 ## 4. Gộp thí sinh trùng (F6)
 
 **Thí sinh → Có thể trùng** liệt kê các hồ sơ cùng họ tên + cùng trường THPT hoặc dùng chung SĐT phụ huynh. Bấm **Gộp vào …** để mở màn so sánh: với mỗi trường khác nhau, chọn giá trị muốn giữ (ô trống tự lấy từ bản kia), có nút **Đổi chiều** để chọn bản giữ lại. Khi gộp, phụ huynh, điểm, hồ sơ, lịch sử và việc của bản kia chuyển sang bản giữ; bản kia bị ẩn khỏi danh sách. Cần quyền *Gộp thí sinh*.
@@ -58,4 +65,4 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 
 ## Chưa có trong MVP
 
-Import danh sách trúng tuyển, hoạt động tại trường + QR check-in, webhook Facebook Lead Ads, thông báo quá SLA / thu hồi hồ sơ tự động (giai đoạn 2 trong `docs/TASKS.md`).
+Import danh sách trúng tuyển, hoạt động tại trường + QR check-in, webhook Facebook Lead Ads, trường tuỳ chỉnh, saved view (giai đoạn 2 trong `docs/TASKS.md`).

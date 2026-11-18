@@ -59,6 +59,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $first_contacted_at
  * @property Carbon|null $last_activity_at
  * @property Carbon|null $next_action_at
+ * @property Carbon|null $sla_alerted_at when the team leader was last told this case is past its stage SLA (task 2.4)
  * @property int|null $lost_reason_id
  * @property string|null $lost_note
  * @property int|null $enrolled_major_id
@@ -84,6 +85,7 @@ class AdmissionCase extends Model
             'first_contacted_at' => 'datetime',
             'last_activity_at' => 'datetime',
             'next_action_at' => 'datetime',
+            'sla_alerted_at' => 'datetime',
             'enrolled_at' => 'datetime',
         ];
     }

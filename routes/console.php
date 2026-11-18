@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Admission\Jobs\CheckCaseSla;
 use App\Domain\Major\Jobs\AggregateQuotaProgress;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -16,3 +17,11 @@ Artisan::command('crm:aggregate-quotas', function () {
 })->purpose('Store the daily quota snapshot per major and notify managers of new warnings');
 
 Schedule::command('crm:aggregate-quotas')->hourly()->withoutOverlapping();
+
+// Task 2.4: SLA alerts and automatic recall of idle cases, every 15 minutes (per the organization's settings).
+Artisan::command('crm:check-sla', function () {
+    CheckCaseSla::dispatchSync();
+    $this->info('SLA checked.');
+})->purpose('Alert team leaders about cases past their SLA and recall idle cases to the shared pool');
+
+Schedule::command('crm:check-sla')->everyFifteenMinutes()->withoutOverlapping();

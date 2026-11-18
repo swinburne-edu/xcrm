@@ -12,6 +12,7 @@ use App\Domain\Catalog\Models\Province;
 use App\Domain\Cycle\Models\AdmissionCycle;
 use App\Domain\HighSchool\Models\HighSchool;
 use App\Domain\Organization\Services\TerritoryResolver;
+use App\Domain\Platform\Services\AssignmentEngine;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
@@ -23,13 +24,13 @@ use Illuminate\Validation\ValidationException;
  *  - R5: one case per applicant per cycle (also enforced by a unique index).
  *  - R8: not in a closed cycle.
  *  - Starts at the first open stage of the organization's default pipeline for the cycle's level.
- *  - Owner: the one given, else the owner of the territory of the applicant's school / province (rule 17),
- *    else nobody (the shared pool).
+ *  - Owner: the one given, else the first assignment rule that decides (AssignmentEngine), else the owner of the
+ *    territory of the applicant's school / province (rule 17), else nobody (the shared pool).
  *  - Writes the first stage history row and the first touch.
  */
 class CreateAdmissionCase
 {
-    public function __construct(private readonly TerritoryResolver $territories) {}
+    public function __construct(private readonly TerritoryResolver $territories, private readonly AssignmentEngine $rules) {}
 
     /**
      * @param  array<string, mixed>  $data  optional: owner_id (null = pool), team_id, source_id, campaign_id, school_activity_id, form_id, utm_*, primary_major_id, temperature, payload
@@ -117,6 +118,13 @@ class CreateAdmissionCase
             $teamId = $data['team_id'] ?? ($ownerId === null ? null : User::query()->find($ownerId)?->teams()->value('teams.id'));
 
             return [$ownerId, $teamId];
+        }
+
+        // Assignment rules (task 2.4) come first; without a matching rule the territory of the school / province decides.
+        $byRule = $this->rules->resolve($applicant, $data, $applicant->organization_id);
+
+        if ($byRule !== null) {
+            return $byRule;
         }
 
         $target = $applicant->high_school_id !== null

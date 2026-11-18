@@ -32,6 +32,8 @@ use App\Domain\Major\Models\Major;
 use App\Domain\Major\Policies\MajorPolicy;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
+use App\Domain\Platform\Models\AssignmentRule;
+use App\Domain\Platform\Policies\AssignmentRulePolicy;
 use App\Domain\Organization\Models\Territory;
 use App\Domain\Organization\Policies\TeamPolicy;
 use App\Domain\Organization\Policies\TerritoryPolicy;
@@ -112,6 +114,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Applicant::class, ApplicantPolicy::class);
         Gate::policy(AdmissionCase::class, CasePolicy::class);
         Gate::policy(Application::class, ApplicationPolicy::class);
+        Gate::policy(AssignmentRule::class, AssignmentRulePolicy::class);
         Gate::policy(Task::class, TaskPolicy::class);
         Gate::policy(Appointment::class, AppointmentPolicy::class);
         Gate::policy(Pipeline::class, PipelinePolicy::class);
