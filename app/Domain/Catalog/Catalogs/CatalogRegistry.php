@@ -25,6 +25,8 @@ class CatalogRegistry
         LostReasonCatalog::class,
         CallResultCatalog::class,
         TagCatalog::class,
+        FacultyCatalog::class,
+        CampusCatalog::class,
     ];
 
     /** @return list<CatalogDefinition> */

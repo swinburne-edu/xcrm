@@ -6,6 +6,7 @@ use App\Http\Controllers\Cycle\CycleController;
 use App\Http\Controllers\Cycle\CycleMethodController;
 use App\Http\Controllers\Cycle\CycleRoundController;
 use App\Http\Controllers\Cycle\CycleSelectionController;
+use App\Http\Controllers\Major\MajorController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\LookupController;
 use App\Http\Controllers\Settings\RoleController;
@@ -59,6 +60,16 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::post('teams', [TeamController::class, 'store'])->name('teams.store');
     Route::put('teams/{id}', [TeamController::class, 'update'])->whereNumber('id')->name('teams.update');
     Route::delete('teams/{id}', [TeamController::class, 'destroy'])->whereNumber('id')->name('teams.destroy');
+});
+
+// Majors (task 1.6). Authorization: MajorPolicy; per-cycle setup also needs an open cycle (R8).
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('majors', [MajorController::class, 'index'])->name('majors.index');
+    Route::post('majors', [MajorController::class, 'store'])->name('majors.store');
+    Route::get('majors/{id}', [MajorController::class, 'show'])->whereNumber('id')->name('majors.show');
+    Route::put('majors/{id}', [MajorController::class, 'update'])->whereNumber('id')->name('majors.update');
+    Route::delete('majors/{id}', [MajorController::class, 'destroy'])->whereNumber('id')->name('majors.destroy');
+    Route::put('majors/{id}/cycles/{cycleId}', [MajorController::class, 'saveCycle'])->whereNumber(['id', 'cycleId'])->name('majors.cycle');
 });
 
 // Header cycle selector (task 1.5): remembers the choice in the session.

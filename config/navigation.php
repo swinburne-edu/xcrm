@@ -67,7 +67,7 @@ return [
             'title' => 'Đào tạo & chỉ tiêu',
             'icon' => 'majors',
             'children' => [
-                ['title' => 'Ngành', 'url' => '/majors', 'route' => 'majors.index', 'placeholder' => true],
+                ['title' => 'Ngành', 'url' => '/majors', 'route' => 'majors.index', 'permission' => 'major.view'],
                 ['title' => 'Tiến độ chỉ tiêu', 'url' => '/quotas', 'route' => 'quotas.index', 'phase' => 'P1', 'placeholder' => true],
             ],
         ],

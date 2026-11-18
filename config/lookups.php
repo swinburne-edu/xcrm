@@ -3,6 +3,9 @@
 use App\Domain\Catalog\Lookups\ProvinceLookup;
 use App\Domain\Catalog\Lookups\SubjectLookup;
 use App\Domain\Catalog\Lookups\WardLookup;
+use App\Domain\Major\Lookups\CampusLookup;
+use App\Domain\Major\Lookups\FacultyLookup;
+use App\Domain\Major\Lookups\MajorLookup;
 use App\Domain\Platform\Lookups\TeamLookup;
 use App\Domain\Platform\Lookups\UserLookup;
 
@@ -24,4 +27,7 @@ return [
     'provinces' => ProvinceLookup::class,
     'wards' => WardLookup::class,
     'subjects' => SubjectLookup::class,
+    'majors' => MajorLookup::class,
+    'faculties' => FacultyLookup::class,
+    'campuses' => CampusLookup::class,
 ];

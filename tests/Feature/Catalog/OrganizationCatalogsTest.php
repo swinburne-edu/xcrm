@@ -80,7 +80,7 @@ it('shows the four organization tabs after the system ones', function () {
     $this->actingAs($this->manager)
         ->get('/settings/catalogs')
         ->assertInertia(fn (Assert $page) => $page
-            ->has('tabs', 12)
+            ->has('tabs', 14)
             ->where('tabs.8', ['key' => 'lead-sources', 'title' => 'Nguồn thí sinh'])
             ->where('tabs.9.key', 'lost-reasons')
             ->where('tabs.10.key', 'call-results')

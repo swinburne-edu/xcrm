@@ -8,6 +8,8 @@ use App\Domain\Catalog\Policies\CatalogPolicy;
 use App\Domain\Cycle\Models\AdmissionCycle;
 use App\Domain\Cycle\Policies\CyclePolicy;
 use App\Domain\Cycle\Services\CurrentCycle;
+use App\Domain\Major\Models\Major;
+use App\Domain\Major\Policies\MajorPolicy;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
 use App\Domain\Organization\Models\Territory;
@@ -69,6 +71,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Team::class, TeamPolicy::class);
         Gate::policy(Territory::class, TerritoryPolicy::class);
         Gate::policy(AdmissionCycle::class, CyclePolicy::class);
+        Gate::policy(Major::class, MajorPolicy::class);
     }
 
     /**
@@ -87,6 +90,7 @@ class AppServiceProvider extends ServiceProvider
             'province' => Province::class,
             'territory' => Territory::class,
             'admission_cycle' => AdmissionCycle::class,
+            'major' => Major::class,
         ]);
     }
 

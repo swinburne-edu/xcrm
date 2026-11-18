@@ -49,7 +49,7 @@ it('shows every catalog tab to a viewer, read-only', function (string $key) {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Catalog/Index')
-            ->has('tabs', 12)
+            ->has('tabs', 14)
             ->where('catalog.key', $key)
             ->where('can.manage', false)
             ->has('items.data')

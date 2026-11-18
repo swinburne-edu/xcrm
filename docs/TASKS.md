@@ -37,7 +37,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
 
 ### Mùa & ngành
 - [x] **1.5 Mùa tuyển sinh (M5)** — admission_cycles, admission_rounds, cycle_methods (R1, công thức JSON nhập bằng form có cấu trúc + chế độ JSON nâng cao). Trang `/settings/cycles`. Bộ chọn mùa ở header (lưu trong session, mặc định `is_current`) + middleware chia sẻ `currentCycle` cho Inertia. R10.
-- [ ] **1.6 Ngành (M4)** — faculties, campuses, majors, major_quotas (R11), major_combinations, major_cycle_methods. Trang danh sách + chi tiết ngành có tab "Theo mùa" (chỉ tiêu, tổ hợp, phương thức).
+- [x] **1.6 Ngành (M4)** — faculties, campuses, majors, major_quotas (R11), major_combinations, major_cycle_methods. Trang danh sách + chi tiết ngành có tab "Theo mùa" (chỉ tiêu, tổ hợp, phương thức).
 - [ ] **1.7 Sao chép mùa (F1)** — Action `CloneCycle` + nút trên UI. Test.
 
 ### Trường THPT & chiến dịch
