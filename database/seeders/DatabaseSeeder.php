@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Domain\Catalog\Actions\SeedOrganizationCatalogs;
+use App\Domain\Organization\Enums\DataScopeLevel;
+use App\Domain\Organization\Services\RoleDefinitions;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -14,22 +16,23 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            PermissionSeeder::class,
+            RoleSeeder::class, // also creates the permissions
             CatalogSeeder::class,
         ]);
 
         if (app()->environment(['local', 'testing'])) {
-            // Local login for development (password from UserFactory). Roles come in task 1.3.
+            // Local administrator for development (password from UserFactory).
             $user = User::query()->where('email', 'test@example.com')->first()
                 ?? User::factory()->create([
                     'name' => 'Test User',
                     'email' => 'test@example.com',
                 ]);
 
-            $user->givePermissionTo(PermissionSeeder::PERMISSIONS);
+            $user->forceFill(['data_scope' => DataScopeLevel::All])->save();
+            $user->syncRoles([RoleDefinitions::ADMIN]);
 
-            // Per-organization defaults (sources, lost reasons, call results). New organizations
-            // created later must call this action too (organization setup, task 1.3).
+            // Per-organization defaults (sources, lost reasons, call results). Any code that
+            // creates an organization must call this action too.
             if ($user->organization) {
                 app(SeedOrganizationCatalogs::class)->handle($user->organization);
             }

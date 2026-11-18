@@ -21,19 +21,46 @@ class NavigationMenu
             return [];
         }
 
-        return array_map(fn (array $item): array => [
-            'title' => $item['title'],
-            'url' => $item['url'] ?? null,
-            'icon' => $item['icon'] ?? null,
-            'phase' => $item['phase'] ?? null,
-            'placeholder' => (bool) ($item['placeholder'] ?? false),
-            'children' => array_map(fn (array $child): array => [
-                'title' => $child['title'],
-                'url' => $child['url'],
-                'phase' => $child['phase'] ?? null,
-                'placeholder' => (bool) ($child['placeholder'] ?? false),
-            ], $item['children'] ?? []),
-        ], $this->items());
+        $menu = [];
+
+        foreach ($this->items() as $item) {
+            $children = array_values(array_filter(
+                $item['children'] ?? [],
+                fn (array $child): bool => $this->allowed($user, $child),
+            ));
+
+            // A group whose children are all hidden disappears; a single page needs its own permission.
+            if (isset($item['children']) ? $children === [] : ! $this->allowed($user, $item)) {
+                continue;
+            }
+
+            $menu[] = [
+                'title' => $item['title'],
+                'url' => $item['url'] ?? null,
+                'icon' => $item['icon'] ?? null,
+                'phase' => $item['phase'] ?? null,
+                'placeholder' => (bool) ($item['placeholder'] ?? false),
+                'children' => array_map(fn (array $child): array => [
+                    'title' => $child['title'],
+                    'url' => $child['url'],
+                    'phase' => $child['phase'] ?? null,
+                    'placeholder' => (bool) ($child['placeholder'] ?? false),
+                ], $children),
+            ];
+        }
+
+        return $menu;
+    }
+
+    /**
+     * Entries with a `permission` key (screens already built) are shown only to users who have it.
+     * Entries without one (placeholders) stay visible until their task adds the permission.
+     *
+     * @param  array<string, mixed>  $entry
+     */
+    private function allowed(User $user, array $entry): bool
+    {
+        return ! isset($entry['permission']) || $user->can($entry['permission']);
     }
 
     /**

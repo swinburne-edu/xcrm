@@ -2,7 +2,7 @@
 
 use App\Domain\Platform\Services\NavigationMenu;
 use App\Models\User;
-use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
 
 /** Menu URLs from docs/06-giao-dien.md. */
@@ -19,9 +19,9 @@ dataset('menu urls', [
 ]);
 
 it('opens every menu screen for a logged-in user', function (string $url) {
-    $this->seed(PermissionSeeder::class);
+    $this->seed(RoleSeeder::class);
     $user = User::factory()->create();
-    $user->givePermissionTo('catalog.view'); // built screens check permissions
+    $user->assignRole('admin'); // built screens check permissions
 
     $this->actingAs($user)
         ->get($url)
@@ -64,7 +64,11 @@ it('registers placeholder routes under the names the real screens will use', fun
 });
 
 it('shares the sidebar menu in the order of the docs', function () {
-    $this->actingAs(User::factory()->create())
+    $this->seed(RoleSeeder::class);
+    $admin = User::factory()->create();
+    $admin->assignRole('admin'); // the full menu; other roles see less (UsersManagementTest)
+
+    $this->actingAs($admin)
         ->get(route('dashboard'))
         ->assertInertia(fn (Assert $page) => $page
             ->has('navigation', 8)

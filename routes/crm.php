@@ -4,6 +4,9 @@ use App\Domain\Platform\Services\NavigationMenu;
 use App\Http\Controllers\Catalog\CatalogController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\LookupController;
+use App\Http\Controllers\Settings\RoleController;
+use App\Http\Controllers\Settings\TeamController;
+use App\Http\Controllers\Settings\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +22,17 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::post('catalogs/{catalog}', [CatalogController::class, 'store'])->name('catalogs.store');
     Route::put('catalogs/{catalog}/{id}', [CatalogController::class, 'update'])->whereNumber('id')->name('catalogs.update');
     Route::delete('catalogs/{catalog}/{id}', [CatalogController::class, 'destroy'])->whereNumber('id')->name('catalogs.destroy');
+
+    // Users, teams, roles (task 1.3). Authorization: UserPolicy / TeamPolicy / role.view.
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::get('users/teams', [TeamController::class, 'index'])->name('users.teams');
+    Route::get('users/roles', [RoleController::class, 'index'])->name('users.roles');
+    Route::post('users', [UserController::class, 'store'])->name('users.store');
+    Route::put('users/{id}', [UserController::class, 'update'])->whereNumber('id')->name('users.update');
+    Route::delete('users/{id}', [UserController::class, 'destroy'])->whereNumber('id')->name('users.destroy');
+    Route::post('teams', [TeamController::class, 'store'])->name('teams.store');
+    Route::put('teams/{id}', [TeamController::class, 'update'])->whereNumber('id')->name('teams.update');
+    Route::delete('teams/{id}', [TeamController::class, 'destroy'])->whereNumber('id')->name('teams.destroy');
 });
 
 /*

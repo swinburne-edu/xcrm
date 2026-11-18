@@ -7,6 +7,8 @@ use App\Domain\Catalog\Models\Province;
 use App\Domain\Catalog\Policies\CatalogPolicy;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
+use App\Domain\Organization\Policies\TeamPolicy;
+use App\Domain\Organization\Policies\UserPolicy;
 use App\Domain\Shared\Services\CurrentOrganization;
 use App\Domain\Shared\Services\PhoneNormalizer;
 use App\Domain\Shared\Support\BlueprintMacros;
@@ -56,6 +58,9 @@ class AppServiceProvider extends ServiceProvider
         foreach (app(CatalogRegistry::class)->models() as $model) {
             Gate::policy($model, CatalogPolicy::class);
         }
+
+        Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Team::class, TeamPolicy::class);
     }
 
     /**
