@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ArrowLeft, Pencil, Plus, RotateCcw, Star, Trash2 } from '@lucide/vue';
+import { ArrowLeft, Copy, Pencil, Plus, RotateCcw, Star, Trash2 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import ToneBadge from '@/components/crm/ToneBadge.vue';
 import type { BadgeTone } from '@/components/crm/ToneBadge.vue';
+import CloneCycleDialog from '@/components/cycles/CloneCycleDialog.vue';
 import CycleFormDialog from '@/components/cycles/CycleFormDialog.vue';
 import MethodFormDialog from '@/components/cycles/MethodFormDialog.vue';
 import RoundFormDialog from '@/components/cycles/RoundFormDialog.vue';
@@ -33,7 +34,7 @@ const props = defineProps<{
     statusOptions: Option[];
     roundTypeOptions: Option[];
     formulaOptions: FormulaOptions;
-    can: { update: boolean; delete: boolean; reopen: boolean };
+    can: { update: boolean; delete: boolean; reopen: boolean; clone: boolean };
 }>();
 
 const tones: Record<string, BadgeTone> = {
@@ -47,6 +48,7 @@ const nonDirectCount = computed(
 );
 
 const cycleOpen = ref(false);
+const cloneOpen = ref(false);
 const roundOpen = ref(false);
 const editingRound = ref<RoundRow | null>(null);
 const methodOpen = ref(false);
@@ -161,6 +163,13 @@ function reopen(): void {
                     data-test="reopen"
                     @click="reopen"
                     ><RotateCcw class="size-4" />Mở lại mùa</Button
+                >
+                <Button
+                    v-if="can.clone"
+                    variant="outline"
+                    data-test="clone-cycle"
+                    @click="cloneOpen = true"
+                    ><Copy class="size-4" />Sao chép sang mùa mới</Button
                 >
                 <Button
                     v-if="can.update && !cycle.is_current"
@@ -365,6 +374,7 @@ function reopen(): void {
         </section>
     </div>
 
+    <CloneCycleDialog v-model:open="cloneOpen" :source="cycle" />
     <CycleFormDialog
         v-model:open="cycleOpen"
         :record="cycle"

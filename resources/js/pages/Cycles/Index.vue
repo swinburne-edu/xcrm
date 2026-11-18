@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { MoreHorizontal, Pencil, Plus, Star, Trash2 } from '@lucide/vue';
+import { Copy, MoreHorizontal, Pencil, Plus, Star, Trash2 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import DataTable from '@/components/crm/DataTable.vue';
 import FilterBar from '@/components/crm/FilterBar.vue';
 import ToneBadge from '@/components/crm/ToneBadge.vue';
 import type { BadgeTone } from '@/components/crm/ToneBadge.vue';
+import CloneCycleDialog from '@/components/cycles/CloneCycleDialog.vue';
 import CycleFormDialog from '@/components/cycles/CycleFormDialog.vue';
 import type { CycleRow, Option } from '@/components/cycles/types';
 import { Button } from '@/components/ui/button';
@@ -72,6 +73,14 @@ const tones: Record<string, BadgeTone> = {
 const formOpen = ref(false);
 const deleteOpen = ref(false);
 const deleting = ref<CycleRow | null>(null);
+
+const cloneOpen = ref(false);
+const cloning = ref<CycleRow | null>(null);
+
+function askClone(row: CycleRow): void {
+    cloning.value = row;
+    cloneOpen.value = true;
+}
 
 function openCreate(): void {
     formOpen.value = true;
@@ -166,6 +175,10 @@ function confirmDelete(): void {
                         <DropdownMenuItem @select="open(row)"
                             ><Pencil class="size-4" />Mở chi tiết</DropdownMenuItem
                         >
+                        <DropdownMenuItem v-if="can.create" @select="askClone(row)"
+                            ><Copy class="size-4" />Sao chép sang mùa
+                            mới</DropdownMenuItem
+                        >
                         <DropdownMenuItem
                             v-if="can.create && !row.is_current && row.status !== 'closed'"
                             @select="setCurrent(row)"
@@ -190,6 +203,7 @@ function confirmDelete(): void {
         </DataTable>
     </div>
 
+    <CloneCycleDialog v-model:open="cloneOpen" :source="cloning" />
     <CycleFormDialog
         v-model:open="formOpen"
         :record="null"

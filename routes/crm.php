@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::put('cycles/{id}', [CycleController::class, 'update'])->whereNumber('id')->name('cycles.update');
     Route::delete('cycles/{id}', [CycleController::class, 'destroy'])->whereNumber('id')->name('cycles.destroy');
     Route::post('cycles/{id}/current', [CycleController::class, 'setCurrent'])->whereNumber('id')->name('cycles.current');
+    Route::post('cycles/{id}/clone', [CycleController::class, 'clone'])->whereNumber('id')->name('cycles.clone');
     Route::post('cycles/{id}/reopen', [CycleController::class, 'reopen'])->whereNumber('id')->name('cycles.reopen');
     Route::post('cycles/{cycleModel}/rounds', [CycleRoundController::class, 'store'])->whereNumber('cycleModel')->name('cycles.rounds.store');
     Route::put('cycles/{cycleModel}/rounds/{roundId}', [CycleRoundController::class, 'update'])->whereNumber(['cycleModel', 'roundId'])->name('cycles.rounds.update');

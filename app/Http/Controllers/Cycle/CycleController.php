@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Cycle;
 
 use App\Domain\Catalog\Models\AdmissionMethod;
+use App\Domain\Cycle\Actions\CloneCycle;
 use App\Domain\Cycle\Actions\DeleteCycle;
 use App\Domain\Cycle\Actions\SaveCycle;
 use App\Domain\Cycle\Actions\SetCurrentCycle;
@@ -17,6 +18,7 @@ use App\Domain\Shared\Support\DisplayTime;
 use App\Domain\Shared\Support\Listing\Filter;
 use App\Domain\Shared\Support\Listing\ListQuery;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Cycle\CloneCycleRequest;
 use App\Http\Requests\Cycle\CycleRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -84,6 +86,7 @@ class CycleController extends Controller
                 'update' => $user->can('update', $cycle),
                 'delete' => $user->can('delete', $cycle) && $cycle->status === CycleStatus::Preparing && ! $cycle->is_current,
                 'reopen' => $user->can('reopen', $cycle),
+                'clone' => $user->can('create', AdmissionCycle::class),
             ],
         ]);
     }
@@ -113,6 +116,21 @@ class CycleController extends Controller
         $delete->handle($cycle);
 
         return $this->toast('success', "Đã xoá {$cycle->name}.", '/settings/cycles');
+    }
+
+    /** Flow F1: new cycle in preparation copied from this one (rounds, methods, quotas, major links). */
+    public function clone(CloneCycleRequest $request, int $id, CloneCycle $clone): RedirectResponse
+    {
+        $source = AdmissionCycle::query()->findOrFail($id);
+
+        $result = $clone->handle($source, $request->validated());
+        $c = $result['counts'];
+
+        return $this->toast(
+            'success',
+            "Đã sao chép {$source->name} sang {$result['cycle']->name}: {$c['rounds']} đợt, {$c['methods']} phương thức, {$c['quotas']} chỉ tiêu ngành.",
+            "/settings/cycles/{$result['cycle']->id}",
+        );
     }
 
     /** Rule R10: becomes the only current cycle of its level, and is activated. */
