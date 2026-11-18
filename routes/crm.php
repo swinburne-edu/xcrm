@@ -24,6 +24,7 @@ use App\Http\Controllers\Intake\FormController;
 use App\Http\Controllers\Major\MajorController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\LookupController;
+use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\TerritoryController;
@@ -181,6 +182,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('forms', [FormController::class, 'store'])->name('forms.store');
     Route::put('forms/{id}', [FormController::class, 'update'])->whereNumber('id')->name('forms.update');
     Route::delete('forms/{id}', [FormController::class, 'destroy'])->whereNumber('id')->name('forms.destroy');
+});
+
+// Funnel reports (task 1.16)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
 });
 
 // Header cycle selector (task 1.5): remembers the choice in the session.

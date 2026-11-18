@@ -77,7 +77,7 @@ return [
             'url' => '/reports',
             'route' => 'reports.index',
             'icon' => 'reports',
-            'placeholder' => true,
+            'permission' => 'report.view',
         ],
         [
             'title' => 'Cài đặt',

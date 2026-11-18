@@ -45,13 +45,13 @@ it('shows the under-construction page with title, phase and breadcrumbs', functi
             ]));
 });
 
-it('uses a single breadcrumb for top-level screens', function () {
+it('uses a section breadcrumb for placeholder screens in a menu group', function () {
     $this->actingAs(User::factory()->create())
-        ->get('/reports')
+        ->get('/quotas')
         ->assertInertia(fn (Assert $page) => $page
             ->component('UnderConstruction')
-            ->where('phase', null)
-            ->where('breadcrumbs', [['title' => 'Báo cáo', 'href' => '/reports']]));
+            ->where('phase', 'P1')
+            ->where('breadcrumbs', [['title' => 'Đào tạo & chỉ tiêu'], ['title' => 'Tiến độ chỉ tiêu', 'href' => '/quotas']]));
 });
 
 it('registers placeholder routes under the names the real screens will use', function () {
