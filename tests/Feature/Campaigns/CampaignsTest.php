@@ -1,5 +1,9 @@
 <?php
 
+use App\Domain\Admission\Enums\StageType;
+use App\Domain\Admission\Models\AdmissionCase;
+use App\Domain\Admission\Models\Pipeline;
+use App\Domain\Admission\Models\PipelineStage;
 use App\Domain\Campaign\Enums\CampaignStatus;
 use App\Domain\Campaign\Models\Campaign;
 use App\Domain\Catalog\Models\Province;
@@ -115,7 +119,7 @@ describe('create and update', function () {
 
         $this->actingAs($this->admin)->get("/campaigns/{$campaign->id}")
             ->assertInertia(fn (Assert $page) => $page->where('campaign.targets.majors.0.id', $major->id)->where('campaign.targets.provinces.0.label', $province->name)
-                ->where('campaign.targets.high_schools.0.label', $school->name)->where('kpi.available', false));
+                ->where('campaign.targets.high_schools.0.label', $school->name)->where('kpi.available', true));
     });
 
     it('validates the code, enums, dates and organization-bound references', function () {
@@ -280,12 +284,21 @@ describe('delete and KPI', function () {
         expect($child->fresh()->parent_id)->toBeNull();
     });
 
-    it('reports KPIs as unavailable until admission cases exist', function () {
+    it('counts leads and enrolled from the cases of the campaign and its sub-campaigns', function () {
         $campaign = ownCampaign(['budget' => 1000000, 'actual_cost' => 400000, 'target_leads' => 100]);
         $child = ownCampaign(['code' => 'con', 'parent_id' => $campaign->id]);
+        $other = ownCampaign(['code' => 'khac']);
+        $pipeline = Pipeline::factory()->for($this->org)->create();
+        $open = PipelineStage::factory()->for($pipeline)->create();
+        $won = PipelineStage::factory()->for($pipeline)->type(StageType::Won)->create();
+
+        foreach ([[$campaign, $open], [$campaign, $won], [$child, $open], [$other, $open]] as [$c, $stage]) {
+            AdmissionCase::factory()->create(['organization_id' => $this->org->id, 'cycle_id' => $this->cycle->id, 'pipeline_id' => $pipeline->id, 'stage_id' => $stage->id, 'campaign_id' => $c->id]);
+        }
 
         $this->actingAs($this->admin)->get("/campaigns/{$campaign->id}")
-            ->assertInertia(fn (Assert $page) => $page->where('kpi.available', false)->where('kpi.leads', null)
+            ->assertInertia(fn (Assert $page) => $page->where('kpi.available', true)->where('kpi.leads', 3)->where('kpi.enrolled', 1)
+                ->where('kpi.cost_per_lead', 133333)->where('kpi.cost_per_enrolled', 400000)
                 ->where('campaign.target_leads', 100)->where('campaign.budget', 1000000)->where('children.0.id', $child->id));
     });
 });

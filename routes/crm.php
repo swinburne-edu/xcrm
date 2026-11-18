@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Platform\Services\NavigationMenu;
+use App\Http\Controllers\Admission\PipelineController;
 use App\Http\Controllers\Applicant\ApplicantCertificateController;
 use App\Http\Controllers\Applicant\ApplicantController;
 use App\Http\Controllers\Applicant\ApplicantGuardianController;
@@ -64,6 +65,15 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::post('cycles/{cycleModel}/methods', [CycleMethodController::class, 'store'])->whereNumber('cycleModel')->name('cycles.methods.store');
     Route::put('cycles/{cycleModel}/methods/{methodId}', [CycleMethodController::class, 'update'])->whereNumber(['cycleModel', 'methodId'])->name('cycles.methods.update');
     Route::delete('cycles/{cycleModel}/methods/{methodId}', [CycleMethodController::class, 'destroy'])->whereNumber(['cycleModel', 'methodId'])->name('cycles.methods.destroy');
+
+    // Pipelines and stages (task 1.11). Authorization: PipelinePolicy (pipeline.view / pipeline.manage).
+    Route::get('pipelines', [PipelineController::class, 'index'])->name('pipelines.index');
+    Route::post('pipelines', [PipelineController::class, 'store'])->name('pipelines.store');
+    Route::put('pipelines/{id}', [PipelineController::class, 'update'])->whereNumber('id')->name('pipelines.update');
+    Route::delete('pipelines/{id}', [PipelineController::class, 'destroy'])->whereNumber('id')->name('pipelines.destroy');
+    Route::post('pipelines/{id}/stages', [PipelineController::class, 'storeStage'])->whereNumber('id')->name('pipelines.stages.store');
+    Route::put('pipelines/{id}/stages/{stageId}', [PipelineController::class, 'updateStage'])->whereNumber(['id', 'stageId'])->name('pipelines.stages.update');
+    Route::delete('pipelines/{id}/stages/{stageId}', [PipelineController::class, 'destroyStage'])->whereNumber(['id', 'stageId'])->name('pipelines.stages.destroy');
 
     Route::post('teams', [TeamController::class, 'store'])->name('teams.store');
     Route::put('teams/{id}', [TeamController::class, 'update'])->whereNumber('id')->name('teams.update');

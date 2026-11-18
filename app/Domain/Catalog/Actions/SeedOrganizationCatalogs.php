@@ -2,6 +2,7 @@
 
 namespace App\Domain\Catalog\Actions;
 
+use App\Domain\Admission\Actions\SeedDefaultPipeline;
 use App\Domain\Catalog\Enums\LeadChannel;
 use App\Domain\Catalog\Models\CallResult;
 use App\Domain\Catalog\Models\LeadSource;
@@ -84,6 +85,8 @@ class SeedOrganizationCatalogs
                         ['is_contacted' => $isContacted, 'sort_order' => (++$order) * 10],
                     );
                 }
+
+                app(SeedDefaultPipeline::class)->handle($organization);
             });
         });
     }

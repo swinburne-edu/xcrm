@@ -83,7 +83,7 @@ return [
             'icon' => 'settings',
             'children' => [
                 ['title' => 'Mùa tuyển sinh', 'url' => '/settings/cycles', 'route' => 'settings.cycles.index', 'permission' => 'cycle.view'],
-                ['title' => 'Pipeline', 'url' => '/settings/pipelines', 'route' => 'settings.pipelines.index', 'placeholder' => true],
+                ['title' => 'Pipeline', 'url' => '/settings/pipelines', 'route' => 'settings.pipelines.index', 'permission' => 'pipeline.view'],
                 ['title' => 'Danh mục', 'url' => '/settings/catalogs', 'route' => 'settings.catalogs.index', 'permission' => 'catalog.view'],
                 ['title' => 'Vùng phụ trách', 'url' => '/settings/territories', 'route' => 'settings.territories.index', 'permission' => 'territory.view'],
                 ['title' => 'Người dùng & vai trò', 'url' => '/settings/users', 'route' => 'settings.users.index', 'permission' => 'user.view'],

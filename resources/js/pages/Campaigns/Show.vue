@@ -111,7 +111,7 @@ function progress(actual: number | null, target: number | null | undefined): str
                 <div><dt class="text-muted-foreground">Chi phí / nhập học</dt><dd>{{ money(kpi.cost_per_enrolled) }}</dd></div>
             </dl>
             <p v-if="!kpi.available" class="text-xs text-muted-foreground" data-test="kpi-note">
-                Số liệu thí sinh, hồ sơ, nhập học sẽ tự tính từ hồ sơ tuyển sinh khi module Hồ sơ hoàn thiện.
+                Số liệu thí sinh và nhập học tính từ hồ sơ tuyển sinh gắn với chiến dịch (kể cả chiến dịch con).
             </p>
         </section>
 

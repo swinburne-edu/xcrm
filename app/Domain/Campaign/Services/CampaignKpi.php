@@ -8,8 +8,9 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Provisional KPIs of a campaign (and its sub-campaigns), counted from admission_cases.
- * Until that table exists (task 1.11) `available` is false and the counters are null.
- * Applications and enrolled counts need the case stages and arrive with the reports (tasks 1.11+); they stay null here.
+ * leads = cases of the campaign's cycle, enrolled = cases that reached a "won" stage. The count of
+ * submitted applications stays null until the applications table exists. `available` is false only
+ * if the cases table is missing.
  */
 class CampaignKpi
 {
@@ -25,16 +26,18 @@ class CampaignKpi
         }
 
         $ids = $campaign->children()->pluck('id')->push($campaign->id);
-        $leads = DB::table('admission_cases')->whereIn('campaign_id', $ids)->count();
+        $cases = DB::table('admission_cases')->whereIn('campaign_id', $ids)->where('cycle_id', $campaign->cycle_id)->whereNull('deleted_at');
+        $leads = (clone $cases)->count();
+        $enrolled = (clone $cases)->where('status', 'won')->count();
         $cost = $campaign->actual_cost === null ? null : (float) $campaign->actual_cost;
 
         return [
             'available' => true,
             'leads' => $leads,
             'applications' => null,
-            'enrolled' => null,
+            'enrolled' => $enrolled,
             'cost_per_lead' => $cost !== null && $leads > 0 ? round($cost / $leads, 0) : null,
-            'cost_per_enrolled' => null,
+            'cost_per_enrolled' => $cost !== null && $enrolled > 0 ? round($cost / $enrolled, 0) : null,
         ];
     }
 }

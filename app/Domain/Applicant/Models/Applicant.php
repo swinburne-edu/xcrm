@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -121,6 +122,15 @@ class Applicant extends Model
     public function dataScopeAlsoOwnedBy(): array
     {
         return ['created_by'];
+    }
+
+    /** Whoever owns a case of this applicant sees the applicant too. */
+    public function dataScopeExtra(User $user): ?\Closure
+    {
+        return fn (Builder $query) => $query->whereIn(
+            $this->qualifyColumn('id'),
+            DB::table('admission_cases')->select('applicant_id')->where('owner_id', $user->id)->whereNull('deleted_at'),
+        );
     }
 
     public function dataScopeTeamColumn(): ?string

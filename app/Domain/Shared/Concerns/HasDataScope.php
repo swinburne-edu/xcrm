@@ -40,6 +40,15 @@ trait HasDataScope
         return [];
     }
 
+    /**
+     * Extra visibility rule OR-ed into the scope for non-"all" users, as a closure over the query
+     * (e.g. applicants are also visible to whoever owns one of their cases). Null by default.
+     */
+    public function dataScopeExtra(User $user): ?\Closure
+    {
+        return null;
+    }
+
     /** Column with the owning team, or null when the model has none. */
     public function dataScopeTeamColumn(): ?string
     {
