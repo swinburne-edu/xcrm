@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Applicant;
 
+use App\Domain\Admission\Models\AdmissionCase;
 use App\Domain\Applicant\Actions\SaveApplicant;
 use App\Domain\Applicant\Enums\CertificateType;
 use App\Domain\Applicant\Enums\Gender;
@@ -112,6 +113,17 @@ class ApplicantController extends Controller
                 'relationship_label' => GuardianRelationship::tryFrom((string) $g->pivot->relationship)?->label(),
                 'is_decision_maker' => (bool) $g->pivot->is_decision_maker,
                 'is_primary_contact' => (bool) $g->pivot->is_primary_contact,
+            ])->all(),
+            'cases' => AdmissionCase::query()->with(['cycle:id,name', 'stage:id,name,color', 'owner:id,name', 'source:id,name'])->where('applicant_id', $applicant->id)->orderByDesc('cycle_id')->get()->map(fn (AdmissionCase $c) => [
+                'uuid' => $c->uuid,
+                'cycle' => $c->cycle?->name,
+                'stage' => $c->stage?->name,
+                'stage_color' => $c->stage?->color,
+                'status' => $c->status->value,
+                'owner' => $c->owner?->name,
+                'source' => $c->source?->name,
+                'next_action_at' => $c->next_action_at?->toIso8601String(),
+                'last_activity_at' => $c->last_activity_at?->toIso8601String(),
             ])->all(),
             'scores' => $applicant->scores->map(fn (ApplicantScore $s) => [
                 'score_type' => $s->score_type->value,

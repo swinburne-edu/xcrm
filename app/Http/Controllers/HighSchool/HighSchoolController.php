@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\HighSchool;
 
+use App\Domain\Applicant\Models\Applicant;
 use App\Domain\Catalog\Models\PriorityArea;
 use App\Domain\Catalog\Models\SubjectCombination;
 use App\Domain\HighSchool\Actions\DeleteHighSchool;
@@ -79,6 +80,11 @@ class HighSchoolController extends Controller
                 'email' => $school->email,
                 'website' => $school->website,
                 'note' => $school->note,
+            ],
+            'applicants' => [
+                'total' => Applicant::query()->where('high_school_id', $school->id)->count(),
+                'items' => Applicant::query()->where('high_school_id', $school->id)->orderByDesc('id')->limit(30)->get(['id', 'uuid', 'code', 'full_name', 'graduation_year', 'class_name'])
+                    ->map(fn (Applicant $a) => ['uuid' => $a->uuid, 'code' => $a->code, 'full_name' => $a->full_name, 'graduation_year' => $a->graduation_year, 'class_name' => $a->class_name])->all(),
             ],
             'contacts' => $school->contacts->map(fn (SchoolContact $c) => [
                 'id' => $c->id,

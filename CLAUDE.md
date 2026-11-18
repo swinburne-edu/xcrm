@@ -24,6 +24,7 @@ Phạm vi: từ lúc có thí sinh tiềm năng → tư vấn → hồ sơ xét 
 | `docs/database.dbml` | **Schema chuẩn** (nguồn sự thật cho migration) — xem trực quan tại dbdiagram.io |
 | `docs/05-luong-nghiep-vu.md` | Luồng nghiệp vụ = kịch bản test |
 | `docs/06-giao-dien.md` | Cấu trúc menu, màn hình, component dùng chung |
+| `docs/HUONG-DAN.md` | Hướng dẫn sử dụng nhanh (cho cán bộ tuyển sinh) + cách chạy dữ liệu mẫu |
 | `docs/TASKS.md` | **Thứ tự triển khai** — làm lần lượt từng task, tick khi xong |
 
 Khi tài liệu mâu thuẫn: `database.dbml` > `04-database.md` > các file khác. Nếu vẫn không rõ, **hỏi người dùng**, đừng tự đoán nghiệp vụ.

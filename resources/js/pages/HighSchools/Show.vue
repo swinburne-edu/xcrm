@@ -22,6 +22,7 @@ import {
 const props = defineProps<{
     school: SchoolRow;
     contacts: ContactRow[];
+    applicants: { total: number; items: { uuid: string; code: string; full_name: string; graduation_year: number | null; class_name: string | null }[] };
     options: SchoolOptions;
     can: {
         update: boolean;
@@ -170,8 +171,17 @@ const tabClass = (name: string): string =>
             </div>
         </section>
 
-        <section v-else-if="tab === 'applicants'" class="rounded-md border p-6 text-sm text-muted-foreground" data-test="applicants-empty">
-            Danh sách thí sinh của trường sẽ hiển thị tại đây khi module Thí sinh hoàn thiện.
+        <section v-else-if="tab === 'applicants'" class="grid gap-2" data-test="school-applicants">
+            <p v-if="applicants.total === 0" class="rounded-md border p-6 text-sm text-muted-foreground" data-test="applicants-empty">Chưa có thí sinh nào của trường này.</p>
+            <template v-else>
+                <p class="text-sm text-muted-foreground">{{ applicants.total }} thí sinh<template v-if="applicants.total > applicants.items.length"> (hiển thị {{ applicants.items.length }} mới nhất)</template>.</p>
+                <ul class="grid gap-1 text-sm">
+                    <li v-for="a in applicants.items" :key="a.uuid" class="flex justify-between rounded-md border px-3 py-1.5" data-test="school-applicant">
+                        <Link :href="`/applicants/${a.uuid}`" class="font-medium hover:underline">{{ a.full_name }}</Link>
+                        <span class="text-xs text-muted-foreground">{{ a.code }}<template v-if="a.class_name"> · lớp {{ a.class_name }}</template><template v-if="a.graduation_year"> · tốt nghiệp {{ a.graduation_year }}</template></span>
+                    </li>
+                </ul>
+            </template>
         </section>
 
         <Timeline v-else subject-type="high_school" :subject="school.id" />

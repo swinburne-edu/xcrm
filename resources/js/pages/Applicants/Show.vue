@@ -16,6 +16,7 @@ import type {
     SubjectRow,
 } from '@/components/applicants/types';
 import { Button } from '@/components/ui/button';
+import { formatDateTime } from '@/lib/format';
 import {
     Dialog,
     DialogContent,
@@ -27,6 +28,7 @@ import {
 
 const props = defineProps<{
     applicant: ApplicantRow;
+    cases: { uuid: string; cycle: string | null; stage: string | null; stage_color: string | null; status: string; owner: string | null; source: string | null; next_action_at: string | null; last_activity_at: string | null }[];
     guardians: GuardianRow[];
     scores: ScoreRow[];
     certificates: CertificateRow[];
@@ -45,8 +47,8 @@ const tabs: { key: Tab; label: string }[] = [
     { key: 'appointments', label: 'Lịch hẹn' },
 ];
 const later: Record<string, string> = {
-    applications: 'Nguyện vọng xét tuyển sẽ có khi module Hồ sơ tuyển sinh hoàn thiện.',
-    documents: 'Giấy tờ minh chứng sẽ có ở bước quản lý giấy tờ.',
+    applications: 'Nguyện vọng xét tuyển thuộc giai đoạn 2 (chưa có trong MVP).',
+    documents: 'Giấy tờ minh chứng thuộc giai đoạn 2 (chưa có trong MVP).',
     appointments: 'Lịch hẹn của thí sinh xem ở menu Lịch hẹn; đặt lịch mới từ thẻ hồ sơ.',
 };
 
@@ -218,7 +220,15 @@ const tabClass = (key: string): string => (tab.value === key ? 'border-primary f
 
             <aside class="grid content-start gap-2 text-sm" data-test="case-card">
                 <h2 class="font-semibold">Hồ sơ mùa hiện tại</h2>
-                <p class="text-muted-foreground">Giai đoạn, người phụ trách, nguồn và task của hồ sơ sẽ hiển thị tại đây khi module Hồ sơ tuyển sinh hoàn thiện.</p>
+                <p v-if="cases.length === 0" class="text-muted-foreground" data-test="no-case">Thí sinh chưa có hồ sơ tuyển sinh.</p>
+                <div v-for="c in cases" :key="c.uuid" class="grid gap-1 rounded-md border p-3" data-test="case-item">
+                    <div class="text-xs text-muted-foreground">{{ c.cycle }}</div>
+                    <div class="font-medium">{{ c.stage }}</div>
+                    <div class="text-muted-foreground">Phụ trách: {{ c.owner || 'Kho chung' }}</div>
+                    <div class="text-muted-foreground">Nguồn: {{ c.source || '—' }}</div>
+                    <div v-if="c.next_action_at" class="text-muted-foreground">Việc tiếp theo: {{ formatDateTime(c.next_action_at) }}</div>
+                    <Link :href="`/cases/table?filter[q]=${applicant.code}&filter[owner]=all`" class="text-xs text-primary hover:underline">Mở trong danh sách hồ sơ</Link>
+                </div>
             </aside>
         </div>
     </div>
