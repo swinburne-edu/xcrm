@@ -51,6 +51,7 @@ Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển s
 ## 5. Theo dõi kết quả
 
 - **Tổng quan** (`/dashboard`): thí sinh mới, hồ sơ, trúng tuyển, nhập học so với mục tiêu; phễu theo giai đoạn; top nguồn, top trường THPT; tiến độ chỉ tiêu theo ngành; việc quá hạn của bạn.
+- **Tiến độ chỉ tiêu** (`/quotas`): mỗi ngành một dòng — quan tâm, đã nộp, đủ điều kiện, trúng tuyển, xác nhận, nhập học so với chỉ tiêu. **Vượt chỉ tiêu** khi số trúng tuyển/nhập học lớn hơn chỉ tiêu; **Thiếu** khi thấp hơn mục tiêu × phần thời gian đã qua của mùa × 0,7 (cần khai báo ngày bắt đầu/kết thúc của mùa). Hằng giờ hệ thống lưu ảnh chụp số liệu và gửi thông báo ở **biểu tượng chuông** cho trưởng phòng/quản trị khi một ngành mới chuyển sang Thiếu hoặc Vượt. Cần chạy `php artisan schedule:work` (hoặc cron `schedule:run` mỗi phút) để lịch chạy.
 - **Báo cáo** (`/reports`): phễu theo nguồn, chiến dịch, trường THPT, tỉnh, ngành, tư vấn viên; nút **Xuất Excel**.
 
 Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên: hồ sơ của mình; trưởng nhóm: nhóm/khu vực; trưởng phòng: tất cả).

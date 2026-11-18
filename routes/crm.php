@@ -24,10 +24,12 @@ use App\Http\Controllers\HighSchool\HighSchoolController;
 use App\Http\Controllers\HighSchool\SchoolContactController;
 use App\Http\Controllers\Intake\FormController;
 use App\Http\Controllers\Major\MajorController;
+use App\Http\Controllers\Major\QuotaController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\GlobalSearchController;
 use App\Http\Controllers\Platform\ImportTemplateController;
 use App\Http\Controllers\Platform\LookupController;
+use App\Http\Controllers\Platform\NotificationController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TeamController;
@@ -137,6 +139,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('imports/{id}', [ApplicantImportController::class, 'show'])->whereNumber('id')->name('imports.show');
 
     // Nguyện vọng xét tuyển and supporting documents (task 2.2). Authorization: ApplicationPolicy / ApplicantPolicy.
+    // Quota progress per major (task 2.3). Authorization: MajorPolicy::viewAny.
+    Route::get('quotas', [QuotaController::class, 'index'])->name('quotas.index');
     Route::get('applications', [ApplicationController::class, 'index'])->name('applications.index');
     Route::post('cases/{uuid}/applications', [ApplicationController::class, 'store'])->name('applications.store');
     Route::put('applications/{id}', [ApplicationController::class, 'update'])->whereNumber('id')->name('applications.update');
@@ -249,6 +253,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Excel templates for the import dialogs (applicants, high-schools).
     Route::get('import-templates/{type}', ImportTemplateController::class)->where('type', '[a-z-]+')->name('import-templates.show');
+
+    // Bell: the user's own database notifications.
+    Route::get('notifications', [NotificationController::class, 'index'])->middleware('throttle:120,1')->name('notifications.index');
+    Route::post('notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::post('notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
 
     // Global search dialog (Ctrl+K): applicants + high schools.
     Route::get('search', GlobalSearchController::class)->middleware('throttle:120,1')->name('search');

@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { Bell } from '@lucide/vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import CycleSwitcher from '@/components/crm/layout/CycleSwitcher.vue';
 import GlobalSearch from '@/components/crm/layout/GlobalSearch.vue';
 import HeaderUserMenu from '@/components/crm/layout/HeaderUserMenu.vue';
-import { Button } from '@/components/ui/button';
+import NotificationBell from '@/components/crm/layout/NotificationBell.vue';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
 import type { BreadcrumbItem } from '@/types';
 
 withDefaults(
@@ -40,21 +33,7 @@ withDefaults(
         <div class="flex shrink-0 items-center gap-2">
             <GlobalSearch />
             <CycleSwitcher />
-            <TooltipProvider :delay-duration="300">
-                <Tooltip>
-                    <TooltipTrigger as-child>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="size-8"
-                            aria-label="Thông báo"
-                        >
-                            <Bell class="size-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Thông báo (đang phát triển)</TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+            <NotificationBell />
             <HeaderUserMenu />
         </div>
     </header>

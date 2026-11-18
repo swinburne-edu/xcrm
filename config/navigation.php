@@ -69,7 +69,7 @@ return [
             'icon' => 'majors',
             'children' => [
                 ['title' => 'Ngành', 'url' => '/majors', 'route' => 'majors.index', 'permission' => 'major.view'],
-                ['title' => 'Tiến độ chỉ tiêu', 'url' => '/quotas', 'route' => 'quotas.index', 'phase' => 'P1', 'placeholder' => true],
+                ['title' => 'Tiến độ chỉ tiêu', 'url' => '/quotas', 'route' => 'quotas.index', 'permission' => 'major.view'],
             ],
         ],
         [
