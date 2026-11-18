@@ -76,7 +76,7 @@ it('shares the sidebar menu in the order of the docs', function () {
             ->where('navigation.0.url', '/dashboard')
             ->where('navigation.0.placeholder', false)
             ->where('navigation.1.title', 'Tuyển sinh')
-            ->has('navigation.1.children', 4)
+            ->has('navigation.1.children', 5)
             ->where('navigation.1.children.0', [
                 'title' => 'Hồ sơ tuyển sinh',
                 'url' => '/cases',

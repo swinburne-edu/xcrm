@@ -52,7 +52,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
 
 ### Thu nhận & báo cáo
 - [x] **1.14 Thu nhận thí sinh (M7)** — Import Excel thí sinh (ImportWizard, queue, import_jobs), forms + endpoint công khai `POST /api/public/leads` (rate limit, honeypot) + đoạn mã nhúng. Luồng F3 (trừ SLA). Test F3.
-- [ ] **1.15 Gộp trùng (F6)** — trang "Có thể trùng", màn hình gộp, `MergeApplicants`. Test.
+- [x] **1.15 Gộp trùng (F6)** — trang "Có thể trùng", màn hình gộp, `MergeApplicants`. Test.
 - [ ] **1.16 Dashboard & báo cáo phễu (M16)** — dashboard theo 06-giao-dien.md; báo cáo phễu theo nguồn, chiến dịch, trường THPT, tỉnh, ngành, tư vấn viên (bảng + biểu đồ). Export Excel.
 - [ ] **1.17 Demo data & rà soát MVP** — `DemoSeeder`; chạy toàn bộ luồng F1, F3, F4 (đến bước 2), F6 bằng tay; sửa lỗi; viết hướng dẫn sử dụng ngắn `docs/HUONG-DAN.md`.
 

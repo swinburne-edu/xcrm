@@ -10,6 +10,7 @@ use App\Http\Controllers\Applicant\ApplicantCertificateController;
 use App\Http\Controllers\Applicant\ApplicantController;
 use App\Http\Controllers\Applicant\ApplicantGuardianController;
 use App\Http\Controllers\Applicant\ApplicantImportController;
+use App\Http\Controllers\Applicant\ApplicantMergeController;
 use App\Http\Controllers\Applicant\ApplicantScoreController;
 use App\Http\Controllers\Campaign\CampaignController;
 use App\Http\Controllers\Catalog\CatalogController;
@@ -123,6 +124,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('applicants', [ApplicantController::class, 'index'])->name('applicants.index');
     Route::post('applicants', [ApplicantController::class, 'store'])->name('applicants.store');
+    Route::get('applicants/duplicates', [ApplicantMergeController::class, 'duplicates'])->name('applicants.duplicates');
+    Route::get('applicants/merge/{keep}/{merge}', [ApplicantMergeController::class, 'compare'])->whereUuid(['keep', 'merge'])->name('applicants.merge.compare');
+    Route::post('applicants/merge', [ApplicantMergeController::class, 'store'])->name('applicants.merge');
     Route::post('applicants/import/preview', [ApplicantImportController::class, 'preview'])->name('applicants.import.preview');
     Route::post('applicants/import', [ApplicantImportController::class, 'store'])->name('applicants.import');
     Route::get('imports/{id}', [ApplicantImportController::class, 'show'])->whereNumber('id')->name('imports.show');
