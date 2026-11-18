@@ -1,5 +1,8 @@
 <?php
 
+use App\Domain\Catalog\Lookups\ProvinceLookup;
+use App\Domain\Catalog\Lookups\SubjectLookup;
+use App\Domain\Catalog\Lookups\WardLookup;
 use App\Domain\Platform\Lookups\TeamLookup;
 use App\Domain\Platform\Lookups\UserLookup;
 
@@ -18,4 +21,7 @@ use App\Domain\Platform\Lookups\UserLookup;
 return [
     'users' => UserLookup::class,
     'teams' => TeamLookup::class,
+    'provinces' => ProvinceLookup::class,
+    'wards' => WardLookup::class,
+    'subjects' => SubjectLookup::class,
 ];

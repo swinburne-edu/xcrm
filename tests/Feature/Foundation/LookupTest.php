@@ -46,7 +46,7 @@ it('returns labels for selected ids', function () {
 });
 
 it('returns 404 for unknown lookups', function () {
-    $this->actingAs($this->me)->getJson('/lookups/provinces')->assertNotFound();
+    $this->actingAs($this->me)->getJson('/lookups/high_schools')->assertNotFound();
     $this->actingAs($this->me)->getJson('/lookups/secrets')->assertNotFound();
 });
 

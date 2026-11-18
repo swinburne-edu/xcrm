@@ -1,9 +1,25 @@
 <?php
 
 use App\Domain\Platform\Services\NavigationMenu;
+use App\Http\Controllers\Catalog\CatalogController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\LookupController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Settings
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->group(function () {
+    // System catalogs (task 1.1). Authorization: CatalogPolicy.
+    Route::get('catalogs', [CatalogController::class, 'index'])->name('catalogs.index');
+    Route::get('catalogs/{catalog}', [CatalogController::class, 'index'])->name('catalogs.show');
+    Route::post('catalogs/{catalog}', [CatalogController::class, 'store'])->name('catalogs.store');
+    Route::put('catalogs/{catalog}/{id}', [CatalogController::class, 'update'])->whereNumber('id')->name('catalogs.update');
+    Route::delete('catalogs/{catalog}/{id}', [CatalogController::class, 'destroy'])->whereNumber('id')->name('catalogs.destroy');
+});
 
 /*
 |--------------------------------------------------------------------------

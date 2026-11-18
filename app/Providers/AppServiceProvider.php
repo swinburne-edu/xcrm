@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Domain\Catalog\Catalogs\CatalogRegistry;
+use App\Domain\Catalog\Models\Province;
+use App\Domain\Catalog\Policies\CatalogPolicy;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
 use App\Domain\Shared\Services\CurrentOrganization;
@@ -12,6 +15,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use libphonenumber\PhoneNumberUtil;
@@ -40,6 +44,18 @@ class AppServiceProvider extends ServiceProvider
         BlueprintMacros::register();
 
         $this->configureMorphMap();
+
+        $this->configurePolicies();
+    }
+
+    /**
+     * Policies for models outside app/Models (no auto-discovery for app/Domain).
+     */
+    protected function configurePolicies(): void
+    {
+        foreach (app(CatalogRegistry::class)->models() as $model) {
+            Gate::policy($model, CatalogPolicy::class);
+        }
     }
 
     /**
@@ -55,6 +71,7 @@ class AppServiceProvider extends ServiceProvider
             'team' => Team::class,
             'role' => Role::class,
             'permission' => Permission::class,
+            'province' => Province::class,
         ]);
     }
 

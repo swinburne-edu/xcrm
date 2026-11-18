@@ -151,20 +151,47 @@ async function request(query: Record<string, string>): Promise<LookupItem[]> {
     return json.data;
 }
 
+/** Term the current `items` were fetched for (null = none yet). */
+const resultsTerm = ref<string | null>(null);
+/** Enter was pressed before results for the typed term arrived: pick the first one when they do. */
+const enterPending = ref(false);
+let searchSeq = 0;
+
 async function search(): Promise<void> {
+    const seq = ++searchSeq;
+    const searched = term.value;
     loading.value = true;
     error.value = null;
 
     try {
-        items.value = await request({ q: term.value });
+        const results = await request({ q: searched });
+
+        if (seq !== searchSeq) {
+            return;
+        }
+
+        items.value = results;
+        resultsTerm.value = searched;
         activeIndex.value = 0;
+
+        if (enterPending.value && searched === term.value) {
+            enterPending.value = false;
+
+            if (results[0]) {
+                choose(results[0]);
+            }
+        }
     } catch (e) {
-        if ((e as Error).name !== 'AbortError') {
+        if ((e as Error).name !== 'AbortError' && seq === searchSeq) {
             error.value = (e as Error).message;
             items.value = [];
+            enterPending.value = false;
         }
     } finally {
-        loading.value = false;
+        // Only the latest request decides the spinner (aborted ones finish late).
+        if (seq === searchSeq) {
+            loading.value = false;
+        }
     }
 }
 
@@ -178,6 +205,8 @@ watch(term, () => {
 
 watch(open, async (isOpen) => {
     if (isOpen) {
+        enterPending.value = false;
+        resultsTerm.value = null;
         term.value = '';
         void search();
         await nextTick();
@@ -242,6 +271,17 @@ function clear(): void {
 }
 
 function onKeydown(event: KeyboardEvent): void {
+    // Results on screen are for an older term: wait for the fresh ones instead of picking a stale item.
+    if (
+        event.key === 'Enter' &&
+        (loading.value || resultsTerm.value !== term.value)
+    ) {
+        event.preventDefault();
+        enterPending.value = true;
+
+        return;
+    }
+
     if (items.value.length === 0) {
         return;
     }

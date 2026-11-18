@@ -30,7 +30,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
 ## Giai đoạn 1 — MVP (P0)
 
 ### Danh mục & phân quyền
-- [ ] **1.1 Danh mục hệ thống (M1)** — migration + model + seeder: provinces, wards, ward_mappings, priority_areas, priority_groups, subjects, subject_combinations, combination_subjects (R2), admission_methods. Seed theo 04-database.md mục 8. Màn hình `/settings/catalogs` CRUD dạng tab.
+- [x] **1.1 Danh mục hệ thống (M1)** — migration + model + seeder: provinces, wards, ward_mappings, priority_areas, priority_groups, subjects, subject_combinations, combination_subjects (R2), admission_methods. Seed theo 04-database.md mục 8. Màn hình `/settings/catalogs` CRUD dạng tab.
 - [ ] **1.2 Danh mục tổ chức** — lead_sources, lost_reasons, call_results, tags, taggables + seeder + CRUD.
 - [ ] **1.3 Phân quyền** — Roles/permissions seeder (02-phan-quyen.md), Policy mẫu, Global Scope `DataScope` (own/team/territory/all), che SĐT/CCCD. Trang `/settings/users`: user, vai trò, team. Test: counselor không xem được hồ sơ người khác.
 - [ ] **1.4 Vùng phụ trách (M8)** — territories, territory_assignments; trang `/settings/territories` gán tỉnh/trường THPT cho user/team; service `TerritoryResolver::ownerFor(HighSchool|Province)`.

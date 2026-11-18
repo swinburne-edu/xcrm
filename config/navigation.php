@@ -84,7 +84,7 @@ return [
             'children' => [
                 ['title' => 'Mùa tuyển sinh', 'url' => '/settings/cycles', 'route' => 'settings.cycles.index', 'placeholder' => true],
                 ['title' => 'Pipeline', 'url' => '/settings/pipelines', 'route' => 'settings.pipelines.index', 'placeholder' => true],
-                ['title' => 'Danh mục', 'url' => '/settings/catalogs', 'route' => 'settings.catalogs.index', 'placeholder' => true],
+                ['title' => 'Danh mục', 'url' => '/settings/catalogs', 'route' => 'settings.catalogs.index'],
                 ['title' => 'Vùng phụ trách', 'url' => '/settings/territories', 'route' => 'settings.territories.index', 'placeholder' => true],
                 ['title' => 'Người dùng & vai trò', 'url' => '/settings/users', 'route' => 'settings.users.index', 'placeholder' => true],
                 ['title' => 'Trường tuỳ chỉnh', 'url' => '/settings/custom-fields', 'route' => 'settings.custom-fields.index', 'phase' => 'P1', 'placeholder' => true],

@@ -2,6 +2,7 @@
 
 use App\Domain\Platform\Services\NavigationMenu;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
 
 /** Menu URLs from docs/06-giao-dien.md. */
@@ -18,7 +19,11 @@ dataset('menu urls', [
 ]);
 
 it('opens every menu screen for a logged-in user', function (string $url) {
-    $this->actingAs(User::factory()->create())
+    $this->seed(PermissionSeeder::class);
+    $user = User::factory()->create();
+    $user->givePermissionTo('catalog.view'); // built screens check permissions
+
+    $this->actingAs($user)
         ->get($url)
         ->assertOk();
 })->with('menu urls');
