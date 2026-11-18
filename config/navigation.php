@@ -34,7 +34,7 @@ return [
             'icon' => 'admission',
             'children' => [
                 ['title' => 'Hồ sơ tuyển sinh', 'url' => '/cases', 'route' => 'cases.index', 'placeholder' => true],
-                ['title' => 'Thí sinh', 'url' => '/applicants', 'route' => 'applicants.index', 'placeholder' => true],
+                ['title' => 'Thí sinh', 'url' => '/applicants', 'route' => 'applicants.index', 'permission' => 'applicant.view'],
                 ['title' => 'Nguyện vọng', 'url' => '/applications', 'route' => 'applications.index', 'phase' => 'P1', 'placeholder' => true],
                 ['title' => 'Lịch hẹn', 'url' => '/appointments', 'route' => 'appointments.index', 'placeholder' => true],
             ],

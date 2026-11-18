@@ -51,6 +51,10 @@ class DataScope implements Scope
         $builder->where(function (Builder $q) use ($level, $model, $user, $owner, $team, $myTeams): void {
             $q->where($owner, $user->id);
 
+            foreach ($model->dataScopeAlsoOwnedBy() as $column) {
+                $q->orWhere($model->qualifyColumn($column), $user->id);
+            }
+
             // Shared pool (no owner) of the teams I belong to.
             if ($model->dataScopeIncludesPool()) {
                 $q->orWhere(function (Builder $pool) use ($owner, $team, $myTeams): void {

@@ -29,6 +29,17 @@ trait HasDataScope
         return 'owner_id';
     }
 
+    /**
+     * Extra columns that also make a row "mine" (e.g. created_by for applicants, so whoever
+     * entered a candidate keeps seeing it). Empty by default.
+     *
+     * @return list<string>
+     */
+    public function dataScopeAlsoOwnedBy(): array
+    {
+        return [];
+    }
+
     /** Column with the owning team, or null when the model has none. */
     public function dataScopeTeamColumn(): ?string
     {

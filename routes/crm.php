@@ -1,6 +1,10 @@
 <?php
 
 use App\Domain\Platform\Services\NavigationMenu;
+use App\Http\Controllers\Applicant\ApplicantCertificateController;
+use App\Http\Controllers\Applicant\ApplicantController;
+use App\Http\Controllers\Applicant\ApplicantGuardianController;
+use App\Http\Controllers\Applicant\ApplicantScoreController;
 use App\Http\Controllers\Campaign\CampaignController;
 use App\Http\Controllers\Catalog\CatalogController;
 use App\Http\Controllers\Cycle\CycleController;
@@ -97,6 +101,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('campaigns/{id}', [CampaignController::class, 'update'])->whereNumber('id')->name('campaigns.update');
     Route::delete('campaigns/{id}', [CampaignController::class, 'destroy'])->whereNumber('id')->name('campaigns.destroy');
     Route::post('campaigns/{id}/transition', [CampaignController::class, 'transition'])->whereNumber('id')->name('campaigns.transition');
+});
+
+// Applicants (task 1.10). Authorization: ApplicantPolicy + data scope; phone / citizen id masked without view_sensitive.
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('applicants', [ApplicantController::class, 'index'])->name('applicants.index');
+    Route::post('applicants', [ApplicantController::class, 'store'])->name('applicants.store');
+    Route::get('applicants/check-duplicate', [ApplicantController::class, 'checkDuplicate'])->name('applicants.check-duplicate');
+    Route::get('applicants/{uuid}', [ApplicantController::class, 'show'])->whereUuid('uuid')->name('applicants.show');
+    Route::put('applicants/{uuid}', [ApplicantController::class, 'update'])->whereUuid('uuid')->name('applicants.update');
+    Route::delete('applicants/{uuid}', [ApplicantController::class, 'destroy'])->whereUuid('uuid')->name('applicants.destroy');
+    Route::post('applicants/{uuid}/guardians', [ApplicantGuardianController::class, 'store'])->whereUuid('uuid')->name('applicants.guardians.store');
+    Route::put('applicants/{uuid}/guardians/{guardianId}', [ApplicantGuardianController::class, 'update'])->whereUuid('uuid')->whereNumber('guardianId')->name('applicants.guardians.update');
+    Route::delete('applicants/{uuid}/guardians/{guardianId}', [ApplicantGuardianController::class, 'destroy'])->whereUuid('uuid')->whereNumber('guardianId')->name('applicants.guardians.destroy');
+    Route::put('applicants/{uuid}/scores', [ApplicantScoreController::class, 'update'])->whereUuid('uuid')->name('applicants.scores.update');
+    Route::post('applicants/{uuid}/certificates', [ApplicantCertificateController::class, 'store'])->whereUuid('uuid')->name('applicants.certificates.store');
+    Route::put('applicants/{uuid}/certificates/{certificateId}', [ApplicantCertificateController::class, 'update'])->whereUuid('uuid')->whereNumber('certificateId')->name('applicants.certificates.update');
+    Route::delete('applicants/{uuid}/certificates/{certificateId}', [ApplicantCertificateController::class, 'destroy'])->whereUuid('uuid')->whereNumber('certificateId')->name('applicants.certificates.destroy');
 });
 
 // Header cycle selector (task 1.5): remembers the choice in the session.
