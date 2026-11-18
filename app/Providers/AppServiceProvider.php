@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Campaign\Models\Campaign;
+use App\Domain\Campaign\Policies\CampaignPolicy;
 use App\Domain\Catalog\Catalogs\CatalogRegistry;
 use App\Domain\Catalog\Models\Province;
 use App\Domain\Catalog\Policies\CatalogPolicy;
@@ -76,6 +78,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Territory::class, TerritoryPolicy::class);
         Gate::policy(AdmissionCycle::class, CyclePolicy::class);
         Gate::policy(Major::class, MajorPolicy::class);
+        Gate::policy(Campaign::class, CampaignPolicy::class);
         Gate::policy(HighSchool::class, HighSchoolPolicy::class);
         Gate::policy(SchoolContact::class, SchoolContactPolicy::class);
     }
@@ -97,6 +100,7 @@ class AppServiceProvider extends ServiceProvider
             'territory' => Territory::class,
             'admission_cycle' => AdmissionCycle::class,
             'major' => Major::class,
+            'campaign' => Campaign::class,
             'high_school' => HighSchool::class,
             'school_contact' => SchoolContact::class,
         ]);

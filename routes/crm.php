@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Platform\Services\NavigationMenu;
+use App\Http\Controllers\Campaign\CampaignController;
 use App\Http\Controllers\Catalog\CatalogController;
 use App\Http\Controllers\Cycle\CycleController;
 use App\Http\Controllers\Cycle\CycleMethodController;
@@ -86,6 +87,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('high-schools/{schoolId}/contacts', [SchoolContactController::class, 'store'])->whereNumber('schoolId')->name('high-schools.contacts.store');
     Route::put('high-schools/{schoolId}/contacts/{contactId}', [SchoolContactController::class, 'update'])->whereNumber(['schoolId', 'contactId'])->name('high-schools.contacts.update');
     Route::delete('high-schools/{schoolId}/contacts/{contactId}', [SchoolContactController::class, 'destroy'])->whereNumber(['schoolId', 'contactId'])->name('high-schools.contacts.destroy');
+});
+
+// Campaigns (task 1.9). Authorization: CampaignPolicy (approval flow, closed cycle read-only).
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
+    Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
+    Route::get('campaigns/{id}', [CampaignController::class, 'show'])->whereNumber('id')->name('campaigns.show');
+    Route::put('campaigns/{id}', [CampaignController::class, 'update'])->whereNumber('id')->name('campaigns.update');
+    Route::delete('campaigns/{id}', [CampaignController::class, 'destroy'])->whereNumber('id')->name('campaigns.destroy');
+    Route::post('campaigns/{id}/transition', [CampaignController::class, 'transition'])->whereNumber('id')->name('campaigns.transition');
 });
 
 // Header cycle selector (task 1.5): remembers the choice in the session.

@@ -42,7 +42,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
 
 ### Trường THPT & chiến dịch
 - [x] **1.8 Trường THPT (M2)** — high_schools, school_contacts. Danh sách (lọc tỉnh/hạng/trạng thái/người phụ trách), form, chi tiết với tabs (Người liên hệ, Thí sinh, Timeline; Hoạt động & Thống kê để sau). Import Excel trường THPT.
-- [ ] **1.9 Chiến dịch (M6)** — campaigns, campaign_targets. Danh sách, form, luồng duyệt (draft → pending_approval → running…), chi tiết hiển thị KPI (tạm tính từ admission_cases).
+- [x] **1.9 Chiến dịch (M6)** — campaigns, campaign_targets. Danh sách, form, luồng duyệt (draft → pending_approval → running…), chi tiết hiển thị KPI (tạm tính từ admission_cases).
 
 ### Thí sinh & hồ sơ
 - [ ] **1.10 Thí sinh & phụ huynh (M9)** — applicants, guardians, applicant_guardian, applicant_scores, applicant_certificates. `ApplicantDeduplicator` (mục 5). Form tạo có cảnh báo trùng realtime. Trang chi tiết theo 06-giao-dien.md (Timeline để task 1.13). Bảng nhập điểm nhanh môn × học kỳ.

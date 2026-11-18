@@ -59,7 +59,7 @@ return [
             'title' => 'Marketing',
             'icon' => 'marketing',
             'children' => [
-                ['title' => 'Chiến dịch', 'url' => '/campaigns', 'route' => 'campaigns.index', 'placeholder' => true],
+                ['title' => 'Chiến dịch', 'url' => '/campaigns', 'route' => 'campaigns.index', 'permission' => 'campaign.view'],
                 ['title' => 'Form thu thập', 'url' => '/forms', 'route' => 'forms.index', 'placeholder' => true],
             ],
         ],
