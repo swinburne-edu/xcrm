@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import { CalendarRange, Check, ChevronsUpDown, Settings2 } from '@lucide/vue';
 import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,15 @@ const page = usePage();
 const cycles = computed(() => page.props.cycles ?? []);
 const current = computed(() => page.props.currentCycle ?? null);
 const label = computed(() => current.value?.name ?? 'Chưa có mùa tuyển sinh');
+
+/** The choice is kept in the session; the page reloads with data of that cycle. */
+function select(id: number) {
+    if (id === current.value?.id) {
+        return;
+    }
+
+    router.post('/cycle/select', { cycle_id: id }, { preserveScroll: true });
+}
 </script>
 
 <template>
@@ -47,9 +56,15 @@ const label = computed(() => current.value?.name ?? 'Chưa có mùa tuyển sinh
                 <DropdownMenuItem
                     v-for="cycle in cycles"
                     :key="cycle.id"
-                    disabled
+                    class="cursor-pointer"
+                    @select="select(cycle.id)"
                 >
                     <span class="truncate">{{ cycle.name }}</span>
+                    <span
+                        v-if="cycle.is_current"
+                        class="text-xs text-muted-foreground"
+                        >hiện tại</span
+                    >
                     <Check
                         v-if="current?.id === cycle.id"
                         class="ml-auto size-4"

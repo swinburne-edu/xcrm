@@ -28,6 +28,8 @@ export type CrmNavItem = {
 export type CycleOption = {
     id: number;
     name: string;
+    year?: number;
+    status?: string;
     is_current?: boolean;
 };
 

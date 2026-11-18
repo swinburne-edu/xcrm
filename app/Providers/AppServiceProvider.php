@@ -5,6 +5,9 @@ namespace App\Providers;
 use App\Domain\Catalog\Catalogs\CatalogRegistry;
 use App\Domain\Catalog\Models\Province;
 use App\Domain\Catalog\Policies\CatalogPolicy;
+use App\Domain\Cycle\Models\AdmissionCycle;
+use App\Domain\Cycle\Policies\CyclePolicy;
+use App\Domain\Cycle\Services\CurrentCycle;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
 use App\Domain\Organization\Models\Territory;
@@ -34,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(CurrentOrganization::class);
+        $this->app->scoped(CurrentCycle::class);
         $this->app->singleton(PhoneNumberUtil::class, fn (): PhoneNumberUtil => PhoneNumberUtil::getInstance());
         $this->app->singleton(PhoneNormalizer::class);
     }
@@ -64,6 +68,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Team::class, TeamPolicy::class);
         Gate::policy(Territory::class, TerritoryPolicy::class);
+        Gate::policy(AdmissionCycle::class, CyclePolicy::class);
     }
 
     /**
@@ -81,6 +86,7 @@ class AppServiceProvider extends ServiceProvider
             'permission' => Permission::class,
             'province' => Province::class,
             'territory' => Territory::class,
+            'admission_cycle' => AdmissionCycle::class,
         ]);
     }
 

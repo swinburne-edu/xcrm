@@ -2,6 +2,10 @@
 
 use App\Domain\Platform\Services\NavigationMenu;
 use App\Http\Controllers\Catalog\CatalogController;
+use App\Http\Controllers\Cycle\CycleController;
+use App\Http\Controllers\Cycle\CycleMethodController;
+use App\Http\Controllers\Cycle\CycleRoundController;
+use App\Http\Controllers\Cycle\CycleSelectionController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\LookupController;
 use App\Http\Controllers\Settings\RoleController;
@@ -37,10 +41,28 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::put('territories/{id}', [TerritoryController::class, 'update'])->whereNumber('id')->name('territories.update');
     Route::delete('territories/{id}', [TerritoryController::class, 'destroy'])->whereNumber('id')->name('territories.destroy');
 
+    // Admission cycles (task 1.5). Authorization: CyclePolicy (closed cycle = read-only, rule R8).
+    Route::get('cycles', [CycleController::class, 'index'])->name('cycles.index');
+    Route::post('cycles', [CycleController::class, 'store'])->name('cycles.store');
+    Route::get('cycles/{id}', [CycleController::class, 'show'])->whereNumber('id')->name('cycles.show');
+    Route::put('cycles/{id}', [CycleController::class, 'update'])->whereNumber('id')->name('cycles.update');
+    Route::delete('cycles/{id}', [CycleController::class, 'destroy'])->whereNumber('id')->name('cycles.destroy');
+    Route::post('cycles/{id}/current', [CycleController::class, 'setCurrent'])->whereNumber('id')->name('cycles.current');
+    Route::post('cycles/{id}/reopen', [CycleController::class, 'reopen'])->whereNumber('id')->name('cycles.reopen');
+    Route::post('cycles/{cycleModel}/rounds', [CycleRoundController::class, 'store'])->whereNumber('cycleModel')->name('cycles.rounds.store');
+    Route::put('cycles/{cycleModel}/rounds/{roundId}', [CycleRoundController::class, 'update'])->whereNumber(['cycleModel', 'roundId'])->name('cycles.rounds.update');
+    Route::delete('cycles/{cycleModel}/rounds/{roundId}', [CycleRoundController::class, 'destroy'])->whereNumber(['cycleModel', 'roundId'])->name('cycles.rounds.destroy');
+    Route::post('cycles/{cycleModel}/methods', [CycleMethodController::class, 'store'])->whereNumber('cycleModel')->name('cycles.methods.store');
+    Route::put('cycles/{cycleModel}/methods/{methodId}', [CycleMethodController::class, 'update'])->whereNumber(['cycleModel', 'methodId'])->name('cycles.methods.update');
+    Route::delete('cycles/{cycleModel}/methods/{methodId}', [CycleMethodController::class, 'destroy'])->whereNumber(['cycleModel', 'methodId'])->name('cycles.methods.destroy');
+
     Route::post('teams', [TeamController::class, 'store'])->name('teams.store');
     Route::put('teams/{id}', [TeamController::class, 'update'])->whereNumber('id')->name('teams.update');
     Route::delete('teams/{id}', [TeamController::class, 'destroy'])->whereNumber('id')->name('teams.destroy');
 });
+
+// Header cycle selector (task 1.5): remembers the choice in the session.
+Route::post('cycle/select', CycleSelectionController::class)->middleware(['auth', 'verified'])->name('cycle.select');
 
 /*
 |--------------------------------------------------------------------------

@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Cycle\Models\AdmissionCycle;
+use App\Domain\Cycle\Services\CurrentCycle;
 use App\Domain\Platform\Services\NavigationMenu;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -45,6 +47,13 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'navigation' => fn (): array => app(NavigationMenu::class)->forUser($request->user()),
+            'cycles' => fn (): array => $request->user()
+                ? AdmissionCycle::query()->orderByDesc('year')->get(['id', 'name', 'year', 'status', 'is_current'])
+                    ->map(fn (AdmissionCycle $c) => ['id' => $c->id, 'name' => $c->name, 'year' => $c->year, 'status' => $c->status->value, 'is_current' => $c->is_current])->all()
+                : [],
+            'currentCycle' => fn (): ?array => ($cycle = $request->user() ? app(CurrentCycle::class)->get() : null)
+                ? ['id' => $cycle->id, 'name' => $cycle->name, 'year' => $cycle->year, 'status' => $cycle->status->value, 'is_current' => $cycle->is_current]
+                : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

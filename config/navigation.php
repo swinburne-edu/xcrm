@@ -82,7 +82,7 @@ return [
             'title' => 'Cài đặt',
             'icon' => 'settings',
             'children' => [
-                ['title' => 'Mùa tuyển sinh', 'url' => '/settings/cycles', 'route' => 'settings.cycles.index', 'placeholder' => true],
+                ['title' => 'Mùa tuyển sinh', 'url' => '/settings/cycles', 'route' => 'settings.cycles.index', 'permission' => 'cycle.view'],
                 ['title' => 'Pipeline', 'url' => '/settings/pipelines', 'route' => 'settings.pipelines.index', 'placeholder' => true],
                 ['title' => 'Danh mục', 'url' => '/settings/catalogs', 'route' => 'settings.catalogs.index', 'permission' => 'catalog.view'],
                 ['title' => 'Vùng phụ trách', 'url' => '/settings/territories', 'route' => 'settings.territories.index', 'permission' => 'territory.view'],
