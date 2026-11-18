@@ -84,7 +84,7 @@ describe('screen', function () {
                 ->where('territories.data.0.provinces_count', 2)
                 ->where('territories.data.0.scope_label', 'Hà Nội, Huế')
                 ->where('territories.data.0.targets.province.0.label', 'Hà Nội')
-                ->where('targets', [['type' => 'province', 'label' => 'Tỉnh/Thành phố', 'lookup' => 'provinces']]));
+                ->where('targets', [['type' => 'province', 'label' => 'Tỉnh/Thành phố', 'lookup' => 'provinces'], ['type' => 'high_school', 'label' => 'Trường THPT', 'lookup' => 'high_schools']]));
     });
 
     it('filters by province covered', function () {

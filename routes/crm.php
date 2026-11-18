@@ -6,6 +6,8 @@ use App\Http\Controllers\Cycle\CycleController;
 use App\Http\Controllers\Cycle\CycleMethodController;
 use App\Http\Controllers\Cycle\CycleRoundController;
 use App\Http\Controllers\Cycle\CycleSelectionController;
+use App\Http\Controllers\HighSchool\HighSchoolController;
+use App\Http\Controllers\HighSchool\SchoolContactController;
 use App\Http\Controllers\Major\MajorController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
 use App\Http\Controllers\Platform\LookupController;
@@ -71,6 +73,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('majors/{id}', [MajorController::class, 'update'])->whereNumber('id')->name('majors.update');
     Route::delete('majors/{id}', [MajorController::class, 'destroy'])->whereNumber('id')->name('majors.destroy');
     Route::put('majors/{id}/cycles/{cycleId}', [MajorController::class, 'saveCycle'])->whereNumber(['id', 'cycleId'])->name('majors.cycle');
+});
+
+// High schools (task 1.8). Authorization: HighSchoolPolicy / SchoolContactPolicy + data scope.
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('high-schools', [HighSchoolController::class, 'index'])->name('high-schools.index');
+    Route::post('high-schools', [HighSchoolController::class, 'store'])->name('high-schools.store');
+    Route::post('high-schools/import', [HighSchoolController::class, 'import'])->name('high-schools.import');
+    Route::get('high-schools/{id}', [HighSchoolController::class, 'show'])->whereNumber('id')->name('high-schools.show');
+    Route::put('high-schools/{id}', [HighSchoolController::class, 'update'])->whereNumber('id')->name('high-schools.update');
+    Route::delete('high-schools/{id}', [HighSchoolController::class, 'destroy'])->whereNumber('id')->name('high-schools.destroy');
+    Route::post('high-schools/{schoolId}/contacts', [SchoolContactController::class, 'store'])->whereNumber('schoolId')->name('high-schools.contacts.store');
+    Route::put('high-schools/{schoolId}/contacts/{contactId}', [SchoolContactController::class, 'update'])->whereNumber(['schoolId', 'contactId'])->name('high-schools.contacts.update');
+    Route::delete('high-schools/{schoolId}/contacts/{contactId}', [SchoolContactController::class, 'destroy'])->whereNumber(['schoolId', 'contactId'])->name('high-schools.contacts.destroy');
 });
 
 // Header cycle selector (task 1.5): remembers the choice in the session.

@@ -3,6 +3,7 @@
 use App\Domain\Catalog\Lookups\ProvinceLookup;
 use App\Domain\Catalog\Lookups\SubjectLookup;
 use App\Domain\Catalog\Lookups\WardLookup;
+use App\Domain\HighSchool\Lookups\HighSchoolLookup;
 use App\Domain\Major\Lookups\CampusLookup;
 use App\Domain\Major\Lookups\FacultyLookup;
 use App\Domain\Major\Lookups\MajorLookup;
@@ -28,6 +29,7 @@ return [
     'wards' => WardLookup::class,
     'subjects' => SubjectLookup::class,
     'majors' => MajorLookup::class,
+    'high_schools' => HighSchoolLookup::class,
     'faculties' => FacultyLookup::class,
     'campuses' => CampusLookup::class,
 ];

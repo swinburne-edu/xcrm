@@ -41,7 +41,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
 - [x] **1.7 Sao chép mùa (F1)** — Action `CloneCycle` + nút trên UI. Test.
 
 ### Trường THPT & chiến dịch
-- [ ] **1.8 Trường THPT (M2)** — high_schools, school_contacts. Danh sách (lọc tỉnh/hạng/trạng thái/người phụ trách), form, chi tiết với tabs (Người liên hệ, Thí sinh, Timeline; Hoạt động & Thống kê để sau). Import Excel trường THPT.
+- [x] **1.8 Trường THPT (M2)** — high_schools, school_contacts. Danh sách (lọc tỉnh/hạng/trạng thái/người phụ trách), form, chi tiết với tabs (Người liên hệ, Thí sinh, Timeline; Hoạt động & Thống kê để sau). Import Excel trường THPT.
 - [ ] **1.9 Chiến dịch (M6)** — campaigns, campaign_targets. Danh sách, form, luồng duyệt (draft → pending_approval → running…), chi tiết hiển thị KPI (tạm tính từ admission_cases).
 
 ### Thí sinh & hồ sơ

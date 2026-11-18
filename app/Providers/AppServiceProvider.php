@@ -8,6 +8,10 @@ use App\Domain\Catalog\Policies\CatalogPolicy;
 use App\Domain\Cycle\Models\AdmissionCycle;
 use App\Domain\Cycle\Policies\CyclePolicy;
 use App\Domain\Cycle\Services\CurrentCycle;
+use App\Domain\HighSchool\Models\HighSchool;
+use App\Domain\HighSchool\Models\SchoolContact;
+use App\Domain\HighSchool\Policies\HighSchoolPolicy;
+use App\Domain\HighSchool\Policies\SchoolContactPolicy;
 use App\Domain\Major\Models\Major;
 use App\Domain\Major\Policies\MajorPolicy;
 use App\Domain\Organization\Models\Organization;
@@ -72,6 +76,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Territory::class, TerritoryPolicy::class);
         Gate::policy(AdmissionCycle::class, CyclePolicy::class);
         Gate::policy(Major::class, MajorPolicy::class);
+        Gate::policy(HighSchool::class, HighSchoolPolicy::class);
+        Gate::policy(SchoolContact::class, SchoolContactPolicy::class);
     }
 
     /**
@@ -91,6 +97,8 @@ class AppServiceProvider extends ServiceProvider
             'territory' => Territory::class,
             'admission_cycle' => AdmissionCycle::class,
             'major' => Major::class,
+            'high_school' => HighSchool::class,
+            'school_contact' => SchoolContact::class,
         ]);
     }
 

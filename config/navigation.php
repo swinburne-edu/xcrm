@@ -50,7 +50,7 @@ return [
             'title' => 'Trường THPT',
             'icon' => 'school',
             'children' => [
-                ['title' => 'Danh sách trường', 'url' => '/high-schools', 'route' => 'high-schools.index', 'placeholder' => true],
+                ['title' => 'Danh sách trường', 'url' => '/high-schools', 'route' => 'high-schools.index', 'permission' => 'high_school.view'],
                 ['title' => 'Người liên hệ', 'url' => '/school-contacts', 'route' => 'school-contacts.index', 'placeholder' => true],
                 ['title' => 'Hoạt động tại trường', 'url' => '/school-activities', 'route' => 'school-activities.index', 'phase' => 'P1', 'placeholder' => true],
             ],
