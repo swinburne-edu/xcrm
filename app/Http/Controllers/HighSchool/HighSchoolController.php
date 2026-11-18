@@ -13,7 +13,9 @@ use App\Domain\HighSchool\Enums\PartnershipStatus;
 use App\Domain\HighSchool\Enums\SchoolTier;
 use App\Domain\HighSchool\Enums\SchoolType;
 use App\Domain\HighSchool\Models\HighSchool;
+use App\Domain\HighSchool\Models\SchoolActivity;
 use App\Domain\HighSchool\Models\SchoolContact;
+use App\Domain\HighSchool\Services\SchoolStatistics;
 use App\Domain\Shared\Support\Listing\Filter;
 use App\Domain\Shared\Support\Listing\ListQuery;
 use App\Http\Controllers\Controller;
@@ -86,6 +88,21 @@ class HighSchoolController extends Controller
                 'items' => Applicant::query()->where('high_school_id', $school->id)->orderByDesc('id')->limit(30)->get(['id', 'uuid', 'code', 'full_name', 'graduation_year', 'class_name'])
                     ->map(fn (Applicant $a) => ['uuid' => $a->uuid, 'code' => $a->code, 'full_name' => $a->full_name, 'graduation_year' => $a->graduation_year, 'class_name' => $a->class_name])->all(),
             ],
+            'activities' => $user->can('viewAny', SchoolActivity::class)
+                ? SchoolActivity::query()->with('staff:id,name')->withCount('attendees')->where('high_school_id', $school->id)->orderByDesc('start_at')->limit(50)->get()->map(fn (SchoolActivity $a) => [
+                    'id' => $a->id,
+                    'title' => $a->title,
+                    'type_label' => $a->type->label(),
+                    'status' => $a->status->value,
+                    'status_label' => $a->status->label(),
+                    'status_tone' => $a->status->tone(),
+                    'start_at' => $a->start_at?->toIso8601String(),
+                    'location' => $a->location,
+                    'checkins' => (int) $a->attendees_count,
+                    'actual_attendees' => $a->actual_attendees,
+                ])->all()
+                : [],
+            'stats' => app(SchoolStatistics::class)->forSchool($school),
             'contacts' => $school->contacts->map(fn (SchoolContact $c) => [
                 'id' => $c->id,
                 'full_name' => $c->full_name,
@@ -103,6 +120,7 @@ class HighSchoolController extends Controller
             'can' => [
                 'update' => $user->can('update', $school),
                 'delete' => $user->can('delete', $school),
+                'activities' => ['create' => $user->can('create', SchoolActivity::class)],
                 'contacts' => [
                     'create' => $user->can('create', SchoolContact::class),
                     'update' => $user->can('update', new SchoolContact),

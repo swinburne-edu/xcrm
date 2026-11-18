@@ -53,7 +53,7 @@ return [
             'children' => [
                 ['title' => 'Danh sách trường', 'url' => '/high-schools', 'route' => 'high-schools.index', 'permission' => 'high_school.view'],
                 ['title' => 'Người liên hệ', 'url' => '/school-contacts', 'route' => 'school-contacts.index', 'placeholder' => true],
-                ['title' => 'Hoạt động tại trường', 'url' => '/school-activities', 'route' => 'school-activities.index', 'phase' => 'P1', 'placeholder' => true],
+                ['title' => 'Hoạt động tại trường', 'url' => '/school-activities', 'route' => 'school-activities.index', 'permission' => 'school_activity.view'],
             ],
         ],
         [

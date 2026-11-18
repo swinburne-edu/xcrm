@@ -28,6 +28,15 @@ Tài khoản mẫu (mật khẩu `password`): `demo.head@example.com` (trưởng
 
 Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển sinh** ở giai đoạn *Mới*, giao theo vùng phụ trách (không khớp thì vào **kho chung**), và tạo việc **"Gọi lần đầu"** với hạn theo SLA giai đoạn Mới (mặc định 24 giờ). Người đăng ký lại không bị tạo mới: hệ thống chỉ bổ sung thông tin còn thiếu và ghi thêm một lần tiếp xúc.
 
+## 2b. Hoạt động tại trường THPT và điểm danh QR (F2)
+
+1. **Trường THPT → Hoạt động tại trường → Thêm hoạt động**: chọn loại (tư vấn tại trường, ngày hội, tham quan, trao học bổng, gặp BGH), trường, chiến dịch, thời gian, địa điểm, nhân sự. Xem dạng **Bảng** hoặc **Lịch** tháng.
+2. Mở hoạt động → **mã QR** và link điểm danh (`/checkin/…`). In hoặc tải QR (SVG) để chiếu/dán tại buổi tư vấn.
+3. Học sinh quét QR bằng điện thoại, điền họ tên, số điện thoại, lớp, ngành quan tâm và đồng ý nhận thông tin. Không cần đăng nhập. Link chỉ mở từ 2 giờ trước giờ bắt đầu đến 12 giờ sau khi kết thúc, và đóng khi hoạt động đã diễn ra hoặc bị huỷ.
+4. Hệ thống tự: chống trùng theo số điện thoại (điểm danh nhiều lần chỉ ghi một lượt và thêm một lần tiếp xúc), tạo thí sinh (trường THPT và khu vực ưu tiên lấy theo trường của hoạt động), tạo **hồ sơ mùa hiện tại** với nguồn "Tư vấn tại trường THPT" (hoặc "Ngày hội tuyển sinh", "Tham quan campus" theo loại), giao cho người phụ trách theo quy tắc phân bổ / vùng của trường, và tạo việc "Gọi lần đầu".
+5. Sau buổi: mở hoạt động → **Báo cáo sau hoạt động** (tham dự thực tế, chi phí, kết quả). Lưu báo cáo chuyển hoạt động sang *Đã diễn ra* và đóng điểm danh.
+6. Trang mỗi trường có tab **Hoạt động** (các buổi đã/đang lên lịch) và **Thống kê theo mùa**: số thí sinh, hồ sơ, trúng tuyển, nhập học từ trường, số hoạt động, điểm danh và chi phí theo từng mùa.
+
 ## 3. Tư vấn (F4)
 
 - **Hồ sơ tuyển sinh** (`/cases`): bảng Kanban theo giai đoạn (kéo thả để chuyển giai đoạn) hoặc dạng bảng; bấm thẻ để xem nhanh. Hồ sơ ở kho chung: bấm **Nhận hồ sơ** (tư vấn viên) hoặc **Giao** (trưởng nhóm).
@@ -65,4 +74,4 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 
 ## Chưa có trong MVP
 
-Import danh sách trúng tuyển, hoạt động tại trường + QR check-in, webhook Facebook Lead Ads, trường tuỳ chỉnh, saved view (giai đoạn 2 trong `docs/TASKS.md`).
+Import danh sách trúng tuyển, webhook Facebook Lead Ads, trường tuỳ chỉnh, saved view (giai đoạn 2 trong `docs/TASKS.md`).

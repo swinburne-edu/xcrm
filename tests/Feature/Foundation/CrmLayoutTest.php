@@ -34,24 +34,23 @@ it('redirects guests from menu screens to login', function (string $url) {
 
 it('shows the under-construction page with title, phase and breadcrumbs', function () {
     $this->actingAs(User::factory()->create())
-        ->get('/school-activities')
+        ->get('/settings/custom-fields')
         ->assertInertia(fn (Assert $page) => $page
             ->component('UnderConstruction')
-            ->where('title', 'Hoạt động tại trường')
+            ->where('title', 'Trường tuỳ chỉnh')
             ->where('phase', 'P1')
             ->where('breadcrumbs', [
-                ['title' => 'Trường THPT'],
-                ['title' => 'Hoạt động tại trường', 'href' => '/school-activities'],
+                ['title' => 'Cài đặt'],
+                ['title' => 'Trường tuỳ chỉnh', 'href' => '/settings/custom-fields'],
             ]));
 });
 
 it('uses a section breadcrumb for placeholder screens in a menu group', function () {
     $this->actingAs(User::factory()->create())
-        ->get('/settings/custom-fields')
+        ->get('/school-contacts')
         ->assertInertia(fn (Assert $page) => $page
             ->component('UnderConstruction')
-            ->where('phase', 'P1')
-            ->where('breadcrumbs', [['title' => 'Cài đặt'], ['title' => 'Trường tuỳ chỉnh', 'href' => '/settings/custom-fields']]));
+            ->where('breadcrumbs', [['title' => 'Trường THPT'], ['title' => 'Người liên hệ', 'href' => '/school-contacts']]));
 });
 
 it('registers placeholder routes under the names the real screens will use', function () {

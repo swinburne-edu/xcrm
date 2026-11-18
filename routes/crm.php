@@ -21,6 +21,7 @@ use App\Http\Controllers\Cycle\CycleMethodController;
 use App\Http\Controllers\Cycle\CycleRoundController;
 use App\Http\Controllers\Cycle\CycleSelectionController;
 use App\Http\Controllers\HighSchool\HighSchoolController;
+use App\Http\Controllers\HighSchool\SchoolActivityController;
 use App\Http\Controllers\HighSchool\SchoolContactController;
 use App\Http\Controllers\Intake\FormController;
 use App\Http\Controllers\Major\MajorController;
@@ -109,6 +110,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('majors/{id}', [MajorController::class, 'update'])->whereNumber('id')->name('majors.update');
     Route::delete('majors/{id}', [MajorController::class, 'destroy'])->whereNumber('id')->name('majors.destroy');
     Route::put('majors/{id}/cycles/{cycleId}', [MajorController::class, 'saveCycle'])->whereNumber(['id', 'cycleId'])->name('majors.cycle');
+});
+
+// Activities with high schools and their QR check-in (task 2.1). Authorization: SchoolActivityPolicy + data scope.
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('school-activities', [SchoolActivityController::class, 'index'])->name('school-activities.index');
+    Route::post('school-activities', [SchoolActivityController::class, 'store'])->name('school-activities.store');
+    Route::get('school-activities/{id}', [SchoolActivityController::class, 'show'])->whereNumber('id')->name('school-activities.show');
+    Route::put('school-activities/{id}', [SchoolActivityController::class, 'update'])->whereNumber('id')->name('school-activities.update');
+    Route::delete('school-activities/{id}', [SchoolActivityController::class, 'destroy'])->whereNumber('id')->name('school-activities.destroy');
+    Route::post('school-activities/{id}/complete', [SchoolActivityController::class, 'complete'])->whereNumber('id')->name('school-activities.complete');
+    Route::get('school-activities/{id}/qr.svg', [SchoolActivityController::class, 'qr'])->whereNumber('id')->name('school-activities.qr');
 });
 
 // High schools (task 1.8). Authorization: HighSchoolPolicy / SchoolContactPolicy + data scope.

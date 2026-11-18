@@ -25,8 +25,10 @@ use App\Domain\Cycle\Models\AdmissionCycle;
 use App\Domain\Cycle\Policies\CyclePolicy;
 use App\Domain\Cycle\Services\CurrentCycle;
 use App\Domain\HighSchool\Models\HighSchool;
+use App\Domain\HighSchool\Models\SchoolActivity;
 use App\Domain\HighSchool\Models\SchoolContact;
 use App\Domain\HighSchool\Policies\HighSchoolPolicy;
+use App\Domain\HighSchool\Policies\SchoolActivityPolicy;
 use App\Domain\HighSchool\Policies\SchoolContactPolicy;
 use App\Domain\Major\Models\Major;
 use App\Domain\Major\Policies\MajorPolicy;
@@ -90,6 +92,12 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
+        // QR check-in at a school event: many students share one school Wi-Fi (one IP), so the per-IP cap is generous
+        RateLimiter::for('checkin', fn (Request $request) => [
+            Limit::perMinute(120)->by('checkin:'.$request->ip()),
+            Limit::perMinute(30)->by('checkin:'.$request->ip().':'.$request->route('token')),
+        ]);
+
         RateLimiter::for('public-leads', fn (Request $request) => [
             Limit::perMinute(60)->by('leads:'.$request->ip()),
             Limit::perMinute(10)->by('leads:'.$request->ip().':'.$request->input('form_uuid')),
@@ -120,6 +128,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Pipeline::class, PipelinePolicy::class);
         Gate::policy(HighSchool::class, HighSchoolPolicy::class);
         Gate::policy(SchoolContact::class, SchoolContactPolicy::class);
+        Gate::policy(SchoolActivity::class, SchoolActivityPolicy::class);
     }
 
     /**
@@ -148,6 +157,7 @@ class AppServiceProvider extends ServiceProvider
             'guardian' => Guardian::class,
             'high_school' => HighSchool::class,
             'school_contact' => SchoolContact::class,
+            'school_activity' => SchoolActivity::class,
             'application' => Application::class,
             'applicant_document' => ApplicantDocument::class,
         ]);

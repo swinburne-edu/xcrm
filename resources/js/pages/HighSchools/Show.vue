@@ -2,6 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ArrowLeft, Pencil, Plus, Star, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
+import { formatDateTime } from '@/lib/format';
 import Timeline from '@/components/activity/Timeline.vue';
 import TierBadge from '@/components/crm/TierBadge.vue';
 import ToneBadge from '@/components/crm/ToneBadge.vue';
@@ -24,9 +25,35 @@ const props = defineProps<{
     contacts: ContactRow[];
     applicants: { total: number; items: { uuid: string; code: string; full_name: string; graduation_year: number | null; class_name: string | null }[] };
     options: SchoolOptions;
+    activities: {
+        id: number;
+        title: string;
+        type_label: string;
+        status: string;
+        status_label: string;
+        status_tone: BadgeTone;
+        start_at: string | null;
+        location: string | null;
+        checkins: number;
+        actual_attendees: number | null;
+    }[];
+    stats: {
+        cycle_id: number;
+        cycle: string;
+        applicants: number;
+        cases: number;
+        admitted: number;
+        enrolled: number;
+        enrolled_rate: number | null;
+        activities: number;
+        checkins: number;
+        attendance: number;
+        cost: number;
+    }[];
     can: {
         update: boolean;
         delete: boolean;
+        activities: { create: boolean };
         contacts: { create: boolean; update: boolean; delete: boolean };
     };
 }>();
@@ -38,7 +65,7 @@ const tones: Record<string, BadgeTone> = {
     mou_signed: 'green',
 };
 
-const tab = ref<'contacts' | 'applicants' | 'timeline'>('contacts');
+const tab = ref<'contacts' | 'applicants' | 'activities' | 'stats' | 'timeline'>('contacts');
 const editOpen = ref(false);
 const deleteOpen = ref(false);
 const contactOpen = ref(false);
@@ -120,6 +147,12 @@ const tabClass = (name: string): string =>
             <button type="button" class="-mb-px border-b-2 px-3 py-2 text-sm" :class="tabClass('applicants')" data-test="tab-applicants" @click="tab = 'applicants'">
                 Thí sinh
             </button>
+            <button type="button" class="-mb-px border-b-2 px-3 py-2 text-sm" :class="tabClass('activities')" data-test="tab-activities" @click="tab = 'activities'">
+                Hoạt động ({{ activities.length }})
+            </button>
+            <button type="button" class="-mb-px border-b-2 px-3 py-2 text-sm" :class="tabClass('stats')" data-test="tab-stats" @click="tab = 'stats'">
+                Thống kê theo mùa
+            </button>
             <button type="button" class="-mb-px border-b-2 px-3 py-2 text-sm" :class="tabClass('timeline')" data-test="tab-timeline" @click="tab = 'timeline'">
                 Timeline
             </button>
@@ -182,6 +215,60 @@ const tabClass = (name: string): string =>
                     </li>
                 </ul>
             </template>
+        </section>
+
+        <section v-else-if="tab === 'activities'" class="grid gap-3" data-test="school-activities">
+            <div v-if="can.activities.create" class="flex justify-end">
+                <Button as="a" href="/school-activities" size="sm" variant="outline" data-test="plan-activity">Lên lịch hoạt động ở màn Hoạt động tại trường</Button>
+            </div>
+            <p v-if="activities.length === 0" class="rounded-md border p-6 text-sm text-muted-foreground" data-test="activities-empty">Chưa có hoạt động nào tại trường này.</p>
+            <ul class="grid gap-1.5 text-sm">
+                <li v-for="a in activities" :key="a.id" class="flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2" data-test="school-activity">
+                    <div>
+                        <Link :href="`/school-activities/${a.id}`" class="font-medium hover:underline">{{ a.title }}</Link>
+                        <div class="text-xs text-muted-foreground">
+                            {{ a.type_label }}<template v-if="a.start_at"> · {{ formatDateTime(a.start_at) }}</template><template v-if="a.location"> · {{ a.location }}</template>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span>{{ a.checkins }} điểm danh<template v-if="a.actual_attendees !== null"> / {{ a.actual_attendees }} tham dự</template></span>
+                        <ToneBadge :tone="a.status_tone">{{ a.status_label }}</ToneBadge>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <section v-else-if="tab === 'stats'" class="grid gap-3" data-test="school-stats">
+            <p v-if="stats.length === 0" class="rounded-md border p-6 text-sm text-muted-foreground" data-test="stats-empty">Chưa có thí sinh hay hoạt động nào của trường này để thống kê.</p>
+            <div v-else class="overflow-x-auto rounded-md border">
+                <table class="w-full text-sm">
+                    <thead class="bg-muted/50 text-left text-muted-foreground">
+                        <tr>
+                            <th class="px-3 py-2 font-medium">Mùa tuyển sinh</th>
+                            <th class="px-3 py-2 font-medium">Thí sinh</th>
+                            <th class="px-3 py-2 font-medium">Hồ sơ</th>
+                            <th class="px-3 py-2 font-medium">Trúng tuyển</th>
+                            <th class="px-3 py-2 font-medium">Nhập học</th>
+                            <th class="px-3 py-2 font-medium">Hoạt động</th>
+                            <th class="px-3 py-2 font-medium">Điểm danh</th>
+                            <th class="px-3 py-2 font-medium">Chi phí</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="s in stats" :key="s.cycle_id" class="border-t" data-test="stats-row">
+                            <td class="px-3 py-2 font-medium">{{ s.cycle }}</td>
+                            <td class="px-3 py-2">{{ s.applicants }}</td>
+                            <td class="px-3 py-2">{{ s.cases }}</td>
+                            <td class="px-3 py-2">{{ s.admitted }}</td>
+                            <td class="px-3 py-2">{{ s.enrolled }}<span v-if="s.enrolled_rate !== null" class="ml-1 text-xs text-muted-foreground">({{ s.enrolled_rate }}%)</span></td>
+                            <td class="px-3 py-2">{{ s.activities }}</td>
+                            <td class="px-3 py-2">{{ s.checkins }}<span v-if="s.attendance" class="ml-1 text-xs text-muted-foreground">/ {{ s.attendance }} tham dự</span></td>
+                            <td class="px-3 py-2">{{ s.cost ? `${s.cost.toLocaleString('vi-VN')} ₫` : '—' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-muted-foreground">Trúng tuyển gồm hồ sơ ở giai đoạn Trúng tuyển, Xác nhận nhập học và Nhập học. Số liệu tính trên toàn tổ chức.</p>
         </section>
 
         <Timeline v-else subject-type="high_school" :subject="school.id" />
