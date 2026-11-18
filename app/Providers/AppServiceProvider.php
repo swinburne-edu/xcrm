@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Domain\Activity\Models\Appointment;
+use App\Domain\Activity\Models\Task;
+use App\Domain\Activity\Policies\AppointmentPolicy;
+use App\Domain\Activity\Policies\TaskPolicy;
 use App\Domain\Admission\Models\AdmissionCase;
 use App\Domain\Admission\Models\Pipeline;
 use App\Domain\Admission\Policies\CasePolicy;
@@ -88,6 +92,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Campaign::class, CampaignPolicy::class);
         Gate::policy(Applicant::class, ApplicantPolicy::class);
         Gate::policy(AdmissionCase::class, CasePolicy::class);
+        Gate::policy(Task::class, TaskPolicy::class);
+        Gate::policy(Appointment::class, AppointmentPolicy::class);
         Gate::policy(Pipeline::class, PipelinePolicy::class);
         Gate::policy(HighSchool::class, HighSchoolPolicy::class);
         Gate::policy(SchoolContact::class, SchoolContactPolicy::class);
@@ -113,6 +119,8 @@ class AppServiceProvider extends ServiceProvider
             'campaign' => Campaign::class,
             'applicant' => Applicant::class,
             'admission_case' => AdmissionCase::class,
+            'task' => Task::class,
+            'appointment' => Appointment::class,
             'pipeline' => Pipeline::class,
             'guardian' => Guardian::class,
             'high_school' => HighSchool::class,

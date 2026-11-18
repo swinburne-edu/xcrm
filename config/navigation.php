@@ -36,7 +36,7 @@ return [
                 ['title' => 'Hồ sơ tuyển sinh', 'url' => '/cases', 'route' => 'cases.index', 'permission' => 'case.view'],
                 ['title' => 'Thí sinh', 'url' => '/applicants', 'route' => 'applicants.index', 'permission' => 'applicant.view'],
                 ['title' => 'Nguyện vọng', 'url' => '/applications', 'route' => 'applications.index', 'phase' => 'P1', 'placeholder' => true],
-                ['title' => 'Lịch hẹn', 'url' => '/appointments', 'route' => 'appointments.index', 'placeholder' => true],
+                ['title' => 'Lịch hẹn', 'url' => '/appointments', 'route' => 'appointments.index', 'permission' => 'appointment.view'],
             ],
         ],
         [
@@ -44,7 +44,7 @@ return [
             'url' => '/tasks',
             'route' => 'tasks.index',
             'icon' => 'tasks',
-            'placeholder' => true,
+            'permission' => 'task.view',
         ],
         [
             'title' => 'Trường THPT',

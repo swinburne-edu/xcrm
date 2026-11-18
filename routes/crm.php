@@ -1,6 +1,9 @@
 <?php
 
 use App\Domain\Platform\Services\NavigationMenu;
+use App\Http\Controllers\Activity\AppointmentController;
+use App\Http\Controllers\Activity\TaskController;
+use App\Http\Controllers\Activity\TimelineController;
 use App\Http\Controllers\Admission\CaseController;
 use App\Http\Controllers\Admission\PipelineController;
 use App\Http\Controllers\Applicant\ApplicantCertificateController;
@@ -143,6 +146,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('cases/{uuid}/move', [CaseController::class, 'move'])->whereUuid('uuid')->name('cases.move');
     Route::post('cases/{uuid}/assign', [CaseController::class, 'assign'])->whereUuid('uuid')->name('cases.assign');
     Route::post('cases/{uuid}/claim', [CaseController::class, 'claim'])->whereUuid('uuid')->name('cases.claim');
+});
+
+// Timeline, tasks, appointments (task 1.13). Authorization: the policies + data scope of each record.
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('timeline', [TimelineController::class, 'index'])->name('timeline.index');
+    Route::post('timeline', [TimelineController::class, 'store'])->name('timeline.store');
+
+    Route::get('tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::put('tasks/{id}', [TaskController::class, 'update'])->whereNumber('id')->name('tasks.update');
+    Route::post('tasks/{id}/status', [TaskController::class, 'status'])->whereNumber('id')->name('tasks.status');
+    Route::delete('tasks/{id}', [TaskController::class, 'destroy'])->whereNumber('id')->name('tasks.destroy');
+
+    Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::post('appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::put('appointments/{id}', [AppointmentController::class, 'update'])->whereNumber('id')->name('appointments.update');
+    Route::post('appointments/{id}/attendance', [AppointmentController::class, 'attendance'])->whereNumber('id')->name('appointments.attendance');
+    Route::delete('appointments/{id}', [AppointmentController::class, 'destroy'])->whereNumber('id')->name('appointments.destroy');
 });
 
 // Header cycle selector (task 1.5): remembers the choice in the session.

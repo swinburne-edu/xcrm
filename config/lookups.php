@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Admission\Lookups\CaseLookup;
 use App\Domain\Applicant\Lookups\ApplicantLookup;
 use App\Domain\Campaign\Lookups\CampaignLookup;
 use App\Domain\Catalog\Lookups\ProvinceLookup;
@@ -31,6 +32,7 @@ return [
     'wards' => WardLookup::class,
     'subjects' => SubjectLookup::class,
     'majors' => MajorLookup::class,
+    'cases' => CaseLookup::class,
     'applicants' => ApplicantLookup::class,
     'campaigns' => CampaignLookup::class,
     'high_schools' => HighSchoolLookup::class,

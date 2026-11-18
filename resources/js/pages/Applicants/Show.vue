@@ -2,6 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ArrowLeft, Pencil, Plus, Star, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
+import Timeline from '@/components/activity/Timeline.vue';
 import ApplicantFormDialog from '@/components/applicants/ApplicantFormDialog.vue';
 import CertificateFormDialog from '@/components/applicants/CertificateFormDialog.vue';
 import GuardianFormDialog from '@/components/applicants/GuardianFormDialog.vue';
@@ -35,7 +36,7 @@ const props = defineProps<{
 }>();
 
 type Tab = 'timeline' | 'scores' | 'applications' | 'documents' | 'appointments';
-const tab = ref<Tab>('scores');
+const tab = ref<Tab>('timeline');
 const tabs: { key: Tab; label: string }[] = [
     { key: 'timeline', label: 'Timeline' },
     { key: 'scores', label: 'Điểm' },
@@ -44,10 +45,9 @@ const tabs: { key: Tab; label: string }[] = [
     { key: 'appointments', label: 'Lịch hẹn' },
 ];
 const later: Record<string, string> = {
-    timeline: 'Timeline (ghi chú, cuộc gọi, thay đổi) sẽ hiển thị tại đây ở bước Hoạt động & Timeline.',
     applications: 'Nguyện vọng xét tuyển sẽ có khi module Hồ sơ tuyển sinh hoàn thiện.',
     documents: 'Giấy tờ minh chứng sẽ có ở bước quản lý giấy tờ.',
-    appointments: 'Lịch hẹn sẽ có ở bước Hoạt động.',
+    appointments: 'Lịch hẹn của thí sinh xem ở menu Lịch hẹn; đặt lịch mới từ thẻ hồ sơ.',
 };
 
 const editOpen = ref(false);
@@ -174,7 +174,9 @@ const tabClass = (key: string): string => (tab.value === key ? 'border-primary f
                     </button>
                 </div>
 
-                <template v-if="tab === 'scores'">
+                <Timeline v-if="tab === 'timeline'" subject-type="applicant" :subject="applicant.uuid" />
+
+                <template v-else-if="tab === 'scores'">
                     <ScoreGrid
                         :applicant-uuid="applicant.uuid"
                         :subjects="subjects"

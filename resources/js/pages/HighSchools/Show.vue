@@ -2,6 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ArrowLeft, Pencil, Plus, Star, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
+import Timeline from '@/components/activity/Timeline.vue';
 import TierBadge from '@/components/crm/TierBadge.vue';
 import ToneBadge from '@/components/crm/ToneBadge.vue';
 import type { BadgeTone } from '@/components/crm/ToneBadge.vue';
@@ -173,9 +174,7 @@ const tabClass = (name: string): string =>
             Danh sách thí sinh của trường sẽ hiển thị tại đây khi module Thí sinh hoàn thiện.
         </section>
 
-        <section v-else class="rounded-md border p-6 text-sm text-muted-foreground" data-test="timeline-empty">
-            Timeline (ghi chú, cuộc gọi, hoạt động tại trường) sẽ hiển thị tại đây khi module Hoạt động hoàn thiện.
-        </section>
+        <Timeline v-else subject-type="high_school" :subject="school.id" />
     </div>
 
     <SchoolFormDialog v-model:open="editOpen" :record="school" :options="options" />

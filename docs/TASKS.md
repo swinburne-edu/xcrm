@@ -48,7 +48,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
 - [x] **1.10 Thí sinh & phụ huynh (M9)** — applicants, guardians, applicant_guardian, applicant_scores, applicant_certificates. `ApplicantDeduplicator` (mục 5). Form tạo có cảnh báo trùng realtime. Trang chi tiết theo 06-giao-dien.md (Timeline để task 1.13). Bảng nhập điểm nhanh môn × học kỳ.
 - [x] **1.11 Pipeline & hồ sơ tuyển sinh (M10)** — pipelines, pipeline_stages (seeder mặc định), admission_cases, case_stage_histories, case_touches, case_interested_majors. Actions: `CreateAdmissionCase` (R5, tự phân bổ theo vùng), `MoveCaseStage` (R6, R7, ghi history), `AssignCase`, `ClaimCase` (kho chung). Trang `/settings/pipelines`.
 - [x] **1.12 Màn hình Hồ sơ tuyển sinh** — `/cases` Kanban + Bảng, bộ lọc, kho chung, RecordDrawer, thao tác hàng loạt (giao người, đổi stage, gắn tag).
-- [ ] **1.13 Timeline, task, lịch hẹn (M12)** — activities, tasks, appointments. Component `Timeline` (ghi chú, cuộc gọi + kết quả, task). Observer ghi `stage_changed`, `owner_changed`. Cập nhật `first_contacted_at`, `last_activity_at`. Trang `/tasks` (Hôm nay / Quá hạn / Sắp tới), `/appointments`.
+- [x] **1.13 Timeline, task, lịch hẹn (M12)** — activities, tasks, appointments. Component `Timeline` (ghi chú, cuộc gọi + kết quả, task). Observer ghi `stage_changed`, `owner_changed`. Cập nhật `first_contacted_at`, `last_activity_at`. Trang `/tasks` (Hôm nay / Quá hạn / Sắp tới), `/appointments`.
 
 ### Thu nhận & báo cáo
 - [ ] **1.14 Thu nhận thí sinh (M7)** — Import Excel thí sinh (ImportWizard, queue, import_jobs), forms + endpoint công khai `POST /api/public/leads` (rate limit, honeypot) + đoạn mã nhúng. Luồng F3 (trừ SLA). Test F3.
