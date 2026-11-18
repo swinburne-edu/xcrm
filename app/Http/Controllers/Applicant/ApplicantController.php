@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Applicant;
 
 use App\Domain\Admission\Models\AdmissionCase;
+use App\Domain\Admission\Services\ApplicationPanel;
+use App\Domain\Cycle\Services\CurrentCycle;
 use App\Domain\Applicant\Actions\SaveApplicant;
 use App\Domain\Applicant\Enums\CertificateType;
 use App\Domain\Applicant\Enums\Gender;
@@ -66,7 +68,7 @@ class ApplicantController extends Controller
         ]);
     }
 
-    public function show(Request $request, string $uuid): Response
+    public function show(Request $request, string $uuid, ApplicationPanel $panel, CurrentCycle $currentCycle): Response
     {
         $applicant = Applicant::query()->where('uuid', $uuid)
             ->with(['province:id,name', 'ward:id,name', 'highSchool:id,name', 'priorityArea:id,code', 'priorityGroup:id,code', 'firstSource:id,name', 'firstCampaign:id,name', 'referrer:id,name', 'guardians', 'scores', 'certificates'])
@@ -146,6 +148,8 @@ class ApplicantController extends Controller
             ])->all(),
             'subjects' => Subject::query()->orderByDesc('is_core')->orderBy('id')->get(['id', 'code', 'name', 'is_core'])
                 ->map(fn (Subject $s) => ['id' => $s->id, 'code' => $s->code, 'name' => $s->name, 'is_core' => $s->is_core])->all(),
+            'application_panel' => $panel->applications($applicant, $currentCycle->get(), $user),
+            'document_panel' => $panel->documents($applicant, $user),
             'options' => $this->options(),
             'can' => [
                 'update' => $user->can('update', $applicant),

@@ -32,7 +32,7 @@ class ImportHighSchools
         'code' => ['code', 'ma_truong', 'ma'],
         'name' => ['name', 'ten_truong', 'ten'],
         'type' => ['type', 'loai_hinh', 'loai'],
-        'province' => ['province', 'tinh', 'tinh_thanh_pho', 'tinh_tp'],
+        'province' => ['province', 'tinh', 'tinh_thanh_pho', 'tinhthanh_pho', 'tinh_tp'],
         'address' => ['address', 'dia_chi'],
         'tier' => ['tier', 'hang'],
         'partnership_status' => ['partnership_status', 'trang_thai_hop_tac', 'trang_thai'],

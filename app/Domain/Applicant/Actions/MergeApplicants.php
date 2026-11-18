@@ -9,10 +9,12 @@ use App\Domain\Activity\Models\Activity;
 use App\Domain\Activity\Models\Appointment;
 use App\Domain\Activity\Models\Task;
 use App\Domain\Admission\Models\AdmissionCase;
+use App\Domain\Admission\Models\Application;
 use App\Domain\Admission\Models\CaseStageHistory;
 use App\Domain\Admission\Models\CaseTouch;
 use App\Domain\Applicant\Models\Applicant;
 use App\Domain\Applicant\Models\ApplicantCertificate;
+use App\Domain\Applicant\Models\ApplicantDocument;
 use App\Domain\Applicant\Models\ApplicantScore;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +63,7 @@ class MergeApplicants
             $this->fields($keep, $merge, $choices);
             $this->guardians($keep, $merge);
             ApplicantCertificate::query()->where('applicant_id', $merge->id)->update(['applicant_id' => $keep->id]);
+            ApplicantDocument::query()->withoutGlobalScopes()->where('applicant_id', $merge->id)->update(['applicant_id' => $keep->id]);
             $this->scores($keep, $merge);
             Activity::query()->withoutGlobalScopes()->where('subject_type', 'applicant')->where('subject_id', $merge->id)->update(['subject_id' => $keep->id]);
             Task::query()->withoutGlobalScopes()->where('subject_type', 'applicant')->where('subject_id', $merge->id)->update(['subject_id' => $keep->id]);
@@ -192,7 +195,30 @@ class MergeApplicants
 
         DB::table('taggables')->where('taggable_type', 'admission_case')->where('taggable_id', $other->id)->delete();
 
+        $this->applications($survivor, $other);
+        ApplicantDocument::query()->withoutGlobalScopes()->where('case_id', $other->id)->update(['case_id' => $survivor->id]);
+
         $other->delete();
         $this->nextAction->sync('admission_case', $survivor->id);
+    }
+
+    /**
+     * Nguyện vọng of the merged case move to the surviving one. A round keeps its order numbers unique (R3):
+     * a clashing order takes the next free one; two cases cannot together exceed 15 in a round.
+     */
+    private function applications(AdmissionCase $survivor, AdmissionCase $other): void
+    {
+        foreach (Application::query()->withoutGlobalScopes()->where('case_id', $other->id)->orderBy('round_id')->orderBy('preference_order')->get() as $application) {
+            $taken = Application::query()->withoutGlobalScopes()->where('case_id', $survivor->id)->where('round_id', $application->round_id)->pluck('preference_order')->all();
+            $order = in_array($application->preference_order, $taken, true)
+                ? collect(range(1, Application::MAX_PER_CASE))->first(fn (int $n) => ! in_array($n, $taken, true))
+                : $application->preference_order;
+
+            if ($order === null) {
+                throw ValidationException::withMessages(['merge' => 'Hai hồ sơ có tổng cộng quá '.Application::MAX_PER_CASE.' nguyện vọng trong cùng một đợt; hãy rút bớt trước khi gộp.']);
+            }
+
+            $application->forceFill(['case_id' => $survivor->id, 'preference_order' => $order])->save();
+        }
     }
 }

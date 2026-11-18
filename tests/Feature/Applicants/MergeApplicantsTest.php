@@ -5,16 +5,21 @@ use App\Domain\Activity\Models\Appointment;
 use App\Domain\Activity\Models\Task;
 use App\Domain\Admission\Actions\CreateAdmissionCase;
 use App\Domain\Admission\Models\AdmissionCase;
+use App\Domain\Admission\Models\Application;
 use App\Domain\Admission\Models\CaseTouch;
 use App\Domain\Admission\Models\PipelineStage;
 use App\Domain\Applicant\Actions\MergeApplicants;
 use App\Domain\Applicant\Models\Applicant;
 use App\Domain\Applicant\Models\ApplicantCertificate;
+use App\Domain\Applicant\Models\ApplicantDocument;
 use App\Domain\Applicant\Models\ApplicantScore;
 use App\Domain\Applicant\Models\Guardian;
 use App\Domain\Catalog\Actions\SeedOrganizationCatalogs;
 use App\Domain\Catalog\Models\Subject;
 use App\Domain\Cycle\Models\AdmissionCycle;
+use App\Domain\Cycle\Models\AdmissionRound;
+use App\Domain\Cycle\Models\CycleMethod;
+use App\Domain\Major\Models\Major;
 use App\Domain\HighSchool\Models\HighSchool;
 use App\Domain\Organization\Enums\DataScopeLevel;
 use App\Domain\Organization\Models\Organization;
@@ -131,6 +136,49 @@ describe('MergeApplicants', function () {
         app(MergeApplicants::class)->handle($keep, $dup, [], $this->admin);
 
         expect($keepCase->refresh()->stage->code)->toBe('counseling');
+    });
+
+    it('moves nguyện vọng and documents with the case, renumbering an order that clashes in the round (R3)', function () {
+        $keep = ($this->person)();
+        $dup = ($this->person)();
+        $keepCase = ($this->openCase)($keep);
+        $dupCase = ($this->openCase)($dup);
+        $round = AdmissionRound::factory()->create(['cycle_id' => $this->cycle->id]);
+        $method = CycleMethod::factory()->create(['cycle_id' => $this->cycle->id]);
+        $make = fn (AdmissionCase $case, int $order) => Application::factory()->create([
+            'organization_id' => $this->org->id, 'case_id' => $case->id, 'major_id' => Major::factory()->for($this->org)->create()->id,
+            'cycle_method_id' => $method->id, 'round_id' => $round->id, 'preference_order' => $order,
+        ]);
+        $make($keepCase, 1);
+        $theirs = $make($dupCase, 1);
+        $free = $make($dupCase, 4);
+        $document = ApplicantDocument::factory()->create(['organization_id' => $this->org->id, 'applicant_id' => $dup->id, 'case_id' => $dupCase->id]);
+
+        app(MergeApplicants::class)->handle($keep, $dup, [], $this->admin);
+
+        expect(Application::query()->where('case_id', $keepCase->id)->orderBy('preference_order')->pluck('preference_order')->all())->toBe([1, 2, 4])
+            ->and($theirs->refresh()->case_id)->toBe($keepCase->id)->and($theirs->preference_order)->toBe(2)
+            ->and($free->refresh()->preference_order)->toBe(4)
+            ->and($document->refresh()->applicant_id)->toBe($keep->id)->and($document->case_id)->toBe($keepCase->id);
+    });
+
+    it('refuses to join cases that together exceed 15 nguyện vọng in a round', function () {
+        $keep = ($this->person)();
+        $dup = ($this->person)();
+        $keepCase = ($this->openCase)($keep);
+        $dupCase = ($this->openCase)($dup);
+        $round = AdmissionRound::factory()->create(['cycle_id' => $this->cycle->id]);
+        $method = CycleMethod::factory()->create(['cycle_id' => $this->cycle->id]);
+
+        foreach (range(1, 8) as $order) {
+            foreach ([$keepCase, $dupCase] as $case) {
+                $major = Major::factory()->for($this->org)->create();
+                Application::factory()->create(['organization_id' => $this->org->id, 'case_id' => $case->id, 'major_id' => $major->id, 'cycle_method_id' => $method->id, 'round_id' => $round->id, 'preference_order' => $order]);
+            }
+        }
+
+        expect(fn () => app(MergeApplicants::class)->handle($keep, $dup, [], $this->admin))->toThrow(ValidationException::class);
+        expect(Applicant::query()->whereKey($dup->id)->exists())->toBeTrue()->and(Application::query()->where('case_id', $dupCase->id)->count())->toBe(8);
     });
 
     it('refuses to merge with itself, across organizations or an already merged record', function () {

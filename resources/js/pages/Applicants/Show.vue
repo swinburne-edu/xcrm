@@ -7,6 +7,9 @@ import ApplicantFormDialog from '@/components/applicants/ApplicantFormDialog.vue
 import CertificateFormDialog from '@/components/applicants/CertificateFormDialog.vue';
 import GuardianFormDialog from '@/components/applicants/GuardianFormDialog.vue';
 import ScoreGrid from '@/components/applicants/ScoreGrid.vue';
+import ApplicationsTab from '@/components/applications/ApplicationsTab.vue';
+import DocumentsTab from '@/components/applications/DocumentsTab.vue';
+import type { ApplicationPanelProps, DocumentPanelProps } from '@/components/applications/types';
 import type {
     ApplicantOptions,
     ApplicantRow,
@@ -33,6 +36,8 @@ const props = defineProps<{
     scores: ScoreRow[];
     certificates: CertificateRow[];
     subjects: SubjectRow[];
+    application_panel: ApplicationPanelProps;
+    document_panel: DocumentPanelProps;
     options: ApplicantOptions;
     can: { update: boolean; delete: boolean };
 }>();
@@ -42,13 +47,11 @@ const tab = ref<Tab>('timeline');
 const tabs: { key: Tab; label: string }[] = [
     { key: 'timeline', label: 'Timeline' },
     { key: 'scores', label: 'Điểm' },
-    { key: 'applications', label: 'Nguyện vọng' },
+    { key: 'applications', label: `Nguyện vọng` },
     { key: 'documents', label: 'Giấy tờ' },
     { key: 'appointments', label: 'Lịch hẹn' },
 ];
 const later: Record<string, string> = {
-    applications: 'Nguyện vọng xét tuyển thuộc giai đoạn 2 (chưa có trong MVP).',
-    documents: 'Giấy tờ minh chứng thuộc giai đoạn 2 (chưa có trong MVP).',
     appointments: 'Lịch hẹn của thí sinh xem ở menu Lịch hẹn; đặt lịch mới từ thẻ hồ sơ.',
 };
 
@@ -214,6 +217,10 @@ const tabClass = (key: string): string => (tab.value === key ? 'border-primary f
                         </ul>
                     </section>
                 </template>
+
+                <ApplicationsTab v-else-if="tab === 'applications'" :panel="application_panel" />
+
+                <DocumentsTab v-else-if="tab === 'documents'" :applicant-uuid="applicant.uuid" :case-uuid="application_panel.case_uuid" :panel="document_panel" />
 
                 <section v-else class="rounded-md border p-6 text-sm text-muted-foreground" :data-test="`${tab}-later`">{{ later[tab] }}</section>
             </main>

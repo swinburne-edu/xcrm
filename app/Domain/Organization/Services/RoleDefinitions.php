@@ -16,7 +16,7 @@ final class RoleDefinitions
     private const OBJECTS = [
         'applicant' => ['view', 'create', 'update', 'delete', 'export', 'import', 'assign', 'merge', 'view_sensitive'],
         'case' => ['view', 'create', 'update', 'delete', 'export', 'assign'],
-        'application' => ['view', 'create', 'update', 'delete'],
+        'application' => ['view', 'create', 'update', 'delete', 'review'],
         'high_school' => ['view', 'create', 'update', 'delete', 'export', 'import'],
         'school_contact' => ['view', 'create', 'update', 'delete'],
         'school_activity' => ['view', 'create', 'update', 'delete'],

@@ -8,9 +8,12 @@ use App\Domain\Activity\Policies\AppointmentPolicy;
 use App\Domain\Activity\Policies\TaskPolicy;
 use App\Domain\Admission\Models\AdmissionCase;
 use App\Domain\Admission\Models\Pipeline;
+use App\Domain\Admission\Models\Application;
+use App\Domain\Admission\Policies\ApplicationPolicy;
 use App\Domain\Admission\Policies\CasePolicy;
 use App\Domain\Admission\Policies\PipelinePolicy;
 use App\Domain\Applicant\Models\Applicant;
+use App\Domain\Applicant\Models\ApplicantDocument;
 use App\Domain\Applicant\Models\Guardian;
 use App\Domain\Applicant\Policies\ApplicantPolicy;
 use App\Domain\Campaign\Models\Campaign;
@@ -108,6 +111,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Campaign::class, CampaignPolicy::class);
         Gate::policy(Applicant::class, ApplicantPolicy::class);
         Gate::policy(AdmissionCase::class, CasePolicy::class);
+        Gate::policy(Application::class, ApplicationPolicy::class);
         Gate::policy(Task::class, TaskPolicy::class);
         Gate::policy(Appointment::class, AppointmentPolicy::class);
         Gate::policy(Pipeline::class, PipelinePolicy::class);
@@ -141,6 +145,8 @@ class AppServiceProvider extends ServiceProvider
             'guardian' => Guardian::class,
             'high_school' => HighSchool::class,
             'school_contact' => SchoolContact::class,
+            'application' => Application::class,
+            'applicant_document' => ApplicantDocument::class,
         ]);
     }
 

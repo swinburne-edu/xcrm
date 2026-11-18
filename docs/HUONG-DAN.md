@@ -40,6 +40,14 @@ Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển s
 
 **Thí sinh → Có thể trùng** liệt kê các hồ sơ cùng họ tên + cùng trường THPT hoặc dùng chung SĐT phụ huynh. Bấm **Gộp vào …** để mở màn so sánh: với mỗi trường khác nhau, chọn giá trị muốn giữ (ô trống tự lấy từ bản kia), có nút **Đổi chiều** để chọn bản giữ lại. Khi gộp, phụ huynh, điểm, hồ sơ, lịch sử và việc của bản kia chuyển sang bản giữ; bản kia bị ẩn khỏi danh sách. Cần quyền *Gộp thí sinh*.
 
+## 4b. Nguyện vọng và giấy tờ
+
+- Mở thí sinh → tab **Nguyện vọng** → **Thêm nguyện vọng**: chọn đợt, ngành, phương thức, tổ hợp. Hệ thống chỉ cho chọn phương thức/tổ hợp đã gán cho ngành trong mùa, mỗi hồ sơ tối đa 15 nguyện vọng.
+- **Điểm tự tính** theo công thức của phương thức (điểm thi THPT, học bạ, ĐGNL…, cộng điểm ưu tiên KV/đối tượng, quy đổi chứng chỉ ngoại ngữ). Thiếu điểm môn nào thì báo "thiếu: …" — nhập điểm ở tab **Điểm** rồi bấm *Tính lại*. Mở "Cách tính điểm" để xem từng môn.
+- Vòng đời: **Nộp** (cần đủ điểm) → thư ký xét tuyển chọn **Đủ điều kiện / Không đủ điều kiện / Trúng tuyển / Không trúng tuyển** → **Xác nhận nhập học**; có thể **Rút** bất cứ lúc nào trước khi xác nhận. Hồ sơ tuyển sinh tự chuyển giai đoạn tương ứng (Nộp hồ sơ xét sớm → Đủ điều kiện → Trúng tuyển → Xác nhận), không bao giờ lùi.
+- Tab **Giấy tờ**: tải học bạ, CCCD… (PDF/ảnh ≤ 10 MB, lưu riêng tư). Thư ký **Duyệt** hoặc **Từ chối** (bắt buộc ghi lý do). Phương thức có danh sách giấy tờ cần nộp, hiện ngay trên nguyện vọng.
+- Menu **Tuyển sinh → Nguyện vọng** (`/applications`): danh sách đã nộp theo điểm; chọn một **ngành** để so thứ hạng với chỉ tiêu (xanh = trong chỉ tiêu xét theo điểm).
+
 ## 5. Theo dõi kết quả
 
 - **Tổng quan** (`/dashboard`): thí sinh mới, hồ sơ, trúng tuyển, nhập học so với mục tiêu; phễu theo giai đoạn; top nguồn, top trường THPT; tiến độ chỉ tiêu theo ngành; việc quá hạn của bạn.
@@ -49,4 +57,4 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 
 ## Chưa có trong MVP
 
-Nguyện vọng xét tuyển và điểm xét tuyển, giấy tờ minh chứng, import danh sách trúng tuyển, hoạt động tại trường + QR check-in, webhook Facebook Lead Ads, thông báo quá SLA / thu hồi hồ sơ tự động (giai đoạn 2 trong `docs/TASKS.md`).
+Import danh sách trúng tuyển, hoạt động tại trường + QR check-in, webhook Facebook Lead Ads, thông báo quá SLA / thu hồi hồ sơ tự động (giai đoạn 2 trong `docs/TASKS.md`).

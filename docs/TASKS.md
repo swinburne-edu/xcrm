@@ -59,7 +59,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
 ## Giai đoạn 2 — P1
 
 - [ ] **2.1 Hoạt động tại trường + check-in QR (M3, F2)** — school_activities, school_activity_user, activity_attendees; lịch + bảng; trang check-in công khai; mã QR; tab Hoạt động & Thống kê theo mùa ở trang trường THPT.
-- [ ] **2.2 Nguyện vọng (M11)** — applications (R3, R4), applicant_documents (medialibrary), `ScoreCalculator` + test nhiều công thức, màn hình nguyện vọng trong hồ sơ, danh sách xét tuyển theo ngành.
+- [x] **2.2 Nguyện vọng (M11)** — applications (R3, R4), applicant_documents (medialibrary), `ScoreCalculator` + test nhiều công thức, màn hình nguyện vọng trong hồ sơ, danh sách xét tuyển theo ngành. _Đã làm: bảng `applications` + `applicant_documents`; `ScoreCalculator` (22+ test); nguyện vọng R3/R4/R8/R9; vòng đời nộp → duyệt → trúng tuyển → xác nhận kéo hồ sơ sang giai đoạn tương ứng; tab Nguyện vọng và Giấy tờ ở trang thí sinh; màn `/applications` xếp theo điểm so chỉ tiêu; gộp thí sinh chuyển cả nguyện vọng/giấy tờ. Giấy tờ lưu ở disk riêng tư._
 - [ ] **2.3 Tiến độ chỉ tiêu** — `/quotas` theo ngành, cảnh báo thiếu/thừa; job tổng hợp định kỳ.
 - [ ] **2.4 Quy tắc phân bổ & SLA (M8)** — assignment_rules, round-robin/theo tải, scheduler kiểm tra SLA, thu hồi tự động, thông báo (database notifications).
 - [ ] **2.5 Custom field** — custom_field_definitions, form động, hiển thị/sửa inline, lọc trong FilterBar.

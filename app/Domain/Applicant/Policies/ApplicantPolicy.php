@@ -14,4 +14,10 @@ class ApplicantPolicy extends ResourcePolicy
     {
         return 'applicant';
     }
+
+    /** R9: an applicant is never removed for good, so the history of their nguyện vọng stays. */
+    public function forceDelete(): bool
+    {
+        return false;
+    }
 }

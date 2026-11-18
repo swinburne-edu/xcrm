@@ -4,9 +4,11 @@ use App\Domain\Platform\Services\NavigationMenu;
 use App\Http\Controllers\Activity\AppointmentController;
 use App\Http\Controllers\Activity\TaskController;
 use App\Http\Controllers\Activity\TimelineController;
+use App\Http\Controllers\Admission\ApplicationController;
 use App\Http\Controllers\Admission\CaseController;
 use App\Http\Controllers\Admission\PipelineController;
 use App\Http\Controllers\Applicant\ApplicantCertificateController;
+use App\Http\Controllers\Applicant\ApplicantDocumentController;
 use App\Http\Controllers\Applicant\ApplicantController;
 use App\Http\Controllers\Applicant\ApplicantGuardianController;
 use App\Http\Controllers\Applicant\ApplicantImportController;
@@ -23,6 +25,8 @@ use App\Http\Controllers\HighSchool\SchoolContactController;
 use App\Http\Controllers\Intake\FormController;
 use App\Http\Controllers\Major\MajorController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
+use App\Http\Controllers\Platform\GlobalSearchController;
+use App\Http\Controllers\Platform\ImportTemplateController;
 use App\Http\Controllers\Platform\LookupController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\RoleController;
@@ -131,6 +135,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('applicants/import/preview', [ApplicantImportController::class, 'preview'])->name('applicants.import.preview');
     Route::post('applicants/import', [ApplicantImportController::class, 'store'])->name('applicants.import');
     Route::get('imports/{id}', [ApplicantImportController::class, 'show'])->whereNumber('id')->name('imports.show');
+
+    // Nguyện vọng xét tuyển and supporting documents (task 2.2). Authorization: ApplicationPolicy / ApplicantPolicy.
+    Route::get('applications', [ApplicationController::class, 'index'])->name('applications.index');
+    Route::post('cases/{uuid}/applications', [ApplicationController::class, 'store'])->name('applications.store');
+    Route::put('applications/{id}', [ApplicationController::class, 'update'])->whereNumber('id')->name('applications.update');
+    Route::delete('applications/{id}', [ApplicationController::class, 'destroy'])->whereNumber('id')->name('applications.destroy');
+    Route::post('applications/{id}/transition', [ApplicationController::class, 'transition'])->whereNumber('id')->name('applications.transition');
+    Route::post('applications/{id}/score', [ApplicationController::class, 'recalculate'])->whereNumber('id')->name('applications.score');
+    Route::post('applicants/{uuid}/documents', [ApplicantDocumentController::class, 'store'])->name('documents.store');
+    Route::get('documents/{id}/file', [ApplicantDocumentController::class, 'file'])->whereNumber('id')->name('documents.file');
+    Route::post('documents/{id}/review', [ApplicantDocumentController::class, 'review'])->whereNumber('id')->name('documents.review');
+    Route::delete('documents/{id}', [ApplicantDocumentController::class, 'destroy'])->whereNumber('id')->name('documents.destroy');
     Route::get('applicants/check-duplicate', [ApplicantController::class, 'checkDuplicate'])->name('applicants.check-duplicate');
     Route::get('applicants/{uuid}', [ApplicantController::class, 'show'])->whereUuid('uuid')->name('applicants.show');
     Route::put('applicants/{uuid}', [ApplicantController::class, 'update'])->whereUuid('uuid')->name('applicants.update');
@@ -230,6 +246,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->where('entity', '[a-z_]+')
         ->middleware('throttle:120,1')
         ->name('lookups.show');
+
+    // Excel templates for the import dialogs (applicants, high-schools).
+    Route::get('import-templates/{type}', ImportTemplateController::class)->where('type', '[a-z-]+')->name('import-templates.show');
+
+    // Global search dialog (Ctrl+K): applicants + high schools.
+    Route::get('search', GlobalSearchController::class)->middleware('throttle:120,1')->name('search');
 
     // Component showcase, local/testing only.
     if (app()->environment(['local', 'testing'])) {

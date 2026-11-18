@@ -29,6 +29,14 @@ use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Services\RoleDefinitions;
 use App\Domain\Shared\Services\CurrentOrganization;
 use App\Models\User;
+use App\Domain\Admission\Actions\SaveApplication;
+use App\Domain\Applicant\Models\ApplicantScore;
+use App\Domain\Catalog\Models\AdmissionMethod;
+use App\Domain\Catalog\Models\Subject;
+use App\Domain\Catalog\Models\SubjectCombination;
+use App\Domain\Cycle\Models\AdmissionRound;
+use App\Domain\Cycle\Models\CycleMethod;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -82,6 +90,18 @@ class DemoSeeder extends Seeder
         $org = $admin?->organization ?? Organization::query()->first() ?? Organization::factory()->create();
 
         if (User::query()->where('email', 'demo.head@example.com')->exists()) {
+            // Demo data from an earlier version may lack the admission setup (rounds, methods, nguyện vọng): add it.
+            app(CurrentOrganization::class)->run($org->id, function () use ($org, $admin): void {
+                Auth::setUser($admin);
+                mt_srand(2027);
+                $cycle = AdmissionCycle::query()->where('is_current', true)->orderByDesc('year')->first();
+                $majors = Major::query()->whereIn('admission_code', array_column(self::MAJORS, 1))->get()->all();
+
+                if ($cycle !== null && $majors !== []) {
+                    $this->admission($org, $cycle, $majors);
+                }
+            });
+
             $this->command?->info('Demo data already seeded.');
 
             return;
@@ -104,6 +124,7 @@ class DemoSeeder extends Seeder
 
             $this->leads($org, $cycle, $campaign, $form, $schools, $majors, $users);
             $this->duplicates($org, $schools);
+            $this->admission($org, $cycle, $majors);
         });
 
         $this->command?->info('Demo data ready. Log in as demo.head@example.com (or demo.counselor1@example.com) / password.');
@@ -293,6 +314,59 @@ class DemoSeeder extends Seeder
                     'phone' => '0988'.str_pad((string) ($n * 10 + $copy + 100), 6, '0', STR_PAD_LEFT), 'high_school_id' => $schools[$school]->id, 'graduation_year' => 2027,
                 ]);
             }
+        }
+    }
+
+    /**
+     * Rounds, two scored methods (THPT exam, transcript), the majors' combinations, and nguyện vọng for the leads that
+     * are already at or past "Nộp hồ sơ xét sớm". Skipped when the cycle already has methods or the catalogs are missing.
+     *
+     * @param  list<Major>  $majors
+     */
+    private function admission(Organization $org, AdmissionCycle $cycle, array $majors): void
+    {
+        $methods = AdmissionMethod::query()->whereIn('code', ['100', '200'])->get()->keyBy('code');
+
+        if (CycleMethod::query()->where('cycle_id', $cycle->id)->exists() || $methods->count() < 2) {
+            return;
+        }
+
+        $early = AdmissionRound::query()->create(['cycle_id' => $cycle->id, 'name' => 'Xét tuyển sớm', 'type' => 'early_school', 'sort_order' => 1]);
+        AdmissionRound::query()->create(['cycle_id' => $cycle->id, 'name' => 'Đợt 1 - hệ thống của Bộ', 'type' => 'moet_system', 'sort_order' => 2]);
+
+        $priority = ['apply' => true, 'taper_from' => 22.5];
+        $english = ['subject' => 'ANH', 'table' => ['IELTS' => ['5.0' => 8.0, '5.5' => 8.5, '6.0' => 9.0, '6.5' => 9.5, '7.0' => 10]]];
+        $thpt = CycleMethod::query()->create(['cycle_id' => $cycle->id, 'method_id' => $methods['100']->id, 'display_name' => 'Điểm thi tốt nghiệp THPT', 'required_documents' => ['citizen_id'],
+            'score_formula' => ['source' => 'thpt_exam', 'scale_to' => 30, 'priority' => $priority, 'encourage_bonus_max' => 3, 'min_total' => 18, 'certificate_conversion' => $english]]);
+        $transcript = CycleMethod::query()->create(['cycle_id' => $cycle->id, 'method_id' => $methods['200']->id, 'display_name' => 'Xét học bạ THPT', 'required_documents' => ['transcript', 'citizen_id'],
+            'score_formula' => ['source' => 'transcript', 'terms' => ['11', '12'], 'aggregate' => 'avg', 'scale_to' => 30, 'priority' => $priority, 'encourage_bonus_max' => 3, 'min_total' => 18]]);
+
+        $combinations = SubjectCombination::query()->whereIn('code', ['A00', 'A01', 'D01'])->pluck('id');
+
+        foreach ($majors as $major) {
+            foreach ([$thpt, $transcript] as $method) {
+                DB::table('major_cycle_methods')->insertOrIgnore(['major_id' => $major->id, 'cycle_method_id' => $method->id]);
+            }
+
+            foreach ($combinations as $combinationId) {
+                DB::table('major_combinations')->insertOrIgnore(['major_id' => $major->id, 'combination_id' => $combinationId, 'cycle_id' => $cycle->id]);
+            }
+        }
+
+        $status = ['early_applied' => 'submitted', 'eligible' => 'eligible', 'moet_registered' => 'eligible', 'admitted' => 'admitted', 'confirmed' => 'confirmed', 'enrolled' => 'confirmed'];
+        $subjects = Subject::query()->whereIn('code', ['TOAN', 'LY', 'HOA', 'ANH', 'VAN'])->pluck('id', 'code');
+        $cases = AdmissionCase::query()->with('stage')->where('cycle_id', $cycle->id)->orderBy('id')->get()->filter(fn (AdmissionCase $c) => isset($status[$c->stage->code]));
+        $save = app(SaveApplication::class);
+
+        foreach ($cases->values() as $i => $case) {
+            foreach (['TOAN', 'LY', 'HOA'] as $code) {
+                $base = 6 + (($i * 7 + strlen($code) * 3) % 33) / 10; // 6.0 – 9.2, repeatable
+                ApplicantScore::query()->create(['applicant_id' => $case->applicant_id, 'score_type' => 'thpt_exam', 'subject_id' => $subjects[$code], 'score' => round($base, 1), 'year' => $cycle->year - 1]);
+            }
+
+            $major = $majors[$i % count($majors)];
+            $application = $save->handle($case, null, ['major_id' => $major->id, 'cycle_method_id' => $thpt->id, 'combination_id' => $combinations->first(), 'round_id' => $early->id], null);
+            $application->forceFill(['status' => $status[$case->stage->code], 'submitted_at' => now()->subDays(3)])->save();
         }
     }
 

@@ -53,7 +53,7 @@ class ApplicantImport
         'gender' => ['gender', 'gioi_tinh'],
         'dob' => ['dob', 'ngay_sinh', 'birthday'],
         'citizen_id' => ['citizen_id', 'cccd', 'can_cuoc', 'so_cccd', 'cmnd'],
-        'province' => ['province', 'tinh', 'tinh_thanh_pho', 'tinh_tp', 'thanh_pho'],
+        'province' => ['province', 'tinh', 'tinh_thanh_pho', 'tinh_tp', 'thanh_pho', 'tinhthanh_pho'],
         'high_school' => ['high_school', 'truong', 'truong_thpt', 'ten_truong'],
         'graduation_year' => ['graduation_year', 'nam_tot_nghiep', 'nam_tn'],
         'major' => ['major', 'nganh', 'nganh_quan_tam', 'nganh_dang_ky'],

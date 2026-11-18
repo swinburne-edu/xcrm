@@ -3,8 +3,11 @@
 use App\Domain\Activity\Models\Appointment;
 use App\Domain\Activity\Models\Task;
 use App\Domain\Admission\Models\AdmissionCase;
+use App\Domain\Admission\Models\Application;
 use App\Domain\Applicant\Models\Applicant;
 use App\Domain\Applicant\Services\DuplicateFinder;
+use App\Domain\Cycle\Models\AdmissionRound;
+use App\Domain\Cycle\Models\CycleMethod;
 use App\Domain\Intake\Models\Form;
 use App\Domain\Report\Services\FunnelReport;
 use App\Models\User;
@@ -31,6 +34,16 @@ it('seeds a usable demo organization: users, leads in every stage, tasks, appoin
         ->and(User::query()->where('email', 'like', 'demo.%')->count())->toBe(6);
 
     expect(collect(app(DuplicateFinder::class)->groups())->pluck('reason')->all())->toBe(['same_school', 'same_school']);
+});
+
+it('sets up the admission cycle and scores a nguyện vọng for every lead past the first applying stage', function () {
+    $applications = Application::query()->withoutGlobalScopes()->get();
+
+    expect(CycleMethod::query()->count())->toBe(2)->and(AdmissionRound::query()->count())->toBe(2)
+        ->and($applications)->toHaveCount(16)->and($applications->whereNull('final_score'))->toHaveCount(0)
+        ->and($applications->pluck('status')->map->value->unique()->sort()->values()->all())->toBe(['admitted', 'confirmed', 'eligible', 'submitted']);
+
+    $this->actingAs($this->head)->get('/applications')->assertInertia(fn (Assert $p) => $p->component('Applications/Index')->where('applications.meta.total', 16));
 });
 
 it('feeds the dashboard and the reports', function () {
