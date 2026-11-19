@@ -47,9 +47,12 @@ const props = defineProps<{
     can: { update: boolean; delete: boolean };
 }>();
 
-type Tab = 'timeline' | 'scores' | 'applications' | 'documents' | 'appointments';
-const tab = ref<Tab>('timeline');
+type Tab = 'overview' | 'timeline' | 'scores' | 'applications' | 'documents' | 'appointments';
+const validTabs: Tab[] = ['overview', 'timeline', 'scores', 'applications', 'documents', 'appointments'];
+const requested = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tab') : null;
+const tab = ref<Tab>(validTabs.includes(requested as Tab) ? (requested as Tab) : 'overview');
 const tabs = computed<{ key: Tab; label: string; count?: number }[]>(() => [
+    { key: 'overview', label: 'Tổng quan' },
     { key: 'timeline', label: 'Timeline' },
     { key: 'scores', label: 'Điểm', count: props.scores.length },
     { key: 'applications', label: 'Nguyện vọng', count: props.application_panel.items.length },
@@ -153,7 +156,7 @@ const tabClass = (key: string): string => (tab.value === key ? 'border-primary f
             </div>
         </header>
 
-        <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div class="grid min-w-0 content-start gap-4">
             <main class="grid min-w-0 content-start gap-4">
                 <div class="flex flex-wrap gap-1 border-b" role="tablist">
                     <button
@@ -171,7 +174,89 @@ const tabClass = (key: string): string => (tab.value === key ? 'border-primary f
                     </button>
                 </div>
 
-                <Timeline v-if="tab === 'timeline'" subject-type="applicant" :subject="applicant.uuid" />
+                <div v-if="tab === 'overview'" class="grid items-start gap-4 text-sm lg:grid-cols-2" data-test="info">
+                    <div class="grid content-start gap-4">
+                <section class="overflow-hidden rounded-lg border bg-card" data-test="case-card">
+                    <h2 class="border-b bg-muted/40 px-4 py-2.5 font-semibold">Hồ sơ tuyển sinh</h2>
+                    <p v-if="cases.length === 0" class="p-4 text-muted-foreground" data-test="no-case">Thí sinh chưa có hồ sơ tuyển sinh.</p>
+                    <div v-for="c in cases" :key="c.uuid" class="grid gap-2 border-b p-4 last:border-b-0" data-test="case-item">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-muted-foreground">{{ c.cycle }}</span>
+                            <StageBadge v-if="c.stage" :name="c.stage" :color="c.stage_color" />
+                        </div>
+                        <dl class="grid gap-1.5">
+                            <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Phụ trách</dt><dd>{{ c.owner || 'Kho chung' }}</dd></div>
+                            <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Nguồn</dt><dd>{{ c.source || '—' }}</dd></div>
+                            <div v-if="c.next_action_at" class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Việc tiếp theo</dt><dd>{{ formatDateTime(c.next_action_at) }}</dd></div>
+                        </dl>
+                        <Link :href="`/cases/table?filter[q]=${applicant.code}&filter[owner]=all`" class="text-xs text-primary hover:underline">Mở trong danh sách hồ sơ</Link>
+                    </div>
+                </section>
+
+                <section class="overflow-hidden rounded-lg border bg-card">
+                    <h2 class="border-b bg-muted/40 px-4 py-2.5 font-semibold">Liên hệ</h2>
+                    <dl class="grid gap-2.5 p-4">
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Điện thoại</dt><dd>{{ applicant.phone || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Email</dt><dd class="break-all">{{ applicant.email || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Zalo</dt><dd>{{ applicant.zalo_id || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Facebook</dt><dd>{{ applicant.facebook_id || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Địa chỉ</dt><dd>{{ [applicant.address, applicant.ward_name, applicant.province_name].filter(Boolean).join(', ') || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2">
+                            <dt class="text-muted-foreground">Nhận thông tin</dt>
+                            <dd><ToneBadge :tone="applicant.consent_marketing ? 'green' : 'gray'">{{ applicant.consent_marketing ? 'Đồng ý' : 'Chưa đồng ý' }}</ToneBadge></dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <section class="overflow-hidden rounded-lg border bg-card">
+                    <h2 class="border-b bg-muted/40 px-4 py-2.5 font-semibold">Nguồn tiếp cận</h2>
+                    <dl class="grid gap-2.5 p-4">
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Nguồn</dt><dd>{{ applicant.first_source_name || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Chiến dịch</dt><dd>{{ applicant.first_campaign_name || '—' }}</dd></div>
+                        <div v-if="applicant.referrer_name" class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Người giới thiệu</dt><dd>{{ applicant.referrer_name }}</dd></div>
+                    </dl>
+                </section>
+                    </div>
+                    <div class="grid content-start gap-4">
+                <section class="overflow-hidden rounded-lg border bg-card">
+                    <h2 class="border-b bg-muted/40 px-4 py-2.5 font-semibold">Cá nhân và học tập</h2>
+                    <dl class="grid gap-2.5 p-4">
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Ngày sinh</dt><dd>{{ applicant.dob || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">CCCD</dt><dd data-test="citizen-id">{{ applicant.citizen_id || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Trường THPT</dt><dd>{{ applicant.high_school_name || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Lớp</dt><dd>{{ applicant.class_name || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Khu vực ƯT</dt><dd>{{ applicant.priority_area_code || '—' }}</dd></div>
+                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Đối tượng ƯT</dt><dd>{{ applicant.priority_group_code || '—' }}</dd></div>
+                    </dl>
+                </section>
+
+                <CustomFieldsCard :panel="custom_fields" :can-edit="can.update" />
+
+                <section class="overflow-hidden rounded-lg border bg-card" data-test="guardians">
+                    <div class="flex items-center justify-between border-b bg-muted/40 px-4 py-1.5">
+                        <h2 class="font-semibold">Phụ huynh<span v-if="guardians.length" class="ml-1 font-normal text-muted-foreground">({{ guardians.length }})</span></h2>
+                        <Button v-if="can.update" size="sm" variant="ghost" data-test="add-guardian" @click="openGuardian(null)"><Plus class="size-4" />Thêm</Button>
+                    </div>
+                    <p v-if="guardians.length === 0" class="p-4 text-muted-foreground">Chưa có phụ huynh.</p>
+                    <div v-for="g in guardians" :key="g.id" class="border-b p-3 last:border-b-0" data-test="guardian-row">
+                        <div class="flex items-start justify-between gap-1">
+                            <div class="min-w-0">
+                                <span class="font-medium">{{ g.full_name }}</span>
+                                <Star v-if="g.is_primary_contact" class="ml-1 inline size-3.5 fill-amber-400 text-amber-500" aria-label="Đầu mối chính" />
+                                <div class="text-xs text-muted-foreground">{{ g.relationship_label || '—' }}<template v-if="g.is_decision_maker"> · người quyết định</template></div>
+                                <div class="text-xs">{{ g.phone || '—' }}<template v-if="g.occupation"> · {{ g.occupation }}</template></div>
+                            </div>
+                            <div v-if="can.update" class="flex shrink-0">
+                                <Button variant="ghost" size="icon" class="size-7" aria-label="Sửa" @click="openGuardian(g)"><Pencil class="size-3.5" /></Button>
+                                <Button variant="ghost" size="icon" class="size-7 text-destructive" aria-label="Gỡ" @click="removal = { kind: 'guardian', id: g.id, label: g.full_name }"><Trash2 class="size-3.5" /></Button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                    </div>
+                </div>
+
+                <Timeline v-else-if="tab === 'timeline'" subject-type="applicant" :subject="applicant.uuid" />
 
                 <template v-else-if="tab === 'scores'">
                     <ScoreGrid :applicant-uuid="applicant.uuid" :subjects="subjects" :scores="scores" :score-types="options.scoreTypes" :graduation-year="applicant.graduation_year" :can-edit="can.update" />
@@ -208,84 +293,6 @@ const tabClass = (key: string): string => (tab.value === key ? 'border-primary f
                 <section v-else class="rounded-md border p-6 text-sm text-muted-foreground" :data-test="`${tab}-later`">{{ later[tab] }}</section>
             </main>
 
-            <aside class="grid content-start gap-4 text-sm" data-test="info">
-                <section class="overflow-hidden rounded-lg border bg-card" data-test="case-card">
-                    <h2 class="border-b bg-muted/40 px-4 py-2.5 font-semibold">Hồ sơ tuyển sinh</h2>
-                    <p v-if="cases.length === 0" class="p-4 text-muted-foreground" data-test="no-case">Thí sinh chưa có hồ sơ tuyển sinh.</p>
-                    <div v-for="c in cases" :key="c.uuid" class="grid gap-2 border-b p-4 last:border-b-0" data-test="case-item">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs text-muted-foreground">{{ c.cycle }}</span>
-                            <StageBadge v-if="c.stage" :name="c.stage" :color="c.stage_color" />
-                        </div>
-                        <dl class="grid gap-1.5">
-                            <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Phụ trách</dt><dd>{{ c.owner || 'Kho chung' }}</dd></div>
-                            <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Nguồn</dt><dd>{{ c.source || '—' }}</dd></div>
-                            <div v-if="c.next_action_at" class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Việc tiếp theo</dt><dd>{{ formatDateTime(c.next_action_at) }}</dd></div>
-                        </dl>
-                        <Link :href="`/cases/table?filter[q]=${applicant.code}&filter[owner]=all`" class="text-xs text-primary hover:underline">Mở trong danh sách hồ sơ</Link>
-                    </div>
-                </section>
-
-                <section class="overflow-hidden rounded-lg border bg-card">
-                    <h2 class="border-b bg-muted/40 px-4 py-2.5 font-semibold">Liên hệ</h2>
-                    <dl class="grid gap-2.5 p-4">
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Điện thoại</dt><dd>{{ applicant.phone || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Email</dt><dd class="break-all">{{ applicant.email || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Zalo</dt><dd>{{ applicant.zalo_id || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Facebook</dt><dd>{{ applicant.facebook_id || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Địa chỉ</dt><dd>{{ [applicant.address, applicant.ward_name, applicant.province_name].filter(Boolean).join(', ') || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2">
-                            <dt class="text-muted-foreground">Nhận thông tin</dt>
-                            <dd><ToneBadge :tone="applicant.consent_marketing ? 'green' : 'gray'">{{ applicant.consent_marketing ? 'Đồng ý' : 'Chưa đồng ý' }}</ToneBadge></dd>
-                        </div>
-                    </dl>
-                </section>
-
-                <section class="overflow-hidden rounded-lg border bg-card">
-                    <h2 class="border-b bg-muted/40 px-4 py-2.5 font-semibold">Cá nhân và học tập</h2>
-                    <dl class="grid gap-2.5 p-4">
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Ngày sinh</dt><dd>{{ applicant.dob || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">CCCD</dt><dd data-test="citizen-id">{{ applicant.citizen_id || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Trường THPT</dt><dd>{{ applicant.high_school_name || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Lớp</dt><dd>{{ applicant.class_name || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Khu vực ƯT</dt><dd>{{ applicant.priority_area_code || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Đối tượng ƯT</dt><dd>{{ applicant.priority_group_code || '—' }}</dd></div>
-                    </dl>
-                </section>
-
-                <section class="overflow-hidden rounded-lg border bg-card">
-                    <h2 class="border-b bg-muted/40 px-4 py-2.5 font-semibold">Nguồn tiếp cận</h2>
-                    <dl class="grid gap-2.5 p-4">
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Nguồn</dt><dd>{{ applicant.first_source_name || '—' }}</dd></div>
-                        <div class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Chiến dịch</dt><dd>{{ applicant.first_campaign_name || '—' }}</dd></div>
-                        <div v-if="applicant.referrer_name" class="grid grid-cols-[6.5rem_1fr] gap-2"><dt class="text-muted-foreground">Người giới thiệu</dt><dd>{{ applicant.referrer_name }}</dd></div>
-                    </dl>
-                </section>
-
-                <CustomFieldsCard :panel="custom_fields" :can-edit="can.update" />
-
-                <section class="overflow-hidden rounded-lg border bg-card" data-test="guardians">
-                    <div class="flex items-center justify-between border-b bg-muted/40 px-4 py-1.5">
-                        <h2 class="font-semibold">Phụ huynh<span v-if="guardians.length" class="ml-1 font-normal text-muted-foreground">({{ guardians.length }})</span></h2>
-                        <Button v-if="can.update" size="sm" variant="ghost" data-test="add-guardian" @click="openGuardian(null)"><Plus class="size-4" />Thêm</Button>
-                    </div>
-                    <p v-if="guardians.length === 0" class="p-4 text-muted-foreground">Chưa có phụ huynh.</p>
-                    <div v-for="g in guardians" :key="g.id" class="border-b p-3 last:border-b-0" data-test="guardian-row">
-                        <div class="flex items-start justify-between gap-1">
-                            <div class="min-w-0">
-                                <span class="font-medium">{{ g.full_name }}</span>
-                                <Star v-if="g.is_primary_contact" class="ml-1 inline size-3.5 fill-amber-400 text-amber-500" aria-label="Đầu mối chính" />
-                                <div class="text-xs text-muted-foreground">{{ g.relationship_label || '—' }}<template v-if="g.is_decision_maker"> · người quyết định</template></div>
-                                <div class="text-xs">{{ g.phone || '—' }}<template v-if="g.occupation"> · {{ g.occupation }}</template></div>
-                            </div>
-                            <div v-if="can.update" class="flex shrink-0">
-                                <Button variant="ghost" size="icon" class="size-7" aria-label="Sửa" @click="openGuardian(g)"><Pencil class="size-3.5" /></Button>
-                                <Button variant="ghost" size="icon" class="size-7 text-destructive" aria-label="Gỡ" @click="removal = { kind: 'guardian', id: g.id, label: g.full_name }"><Trash2 class="size-3.5" /></Button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </aside>
         </div>
     </div>
 

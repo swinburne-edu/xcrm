@@ -142,7 +142,7 @@ export const guides: Guide[] = [
                     'Nhập họ tên, số điện thoại, trường THPT, năm tốt nghiệp… Khi gõ số điện thoại, email hoặc CCCD, hệ thống cảnh báo nếu đã có người trùng.',
                     'Nếu thí sinh đã có, mở thí sinh cũ và bổ sung thay vì tạo mới.',
                     'Sửa nhanh ngay trong danh sách Thí sinh: bấm vào ô tên, email, điện thoại, trường THPT, tỉnh hoặc năm tốt nghiệp, gõ rồi Enter để lưu (Esc để bỏ). Nút Gọi và Chép số nằm cạnh số điện thoại.',
-                    'Trang chi tiết thí sinh có các tab Timeline, Điểm, Nguyện vọng, Giấy tờ; cột bên phải là thông tin liên hệ, phụ huynh, nguồn tiếp cận.',
+                    'Trang chi tiết thí sinh có các tab Tổng quan (mở mặc định: hồ sơ tuyển sinh, liên hệ, phụ huynh, nguồn tiếp cận, trường tuỳ chỉnh), Timeline, Điểm, Nguyện vọng, Giấy tờ, Lịch hẹn.',
                 ],
             },
             {

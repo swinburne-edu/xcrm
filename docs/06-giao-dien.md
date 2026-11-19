@@ -71,7 +71,7 @@ Backend trả dữ liệu bảng theo một chuẩn chung: `GET /{resource}?filt
 
 **Hồ sơ tuyển sinh `/cases`** — mặc định Kanban theo stage của mùa đang chọn. Thẻ: tên thí sinh, trường THPT, ngành quan tâm, người phụ trách (avatar), temperature, ngày hành động tiếp theo (đỏ nếu quá hạn). Lọc: người phụ trách (mặc định "Của tôi" với counselor), nguồn, chiến dịch, tỉnh, trường, ngành, temperature, tag. Nút "Kho chung".
 
-**Chi tiết thí sinh `/applicants/{uuid}`** — cột trái: thông tin + phụ huynh + tag + custom field (sửa inline). Giữa: tabs Timeline (mặc định) · Điểm · Nguyện vọng · Giấy tờ · Lịch hẹn. Phải: hồ sơ mùa hiện tại (stage dạng stepper, người phụ trách, nguồn, chiến dịch, next action), danh sách task.
+**Chi tiết thí sinh `/applicants/{uuid}`** — header cố định phía trên: ảnh viết tắt, tên, giai đoạn hồ sơ mùa hiện tại, mã, liên hệ nhanh, nút Sửa/Xoá. Bên dưới là các tab ngang toàn chiều rộng, mặc định mở tab **Tổng quan**: Tổng quan · Timeline · Điểm · Nguyện vọng · Giấy tờ · Lịch hẹn. Tab Tổng quan gồm hai cột thẻ: hồ sơ tuyển sinh (người phụ trách, nguồn, việc tiếp theo), liên hệ, nguồn tiếp cận / cá nhân và học tập, trường tuỳ chỉnh (sửa inline), phụ huynh. Có thể mở thẳng một tab bằng `?tab=timeline`, `?tab=scores`…
 
 **Chi tiết trường THPT** — header: tên, hạng, trạng thái hợp tác, người phụ trách, KPI mùa hiện tại (thí sinh / hồ sơ / trúng tuyển / nhập học). Tabs: Người liên hệ · Hoạt động · Thí sinh · Thống kê theo mùa · Timeline.
 
