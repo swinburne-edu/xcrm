@@ -85,7 +85,7 @@ function confirmDelete(): void {
         <div class="flex flex-wrap items-end justify-between gap-3">
             <div>
                 <h1 class="text-xl font-semibold">Mẫu tin nhắn</h1>
-                <p class="text-sm text-muted-foreground">Soạn một lần, gửi hàng loạt từ danh sách thí sinh. Dùng biến như <code>{{ '{{applicant.first_name}}' }}</code> để cá nhân hoá.</p>
+                <p class="text-sm text-muted-foreground">Soạn một lần, gửi hàng loạt từ danh sách thí sinh. Dùng biến như <code v-text="'{{applicant.first_name}}'"></code> để cá nhân hoá.</p>
             </div>
             <Button v-if="can.manage" data-test="create-template" @click="start(null)"><Plus class="size-4" />Thêm mẫu</Button>
         </div>

@@ -119,6 +119,13 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 2. Lần sau mở menu **Chế độ xem** và chọn tên để áp dụng lại. Chế độ xem đang khớp với màn hình hiện tại được đánh dấu; mở menu để **Cập nhật** theo bộ lọc hiện có, **Đổi tên** hoặc **Xoá**.
 3. Chế độ xem là của riêng bạn. Người có quyền quản lý chế độ xem (trưởng phòng, quản trị) có thể bật **Chia sẻ cho cả tổ chức** để mọi người cùng thấy; chỉ họ sửa hoặc xoá được chế độ xem dùng chung.
 
+## 5d. Workflow tự động
+
+1. **Cài đặt, Workflow tự động**, bấm **Thêm workflow**: chọn đối tượng (hồ sơ tuyển sinh hoặc thí sinh), **Khi** (tạo mới, đổi một trường, đổi giai đoạn, hằng ngày), **Nếu** (điều kiện, tất cả cùng đúng, có thể bỏ trống) và **Thì** (một hoặc nhiều hành động: giao người phụ trách, tạo việc cần làm, gửi tin nhắn, cập nhật mức độ quan tâm hoặc ngành chính, gọi webhook).
+2. Bật hoặc tắt từng workflow bằng nút Bật/Tắt. Bấm **Lần chạy gần đây** để xem workflow đã làm gì với từng bản ghi, hành động nào lỗi và vì sao.
+3. Lưu ý: workflow hằng ngày chạy lúc 07:00 và chỉ chạy một lần trên mỗi bản ghi. Hành động do workflow làm không kích hoạt thêm workflow khác. Tin nhắn chỉ gửi cho thí sinh đã đồng ý nhận tin. Webhook chỉ gọi địa chỉ https công khai.
+4. Cần chạy hàng đợi (`php artisan queue:work`) và bộ lập lịch (`php artisan schedule:work`).
+
 ## Chưa có trong MVP
 
 Import danh sách trúng tuyển (giai đoạn 2 trong `docs/TASKS.md`).

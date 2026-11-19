@@ -92,6 +92,7 @@ return [
                 ['title' => 'Trường tuỳ chỉnh', 'url' => '/settings/custom-fields', 'route' => 'settings.custom-fields.index', 'permission' => 'custom_field.view'],
                 ['title' => 'Tích hợp lead ads', 'url' => '/settings/lead-integrations', 'route' => 'settings.lead-integrations.index', 'permission' => 'lead_integration.view'],
                 ['title' => 'Mẫu tin nhắn', 'url' => '/settings/message-templates', 'route' => 'settings.message-templates.index', 'permission' => 'message_template.view'],
+                ['title' => 'Workflow tự động', 'url' => '/settings/workflows', 'route' => 'settings.workflows.index', 'permission' => 'workflow.view'],
                 ['title' => 'Quy tắc phân bổ', 'url' => '/settings/assignment-rules', 'route' => 'settings.assignment-rules.index', 'permission' => 'assignment_rule.view'],
             ],
         ],

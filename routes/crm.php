@@ -42,6 +42,7 @@ use App\Http\Controllers\Settings\AssignmentRuleController;
 use App\Http\Controllers\Settings\CustomFieldController;
 use App\Http\Controllers\Settings\LeadIntegrationController;
 use App\Http\Controllers\Settings\MessageTemplateController;
+use App\Http\Controllers\Settings\WorkflowController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\TerritoryController;
@@ -83,6 +84,12 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::post('message-templates', [MessageTemplateController::class, 'store'])->name('message-templates.store');
     Route::put('message-templates/{id}', [MessageTemplateController::class, 'update'])->whereNumber('id')->name('message-templates.update');
     Route::delete('message-templates/{id}', [MessageTemplateController::class, 'destroy'])->whereNumber('id')->name('message-templates.destroy');
+
+    Route::get('workflows', [WorkflowController::class, 'index'])->name('workflows.index');
+    Route::post('workflows', [WorkflowController::class, 'store'])->name('workflows.store');
+    Route::put('workflows/{id}', [WorkflowController::class, 'update'])->whereNumber('id')->name('workflows.update');
+    Route::patch('workflows/{id}/active', [WorkflowController::class, 'toggle'])->whereNumber('id')->name('workflows.toggle');
+    Route::delete('workflows/{id}', [WorkflowController::class, 'destroy'])->whereNumber('id')->name('workflows.destroy');
 
     Route::get('assignment-rules', [AssignmentRuleController::class, 'index'])->name('assignment-rules.index');
     Route::post('assignment-rules', [AssignmentRuleController::class, 'store'])->name('assignment-rules.store');

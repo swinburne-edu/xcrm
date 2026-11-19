@@ -81,7 +81,7 @@ class SendMessages
      * @param  Builder<Applicant>  $applicants
      * @return array{batch_id: string, queued: int, no_consent: int, no_contact: int}
      */
-    public function handle(MessageTemplate $template, Builder $applicants, User $by): array
+    public function handle(MessageTemplate $template, Builder $applicants, ?User $by = null): array
     {
         $plan = $this->plan($template, $applicants, $by);
         $batch = (string) Str::uuid();
@@ -97,7 +97,7 @@ class SendMessages
                     'channel' => $template->channel,
                     'recipient' => $r['to'],
                     'applicant_id' => $r['applicant']->id,
-                    'user_id' => $by->id,
+                    'user_id' => $by?->id,
                     'subject' => $template->subject === null ? null : $this->renderer->render($template->subject, $values),
                     'body' => $this->renderer->render($template->body, $values),
                 ])->id;

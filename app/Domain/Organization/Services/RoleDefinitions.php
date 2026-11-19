@@ -35,6 +35,7 @@ final class RoleDefinitions
         'saved_view' => ['manage'],
         'lead_integration' => ['view', 'manage'],
         'message_template' => ['view', 'manage'],
+        'workflow' => ['view', 'manage'],
         'message' => ['view', 'send'],
         'user' => ['view', 'create', 'update', 'delete'],
         'team' => ['view', 'create', 'update', 'delete'],

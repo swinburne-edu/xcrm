@@ -33,3 +33,11 @@ Artisan::command('crm:create-graduating-cases', function () {
 })->purpose('Open cases in every active cycle for applicants whose graduation year matches the cycle year');
 
 Schedule::command('crm:create-graduating-cases')->dailyAt('02:00')->withoutOverlapping();
+
+// Task 3.2: workflows with the trigger "schedule", once a day.
+Artisan::command('crm:run-workflows', function () {
+    \App\Domain\Workflow\Jobs\RunScheduledWorkflows::dispatchSync();
+    $this->info('Scheduled workflows processed.');
+})->purpose('Run the scheduled workflows on the records that have not been through them yet');
+
+Schedule::command('crm:run-workflows')->dailyAt('07:00')->withoutOverlapping();
