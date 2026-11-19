@@ -2,6 +2,8 @@
 
 Dành cho cán bộ tuyển sinh. Giao diện hoàn toàn tiếng Việt; thanh trên cùng có ô **chọn mùa tuyển sinh** — mọi số liệu, hồ sơ, chiến dịch đều theo mùa đang chọn.
 
+> Trong hệ thống có sẵn trang **Hướng dẫn sử dụng** (menu cuối cùng, `/help`): hướng dẫn từng bước theo vai trò (tư vấn viên, trưởng nhóm, trưởng phòng, thư ký xét tuyển, cán bộ trường THPT, marketing, khoa, cộng tác viên, quản trị). Nội dung sửa ở `resources/js/pages/Help/guides.ts`.
+
 ## 0. Chạy thử với dữ liệu mẫu
 
 ```bash

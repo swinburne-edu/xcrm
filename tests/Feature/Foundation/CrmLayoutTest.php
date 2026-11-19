@@ -59,7 +59,7 @@ it('shares the sidebar menu in the order of the docs', function () {
     $this->actingAs($admin)
         ->get(route('dashboard'))
         ->assertInertia(fn (Assert $page) => $page
-            ->has('navigation', 8)
+            ->has('navigation', 9)
             ->where('navigation.0.title', 'Tổng quan')
             ->where('navigation.0.url', '/dashboard')
             ->where('navigation.0.placeholder', false)
@@ -77,7 +77,9 @@ it('shares the sidebar menu in the order of the docs', function () {
             ->where('navigation.5.title', 'Đào tạo & chỉ tiêu')
             ->where('navigation.6.title', 'Báo cáo')
             ->where('navigation.7.title', 'Cài đặt')
-            ->has('navigation.7.children', 7));
+            ->has('navigation.7.children', 7)
+            ->where('navigation.8.title', 'Hướng dẫn sử dụng')
+            ->where('navigation.8.url', '/help'));
 });
 
 it('does not share the menu with guests', function () {

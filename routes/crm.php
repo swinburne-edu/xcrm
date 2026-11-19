@@ -21,6 +21,7 @@ use App\Http\Controllers\Cycle\CycleMethodController;
 use App\Http\Controllers\Cycle\CycleRoundController;
 use App\Http\Controllers\Cycle\CycleSelectionController;
 use App\Http\Controllers\HighSchool\HighSchoolController;
+use App\Http\Controllers\Platform\HelpController;
 use App\Http\Controllers\HighSchool\SchoolActivityController;
 use App\Http\Controllers\HighSchool\SchoolContactController;
 use App\Http\Controllers\Intake\FormController;
@@ -41,6 +42,9 @@ use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\TerritoryController;
 use App\Http\Controllers\Settings\UserController;
 use Illuminate\Support\Facades\Route;
+
+// In-app user guide per role (no permission needed: every signed-in user may read it).
+Route::middleware(['auth', 'verified'])->get('help', HelpController::class)->name('help');
 
 /*
 |--------------------------------------------------------------------------

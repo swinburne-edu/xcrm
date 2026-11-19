@@ -92,6 +92,12 @@ return [
                 ['title' => 'Quy tắc phân bổ', 'url' => '/settings/assignment-rules', 'route' => 'settings.assignment-rules.index', 'permission' => 'assignment_rule.view'],
             ],
         ],
+        [
+            'title' => 'Hướng dẫn sử dụng',
+            'url' => '/help',
+            'route' => 'help',
+            'icon' => 'help',
+        ],
     ],
 
 ];

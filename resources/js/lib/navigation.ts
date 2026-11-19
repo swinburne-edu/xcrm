@@ -5,6 +5,7 @@ import {
     Circle,
     GraduationCap,
     LayoutDashboard,
+    LifeBuoy,
     Megaphone,
     School,
     Settings,
@@ -21,6 +22,7 @@ const navIcons: Record<string, LucideIcon> = {
     majors: BookOpen,
     reports: ChartColumn,
     settings: Settings,
+    help: LifeBuoy,
 };
 
 export function navIcon(key: string | null): LucideIcon {
