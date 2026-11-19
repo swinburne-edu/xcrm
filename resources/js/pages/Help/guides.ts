@@ -488,6 +488,7 @@ export const guides: Guide[] = [
                     'Pipeline: chỉnh giai đoạn, màu, SLA từng giai đoạn.',
                     'Vùng phụ trách: gán tỉnh hoặc trường THPT cho người hay nhóm.',
                     'Quy tắc phân bổ và Trường tuỳ chỉnh: cấu hình như hướng dẫn của Trưởng phòng tuyển sinh.',
+                    'Tích hợp lead ads: Cài đặt → Tích hợp lead ads → Thêm tích hợp, chọn Facebook hoặc TikTok, nhập khoá bí mật rồi dán địa chỉ webhook (và verify token với Facebook) vào nền tảng quảng cáo. Lead gửi về tự tạo thí sinh và hồ sơ.',
                 ],
             },
             {

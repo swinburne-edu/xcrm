@@ -39,6 +39,14 @@ Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển s
 5. Sau buổi: mở hoạt động → **Báo cáo sau hoạt động** (tham dự thực tế, chi phí, kết quả). Lưu báo cáo chuyển hoạt động sang *Đã diễn ra* và đóng điểm danh.
 6. Trang mỗi trường có tab **Hoạt động** (các buổi đã/đang lên lịch) và **Thống kê theo mùa**: số thí sinh, hồ sơ, trúng tuyển, nhập học từ trường, số hoạt động, điểm danh và chi phí theo từng mùa.
 
+## 2c. Nhận lead từ Facebook Lead Ads và TikTok
+
+1. **Cài đặt → Tích hợp lead ads → Thêm tích hợp**: chọn nền tảng, đặt tên, chọn nguồn / chiến dịch (để trống thì dùng nguồn mặc định Facebook Ads hoặc TikTok Ads), nhập khoá bí mật. Facebook cần thêm **Page access token** (quyền `leads_retrieval`) và hệ thống tự tạo **verify token**.
+2. Sao chép **địa chỉ webhook** (và verify token) dán vào ứng dụng Facebook (Webhooks → Page → leadgen) hoặc cấu hình webhook của TikTok. Mỗi yêu cầu được kiểm tra chữ ký; sai chữ ký bị từ chối và ghi lại.
+3. Mỗi lead mới tự tạo thí sinh, hồ sơ mùa hiện tại, giao người phụ trách và tạo việc "Gọi lần đầu"; người đã có trong hệ thống chỉ được bổ sung thông tin và ghi thêm một lần tiếp xúc. Một lead gửi lại nhiều lần chỉ tính một lần.
+4. Trường quen thuộc (họ tên, số điện thoại, email, tỉnh, trường, ngành…) tự nhận ra; form quảng cáo dùng tên trường riêng thì thêm dòng ở **Ghép trường**. Trường không ghép được vẫn lưu trong thông tin lần tiếp xúc.
+5. Bấm **Lead gần đây** để xem lead vừa nhận và lý do lỗi (ví dụ thiếu số điện thoại). Cần chạy `php artisan queue:work` để lead được xử lý.
+
 ## 3. Tư vấn (F4)
 
 - **Hồ sơ tuyển sinh** (`/cases`): bảng Kanban theo giai đoạn (kéo thả để chuyển giai đoạn) hoặc dạng bảng; bấm thẻ để xem nhanh. Hồ sơ ở kho chung: bấm **Nhận hồ sơ** (tư vấn viên) hoặc **Giao** (trưởng nhóm).
@@ -89,4 +97,4 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 
 ## Chưa có trong MVP
 
-Import danh sách trúng tuyển, webhook Facebook Lead Ads (giai đoạn 2 trong `docs/TASKS.md`).
+Import danh sách trúng tuyển (giai đoạn 2 trong `docs/TASKS.md`).

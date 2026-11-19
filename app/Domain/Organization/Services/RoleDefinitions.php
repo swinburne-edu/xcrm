@@ -33,6 +33,7 @@ final class RoleDefinitions
         'assignment_rule' => ['view', 'manage'],
         'custom_field' => ['view', 'manage'],
         'saved_view' => ['manage'],
+        'lead_integration' => ['view', 'manage'],
         'user' => ['view', 'create', 'update', 'delete'],
         'team' => ['view', 'create', 'update', 'delete'],
         'role' => ['view'],

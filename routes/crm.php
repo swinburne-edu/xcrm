@@ -37,6 +37,7 @@ use App\Http\Controllers\Platform\SavedViewController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\AssignmentRuleController;
 use App\Http\Controllers\Settings\CustomFieldController;
+use App\Http\Controllers\Settings\LeadIntegrationController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\TerritoryController;
@@ -68,6 +69,12 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::put('users/{id}', [UserController::class, 'update'])->whereNumber('id')->name('users.update');
     Route::delete('users/{id}', [UserController::class, 'destroy'])->whereNumber('id')->name('users.destroy');
     // Assignment rules and SLA / recall settings (task 2.4). Authorization: AssignmentRulePolicy.
+    // Lead ads webhooks (task 2.7). Authorization: LeadIntegrationPolicy; the public endpoints are in routes/api.php.
+    Route::get('lead-integrations', [LeadIntegrationController::class, 'index'])->name('lead-integrations.index');
+    Route::post('lead-integrations', [LeadIntegrationController::class, 'store'])->name('lead-integrations.store');
+    Route::put('lead-integrations/{id}', [LeadIntegrationController::class, 'update'])->whereNumber('id')->name('lead-integrations.update');
+    Route::delete('lead-integrations/{id}', [LeadIntegrationController::class, 'destroy'])->whereNumber('id')->name('lead-integrations.destroy');
+
     Route::get('assignment-rules', [AssignmentRuleController::class, 'index'])->name('assignment-rules.index');
     Route::post('assignment-rules', [AssignmentRuleController::class, 'store'])->name('assignment-rules.store');
     Route::put('assignment-rules/settings', [AssignmentRuleController::class, 'settings'])->name('assignment-rules.settings');

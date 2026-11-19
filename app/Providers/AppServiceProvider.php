@@ -35,6 +35,8 @@ use App\Domain\Major\Policies\MajorPolicy;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
 use App\Domain\Platform\Models\AssignmentRule;
+use App\Domain\Intake\Models\LeadIntegration;
+use App\Domain\Intake\Policies\LeadIntegrationPolicy;
 use App\Domain\Platform\Models\CustomFieldDefinition;
 use App\Domain\Platform\Models\SavedView;
 use App\Domain\Platform\Policies\SavedViewPolicy;
@@ -102,6 +104,12 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(30)->by('checkin:'.$request->ip().':'.$request->route('token')),
         ]);
 
+        // Ad platforms push many leads from a few addresses: a generous cap per integration, a looser one per IP.
+        RateLimiter::for('lead-webhooks', fn (Request $request) => [
+            Limit::perMinute(600)->by('webhooks:'.$request->ip()),
+            Limit::perMinute(300)->by('webhooks:'.$request->route('uuid')),
+        ]);
+
         RateLimiter::for('public-leads', fn (Request $request) => [
             Limit::perMinute(60)->by('leads:'.$request->ip()),
             Limit::perMinute(10)->by('leads:'.$request->ip().':'.$request->input('form_uuid')),
@@ -129,6 +137,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(AssignmentRule::class, AssignmentRulePolicy::class);
         Gate::policy(SavedView::class, SavedViewPolicy::class);
         Gate::policy(CustomFieldDefinition::class, CustomFieldDefinitionPolicy::class);
+        Gate::policy(LeadIntegration::class, LeadIntegrationPolicy::class);
         Gate::policy(Task::class, TaskPolicy::class);
         Gate::policy(Appointment::class, AppointmentPolicy::class);
         Gate::policy(Pipeline::class, PipelinePolicy::class);

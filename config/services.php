@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    // Lead ads webhooks (task 2.7). Version of the Graph API used to read a Facebook lead.
+    'facebook' => [
+        'graph_version' => env('FACEBOOK_GRAPH_VERSION', 'v21.0'),
+    ],
+
 ];
