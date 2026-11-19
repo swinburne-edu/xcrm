@@ -21,6 +21,8 @@ use App\Domain\Catalog\Models\PriorityGroup;
 use App\Domain\Catalog\Models\Subject;
 use App\Domain\Platform\Actions\SaveCustomData;
 use App\Domain\Platform\Enums\CustomFieldObject;
+use App\Domain\Platform\Enums\SavedViewObject;
+use App\Domain\Platform\Services\SavedViews;
 use App\Domain\Platform\Services\CustomFields;
 use App\Domain\Shared\Services\SensitiveData;
 use App\Domain\Shared\Support\Listing\Filter;
@@ -67,6 +69,7 @@ class ApplicantController extends Controller
 
         return Inertia::render('Applicants/Index', [
             'applicants' => $applicants,
+            'saved_views' => app(SavedViews::class)->for(SavedViewObject::Applicants, $request->user()),
             'options' => $this->options(),
             'can' => ['create' => $request->user()->can('create', Applicant::class), 'import' => $request->user()->can('import', Applicant::class)],
         ]);

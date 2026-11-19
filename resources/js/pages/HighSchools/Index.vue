@@ -4,6 +4,8 @@ import { Plus, Upload } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import DataTable from '@/components/crm/DataTable.vue';
 import FilterBar from '@/components/crm/FilterBar.vue';
+import SavedViewMenu from '@/components/crm/SavedViewMenu.vue';
+import type { SavedViewsProps } from '@/components/crm/SavedViewMenu.vue';
 import TierBadge from '@/components/crm/TierBadge.vue';
 import ToneBadge from '@/components/crm/ToneBadge.vue';
 import type { BadgeTone } from '@/components/crm/ToneBadge.vue';
@@ -17,6 +19,7 @@ import type { FilterDefinition, ListResult } from '@/types';
 
 const props = defineProps<{
     schools: ListResult<SchoolRow>;
+    saved_views: SavedViewsProps;
     options: SchoolOptions;
     can: { create: boolean; import: boolean };
 }>();
@@ -83,7 +86,10 @@ function open(row: SchoolRow): void {
         </div>
 
         <DataTable :list="schools" :query="query" :columns="columns" row-clickable storage-key="high-schools" @row-click="open">
-            <template #toolbar><FilterBar :query="query" :filters="filters" /></template>
+            <template #toolbar>
+                <SavedViewMenu :views="saved_views" :query="query" storage-key="high-schools" />
+                <FilterBar :query="query" :filters="filters" />
+            </template>
             <template #cell-name="{ row }">
                 <Link :href="`/high-schools/${row.id}`" class="font-medium hover:underline">{{ row.name }}</Link>
                 <div v-if="row.type_label" class="text-xs text-muted-foreground">{{ row.type_label }}</div>

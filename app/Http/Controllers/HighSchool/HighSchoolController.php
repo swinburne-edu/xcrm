@@ -18,6 +18,8 @@ use App\Domain\HighSchool\Models\SchoolContact;
 use App\Domain\HighSchool\Services\SchoolStatistics;
 use App\Domain\Platform\Actions\SaveCustomData;
 use App\Domain\Platform\Enums\CustomFieldObject;
+use App\Domain\Platform\Enums\SavedViewObject;
+use App\Domain\Platform\Services\SavedViews;
 use App\Domain\Platform\Services\CustomFields;
 use App\Domain\Shared\Support\Listing\Filter;
 use App\Domain\Shared\Support\Listing\ListQuery;
@@ -55,6 +57,7 @@ class HighSchoolController extends Controller
 
         return Inertia::render('HighSchools/Index', [
             'schools' => $schools,
+            'saved_views' => app(SavedViews::class)->for(SavedViewObject::HighSchools, $request->user()),
             'options' => $this->options(),
             'can' => [
                 'create' => $request->user()->can('create', HighSchool::class),

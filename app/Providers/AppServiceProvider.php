@@ -36,6 +36,8 @@ use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
 use App\Domain\Platform\Models\AssignmentRule;
 use App\Domain\Platform\Models\CustomFieldDefinition;
+use App\Domain\Platform\Models\SavedView;
+use App\Domain\Platform\Policies\SavedViewPolicy;
 use App\Domain\Platform\Policies\CustomFieldDefinitionPolicy;
 use App\Domain\Platform\Policies\AssignmentRulePolicy;
 use App\Domain\Organization\Models\Territory;
@@ -125,6 +127,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(AdmissionCase::class, CasePolicy::class);
         Gate::policy(Application::class, ApplicationPolicy::class);
         Gate::policy(AssignmentRule::class, AssignmentRulePolicy::class);
+        Gate::policy(SavedView::class, SavedViewPolicy::class);
         Gate::policy(CustomFieldDefinition::class, CustomFieldDefinitionPolicy::class);
         Gate::policy(Task::class, TaskPolicy::class);
         Gate::policy(Appointment::class, AppointmentPolicy::class);

@@ -7,6 +7,8 @@ import ApplicantFormDialog from '@/components/applicants/ApplicantFormDialog.vue
 import type { ApplicantOptions, ApplicantRow } from '@/components/applicants/types';
 import DataTable from '@/components/crm/DataTable.vue';
 import FilterBar from '@/components/crm/FilterBar.vue';
+import SavedViewMenu from '@/components/crm/SavedViewMenu.vue';
+import type { SavedViewsProps } from '@/components/crm/SavedViewMenu.vue';
 import { Button } from '@/components/ui/button';
 import { useListQuery } from '@/composables/useListQuery';
 import type { CrmColumn } from '@/lib/dataTable';
@@ -14,6 +16,7 @@ import type { FilterDefinition, ListResult } from '@/types';
 
 const props = defineProps<{
     applicants: ListResult<ApplicantRow>;
+    saved_views: SavedViewsProps;
     options: ApplicantOptions;
     can: { create: boolean; import: boolean };
 }>();
@@ -86,7 +89,10 @@ function date(value: string | null): string {
         </div>
 
         <DataTable :list="applicants" :query="query" :columns="columns" row-clickable storage-key="applicants" @row-click="open">
-            <template #toolbar><FilterBar :query="query" :filters="filters" /></template>
+            <template #toolbar>
+                <SavedViewMenu :views="saved_views" :query="query" storage-key="applicants" />
+                <FilterBar :query="query" :filters="filters" />
+            </template>
             <template #cell-full_name="{ row }">
                 <Link :href="`/applicants/${row.uuid}`" class="font-medium hover:underline">{{ row.full_name }}</Link>
                 <div v-if="row.email" class="text-xs text-muted-foreground">{{ row.email }}</div>

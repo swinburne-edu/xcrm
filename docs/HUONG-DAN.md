@@ -79,6 +79,12 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 3. Trường đánh dấu "cho phép lọc" xuất hiện trong bộ lọc của danh sách thí sinh, trường THPT và hồ sơ.
 4. Xoá trường chỉ ẩn nó đi; dữ liệu đã nhập vẫn được giữ và hiện lại nếu tạo lại trường cùng mã.
 
+## 5c. Chế độ xem đã lưu
+
+1. Ở danh sách **Thí sinh**, **Trường THPT** và **Hồ sơ** (bảng hoặc Kanban), đặt bộ lọc, sắp xếp, số dòng và cột hiển thị như ý, rồi bấm nút **Chế độ xem** → **Lưu bộ lọc hiện tại…** và đặt tên.
+2. Lần sau mở menu **Chế độ xem** và chọn tên để áp dụng lại. Chế độ xem đang khớp với màn hình hiện tại được đánh dấu; mở menu để **Cập nhật** theo bộ lọc hiện có, **Đổi tên** hoặc **Xoá**.
+3. Chế độ xem là của riêng bạn. Người có quyền quản lý chế độ xem (trưởng phòng, quản trị) có thể bật **Chia sẻ cho cả tổ chức** để mọi người cùng thấy; chỉ họ sửa hoặc xoá được chế độ xem dùng chung.
+
 ## Chưa có trong MVP
 
-Import danh sách trúng tuyển, webhook Facebook Lead Ads, saved view (giai đoạn 2 trong `docs/TASKS.md`).
+Import danh sách trúng tuyển, webhook Facebook Lead Ads (giai đoạn 2 trong `docs/TASKS.md`).

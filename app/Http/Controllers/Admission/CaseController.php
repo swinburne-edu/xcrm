@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admission;
 
 use App\Domain\Platform\Enums\CustomFieldObject;
+use App\Domain\Platform\Enums\SavedViewObject;
+use App\Domain\Platform\Services\SavedViews;
 use App\Domain\Platform\Services\CustomFields;
 use App\Domain\Admission\Actions\AssignCase;
 use App\Domain\Admission\Actions\BulkCaseAction;
@@ -212,6 +214,7 @@ class CaseController extends Controller
             'mode' => $mode,
             'cycle' => $cycle?->only(['id', 'name']),
             'cases' => $cases,
+            'saved_views' => app(SavedViews::class)->for(SavedViewObject::AdmissionCases, $user),
             'board' => $mode === 'kanban' ? $this->board($list, $cycle) : null,
             'options' => [
                 'sources' => LeadSource::query()->where('is_active', true)->orderBy('name')->get(['id', 'name'])->map(fn ($s) => ['value' => (string) $s->id, 'label' => $s->name])->all(),

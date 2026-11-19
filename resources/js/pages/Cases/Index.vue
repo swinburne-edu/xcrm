@@ -11,6 +11,8 @@ import type { BoardColumn, BulkResult, CaseCardData, CaseOptions } from '@/compo
 import DataTable from '@/components/crm/DataTable.vue';
 import EntityPicker from '@/components/crm/EntityPicker.vue';
 import FilterBar from '@/components/crm/FilterBar.vue';
+import SavedViewMenu from '@/components/crm/SavedViewMenu.vue';
+import type { SavedViewsProps } from '@/components/crm/SavedViewMenu.vue';
 import KanbanBoard from '@/components/crm/KanbanBoard.vue';
 import type { KanbanColumn } from '@/components/crm/KanbanBoard.vue';
 import StageBadge from '@/components/crm/StageBadge.vue';
@@ -34,6 +36,7 @@ const props = defineProps<{
     cycle: { id: number; name: string } | null;
     cases: ListResult<CaseCardData>;
     board: { pipeline: { id: number; name: string } | null; columns: BoardColumn[] } | null;
+    saved_views: SavedViewsProps;
     options: CaseOptions;
     can: { create: boolean; assign: boolean; update: boolean };
 }>();
@@ -279,6 +282,7 @@ function confirmBulkLost(payload: { lost_reason_id: string; lost_note: string | 
             </div>
             <div class="w-52"><EntityPicker v-model="ownerPerson" entity="users" placeholder="Người phụ trách…" /></div>
             <FilterBar :query="query" :filters="filters" />
+            <SavedViewMenu :views="saved_views" :query="query" storage-key="cases" :view-type="mode" />
         </div>
 
         <p v-if="errorMessage" class="rounded-md border border-red-300 bg-red-50 p-2 text-sm text-red-800 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-200" role="alert" data-test="move-error">

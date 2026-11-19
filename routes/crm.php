@@ -32,6 +32,7 @@ use App\Http\Controllers\Platform\GlobalSearchController;
 use App\Http\Controllers\Platform\ImportTemplateController;
 use App\Http\Controllers\Platform\LookupController;
 use App\Http\Controllers\Platform\NotificationController;
+use App\Http\Controllers\Platform\SavedViewController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\AssignmentRuleController;
 use App\Http\Controllers\Settings\CustomFieldController;
@@ -287,6 +288,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Inline edit of custom field values (task 2.5); the record's own policy decides.
     Route::put('custom-data/{object}/{id}', [CustomDataController::class, 'update'])->whereNumber('id')->name('custom-data.update');
+
+    // Saved views of the list screens (task 2.6). Authorization: SavedViewPolicy.
+    Route::post('saved-views', [SavedViewController::class, 'store'])->name('saved-views.store');
+    Route::put('saved-views/{id}', [SavedViewController::class, 'update'])->whereNumber('id')->name('saved-views.update');
+    Route::delete('saved-views/{id}', [SavedViewController::class, 'destroy'])->whereNumber('id')->name('saved-views.destroy');
 
     // Global search dialog (Ctrl+K): applicants + high schools.
     Route::get('search', GlobalSearchController::class)->middleware('throttle:120,1')->name('search');

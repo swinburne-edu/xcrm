@@ -57,6 +57,32 @@ function serializeFilter(value: FilterValue): string | DateRangeValue {
 }
 
 /**
+ * Query-string params of a list state: ?filter[key]=…&sort=…&page=…&per_page=… (empty parts left out).
+ * Also used to apply a saved view (task 2.6).
+ */
+export function buildListParams(
+    filters: Record<string, FilterValue>,
+    sort: string | null,
+    page = 1,
+    perPage: number = DEFAULT_PER_PAGE,
+): Record<string, unknown> {
+    const filter: Record<string, string | DateRangeValue> = {};
+
+    for (const [key, value] of Object.entries(filters)) {
+        if (!isEmpty(value)) {
+            filter[key] = serializeFilter(value);
+        }
+    }
+
+    return {
+        ...(Object.keys(filter).length > 0 ? { filter } : {}),
+        ...(sort ? { sort } : {}),
+        ...(page > 1 ? { page } : {}),
+        ...(perPage !== DEFAULT_PER_PAGE ? { per_page: perPage } : {}),
+    };
+}
+
+/**
  * Server-side list state (filters, sort, page, per_page) for one ListResult prop.
  * Changes re-visit the current URL with the shared query-string contract:
  *   ?filter[key]=...&sort=-created_at&page=2&per_page=50
@@ -94,22 +120,7 @@ export function useListQuery<T>(
     );
 
     function params(): Record<string, unknown> {
-        const filter: Record<string, string | DateRangeValue> = {};
-
-        for (const [key, value] of Object.entries(filters.value)) {
-            if (!isEmpty(value)) {
-                filter[key] = serializeFilter(value);
-            }
-        }
-
-        return {
-            ...(Object.keys(filter).length > 0 ? { filter } : {}),
-            ...(sort.value ? { sort: sort.value } : {}),
-            ...(page.value > 1 ? { page: page.value } : {}),
-            ...(perPage.value !== DEFAULT_PER_PAGE
-                ? { per_page: perPage.value }
-                : {}),
-        };
+        return buildListParams(filters.value, sort.value, page.value, perPage.value);
     }
 
     function visit(): void {
