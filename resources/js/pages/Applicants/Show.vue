@@ -73,7 +73,7 @@ const later: Record<string, string> = {
     appointments: 'Lịch hẹn của thí sinh xem ở menu Lịch hẹn; đặt lịch mới từ thẻ hồ sơ.',
 };
 
-const editOpen = ref(false);
+const editOpen = ref(typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('edit') === '1' && props.can.update);
 const deleteOpen = ref(false);
 const guardianOpen = ref(false);
 const editingGuardian = ref<GuardianRow | null>(null);

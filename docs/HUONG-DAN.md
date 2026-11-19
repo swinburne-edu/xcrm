@@ -55,6 +55,13 @@ Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển s
 - **Lịch hẹn** (`/appointments`): đặt lịch tư vấn, tham quan, phỏng vấn, thi năng khiếu; sau buổi hẹn ghi nhận *có đến / vắng / huỷ* (ghi xong không sửa được).
 - Chuyển sang giai đoạn **Thất bại** bắt buộc chọn lý do. Mùa đã đóng chỉ đọc.
 
+## 3c. Sửa nhanh ngay trong danh sách thí sinh
+
+1. Ở **Thí sinh**, bấm vào ô **Họ tên** (biểu tượng bút chì nhỏ khi rê chuột), **Email**, **Điện thoại**, **Trường THPT**, **Tỉnh/Thành phố** hoặc **Tốt nghiệp** để gõ trực tiếp. **Enter** hoặc bấm ra ngoài là lưu, **Esc** là bỏ. Ô Trường THPT và Tỉnh chọn từ danh sách, chọn xong tự lưu.
+2. Số điện thoại hoặc email trùng thí sinh khác sẽ không được lưu và báo rõ trùng với ai. Họ tên không được để trống.
+3. Cạnh số điện thoại có nút **Gọi** (mở ứng dụng gọi trên điện thoại/máy tính) và **Chép số**. Người chỉ thấy số đã che không sửa được số tại chỗ và không có hai nút này; dùng nút bút chì ở cuối dòng để mở form đầy đủ.
+4. Danh sách có thêm cột **Giai đoạn**, **Người phụ trách** và **Hoạt động gần nhất** của hồ sơ mùa mới nhất. Chỉ sửa được thí sinh thuộc phạm vi dữ liệu của bạn và khi bạn có quyền sửa thí sinh.
+
 ## 3b. Phân bổ hồ sơ và SLA
 
 - **Cài đặt → Quy tắc phân bổ**: mỗi quy tắc có *độ ưu tiên* (số nhỏ chạy trước), *điều kiện* (nguồn, chiến dịch, tỉnh, trường THPT, hạng trường, ngành — để trống là áp dụng mọi hồ sơ) và *cách phân bổ*: **cố định** một người, **xoay vòng** (người nhận hồ sơ cách đây lâu nhất), **theo tải** (ít hồ sơ đang mở nhất) hoặc **theo vùng phụ trách**. Có thể chọn danh sách người hoặc một nhóm (lấy thành viên). Hồ sơ mới từ form, import hay nhập tay (không chọn người) được thử lần lượt với các quy tắc; quy tắc đầu tiên khớp và tìm được người nhận sẽ quyết định, không có thì dùng vùng phụ trách, rồi kho chung. Người đã ngừng hoạt động bị bỏ qua.

@@ -6,6 +6,8 @@ use App\Domain\Admission\Models\AdmissionCase;
 use App\Domain\Admission\Services\ApplicationPanel;
 use App\Domain\Cycle\Services\CurrentCycle;
 use App\Domain\Applicant\Actions\SaveApplicant;
+use App\Domain\Applicant\Actions\UpdateApplicantField;
+use App\Http\Requests\Applicant\ApplicantFieldRequest;
 use App\Domain\Applicant\Enums\CertificateType;
 use App\Domain\Applicant\Enums\Gender;
 use App\Domain\Applicant\Enums\GuardianRelationship;
@@ -50,7 +52,7 @@ class ApplicantController extends Controller
         $this->authorize('viewAny', Applicant::class);
 
         $applicants = ListQuery::for(
-            Applicant::query()->whereNull('merged_into_id')->with(['province:id,name', 'highSchool:id,name']),
+            Applicant::query()->whereNull('merged_into_id')->with(['province:id,name', 'highSchool:id,name', 'latestCase.stage:id,name,color', 'latestCase.owner:id,name']),
             $request,
         )
             ->filters(
@@ -85,32 +87,7 @@ class ApplicantController extends Controller
         $user = $request->user();
 
         return Inertia::render('Applicants/Show', [
-            'applicant' => $this->row($applicant, $request) + [
-                'gender' => $applicant->gender?->value,
-                'gender_label' => $applicant->gender?->label(),
-                'dob' => $applicant->dob?->format('Y-m-d'),
-                'citizen_id' => $this->sensitive->citizenId($applicant->citizen_id, $user, $applicant),
-                'sensitive_masked' => ! $this->sensitive->canView($user),
-                'custom_data' => $applicant->custom_data ?? (object) [],
-                'zalo_id' => $applicant->zalo_id,
-                'facebook_id' => $applicant->facebook_id,
-                'province_id' => $applicant->province_id,
-                'ward_id' => $applicant->ward_id,
-                'ward_name' => $applicant->ward?->name,
-                'address' => $applicant->address,
-                'class_name' => $applicant->class_name,
-                'priority_area_id' => $applicant->priority_area_id,
-                'priority_area_code' => $applicant->priorityArea?->code,
-                'priority_group_id' => $applicant->priority_group_id,
-                'priority_group_code' => $applicant->priorityGroup?->code,
-                'first_source_id' => $applicant->first_source_id,
-                'first_source_name' => $applicant->firstSource?->name,
-                'first_campaign_id' => $applicant->first_campaign_id,
-                'first_campaign_name' => $applicant->firstCampaign?->name,
-                'referred_by_user_id' => $applicant->referred_by_user_id,
-                'referrer_name' => $applicant->referrer?->name,
-                'consent_marketing' => $applicant->consent_marketing,
-            ],
+            'applicant' => $this->detail($applicant, $request),
             'custom_fields' => $customFields->panel(CustomFieldObject::Applicants, $applicant),
             'guardians' => $applicant->guardians->map(fn (Guardian $g) => [
                 'id' => $g->id,
@@ -184,6 +161,63 @@ class ApplicantController extends Controller
         return $this->toast("Đã cập nhật thí sinh {$applicant->full_name}.");
     }
 
+    /**
+     * The applicant as the detail page and the edit form need it (the list row plus every editable field).
+     *
+     * @return array<string, mixed>
+     */
+    private function detail(Applicant $applicant, Request $request): array
+    {
+        $user = $request->user();
+
+        return $this->row($applicant, $request) + [
+                'gender' => $applicant->gender?->value,
+                'gender_label' => $applicant->gender?->label(),
+                'dob' => $applicant->dob?->format('Y-m-d'),
+                'citizen_id' => $this->sensitive->citizenId($applicant->citizen_id, $user, $applicant),
+                'sensitive_masked' => ! $this->sensitive->canView($user),
+                'custom_data' => $applicant->custom_data ?? (object) [],
+                'zalo_id' => $applicant->zalo_id,
+                'facebook_id' => $applicant->facebook_id,
+                'province_id' => $applicant->province_id,
+                'ward_id' => $applicant->ward_id,
+                'ward_name' => $applicant->ward?->name,
+                'address' => $applicant->address,
+                'class_name' => $applicant->class_name,
+                'priority_area_id' => $applicant->priority_area_id,
+                'priority_area_code' => $applicant->priorityArea?->code,
+                'priority_group_id' => $applicant->priority_group_id,
+                'priority_group_code' => $applicant->priorityGroup?->code,
+                'first_source_id' => $applicant->first_source_id,
+                'first_source_name' => $applicant->firstSource?->name,
+                'first_campaign_id' => $applicant->first_campaign_id,
+                'first_campaign_name' => $applicant->firstCampaign?->name,
+                'referred_by_user_id' => $applicant->referred_by_user_id,
+                'referrer_name' => $applicant->referrer?->name,
+                'consent_marketing' => $applicant->consent_marketing,
+            ];
+    }
+
+    /** The edit form opened from the list: the full record as JSON, for people who may update it. */
+    public function edit(Request $request, string $uuid): JsonResponse
+    {
+        $applicant = Applicant::query()->where('uuid', $uuid)
+            ->with(['province:id,name', 'ward:id,name', 'highSchool:id,name', 'priorityArea:id,code', 'priorityGroup:id,code', 'firstSource:id,name', 'firstCampaign:id,name', 'referrer:id,name'])
+            ->firstOrFail();
+        $this->authorize('update', $applicant);
+
+        return response()->json(['applicant' => $this->detail($applicant, $request)]);
+    }
+
+    /** Quick edit from the list: one field at a time (name, phone, email, high school, province, graduation year). */
+    public function patchField(ApplicantFieldRequest $request, string $uuid, UpdateApplicantField $update): RedirectResponse
+    {
+        $applicant = $request->applicant() ?? abort(404);
+        $update->handle($applicant, $request->string('field')->toString(), $request->input('value'));
+
+        return $this->toast("Đã cập nhật thí sinh {$applicant->full_name}.");
+    }
+
     /** Soft delete (rule R9: applicants are never removed for good). */
     public function destroy(Request $request, string $uuid): RedirectResponse
     {
@@ -241,6 +275,13 @@ class ApplicantController extends Controller
             'current_grade' => $a->current_grade,
             'graduation_year' => $a->graduation_year,
             'created_at' => $a->created_at?->toIso8601String(),
+            'province_id' => $a->province_id,
+            'sensitive_masked' => ! $this->sensitive->canView($request->user()),
+            'can_edit' => $request->user()->can('update', $a),
+            'stage_name' => $a->latestCase?->stage?->name,
+            'stage_color' => $a->latestCase?->stage?->color,
+            'owner_name' => $a->latestCase?->owner?->name,
+            'last_activity_at' => $a->latestCase?->last_activity_at?->toIso8601String(),
         ];
     }
 

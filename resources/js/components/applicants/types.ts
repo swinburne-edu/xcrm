@@ -31,6 +31,11 @@ export type ApplicantRow = {
     current_grade: number | null;
     graduation_year: number | null;
     created_at: string | null;
+    can_edit?: boolean;
+    stage_name?: string | null;
+    stage_color?: string | null;
+    owner_name?: string | null;
+    last_activity_at?: string | null;
     // detail only
     gender?: string | null;
     gender_label?: string | null;

@@ -192,6 +192,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('applicants/check-duplicate', [ApplicantController::class, 'checkDuplicate'])->name('applicants.check-duplicate');
     Route::get('applicants/{uuid}', [ApplicantController::class, 'show'])->whereUuid('uuid')->name('applicants.show');
     Route::put('applicants/{uuid}', [ApplicantController::class, 'update'])->whereUuid('uuid')->name('applicants.update');
+    Route::get('applicants/{uuid}/edit', [ApplicantController::class, 'edit'])->whereUuid('uuid')->name('applicants.edit');
+    Route::patch('applicants/{uuid}/field', [ApplicantController::class, 'patchField'])->whereUuid('uuid')->name('applicants.field');
     Route::delete('applicants/{uuid}', [ApplicantController::class, 'destroy'])->whereUuid('uuid')->name('applicants.destroy');
     Route::post('applicants/{uuid}/guardians', [ApplicantGuardianController::class, 'store'])->whereUuid('uuid')->name('applicants.guardians.store');
     Route::put('applicants/{uuid}/guardians/{guardianId}', [ApplicantGuardianController::class, 'update'])->whereUuid('uuid')->whereNumber('guardianId')->name('applicants.guardians.update');

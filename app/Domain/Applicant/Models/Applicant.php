@@ -5,6 +5,7 @@ namespace App\Domain\Applicant\Models;
 use App\Domain\Applicant\Enums\Gender;
 use App\Domain\Campaign\Models\Campaign;
 use App\Domain\Catalog\Models\LeadSource;
+use App\Domain\Admission\Models\AdmissionCase;
 use App\Domain\Catalog\Models\PriorityArea;
 use App\Domain\Catalog\Models\PriorityGroup;
 use App\Domain\Catalog\Models\Province;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -144,6 +146,16 @@ class Applicant extends Model
     }
 
     /** @return BelongsTo<Province, $this> */
+    /**
+     * The case of the newest admission cycle (what the list shows: stage, owner, last activity).
+     *
+     * @return HasOne<AdmissionCase, $this>
+     */
+    public function latestCase(): HasOne
+    {
+        return $this->hasOne(AdmissionCase::class)->ofMany('cycle_id', 'max');
+    }
+
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class);

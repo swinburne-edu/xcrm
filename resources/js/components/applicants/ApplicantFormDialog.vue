@@ -97,7 +97,8 @@ watch(open, (isOpen) => {
         referred_by_user_id: r?.referred_by_user_id ?? null,
         consent_marketing: r?.consent_marketing ?? false,
     };
-});
+    // immediate: the dialog can be mounted already open (/applicants/{uuid}?edit=1), when open never changes.
+}, { immediate: true });
 
 // Realtime duplicate warning (debounced).
 let timer: ReturnType<typeof setTimeout> | undefined;
