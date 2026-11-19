@@ -3,6 +3,7 @@ import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
+import IncomingCallPopup from '@/components/calls/IncomingCallPopup.vue';
 import { Toaster } from '@/components/ui/sonner';
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -34,5 +35,6 @@ const resolvedBreadcrumbs = computed<BreadcrumbItem[]>(() =>
             <slot />
         </AppContent>
         <Toaster />
+        <IncomingCallPopup />
     </AppShell>
 </template>

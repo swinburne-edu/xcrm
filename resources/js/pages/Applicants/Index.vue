@@ -13,6 +13,9 @@ import FilterBar from '@/components/crm/FilterBar.vue';
 import SavedViewMenu from '@/components/crm/SavedViewMenu.vue';
 import type { SavedViewsProps } from '@/components/crm/SavedViewMenu.vue';
 import { Button } from '@/components/ui/button';
+import { requestJson } from '@/lib/http';
+import type { HttpError } from '@/lib/http';
+import { toast } from 'vue-sonner';
 import { useListQuery } from '@/composables/useListQuery';
 import type { CrmColumn } from '@/lib/dataTable';
 import type { FilterDefinition, ListResult } from '@/types';
@@ -22,7 +25,7 @@ const props = defineProps<{
     saved_views: SavedViewsProps;
     options: ApplicantOptions;
     message_templates: { id: number; name: string; channel_label: string }[];
-    can: { create: boolean; import: boolean };
+    can: { create: boolean; import: boolean; dial: boolean };
 }>();
 
 const messageOpen = ref(false);
@@ -64,6 +67,15 @@ const columns: CrmColumn<ApplicantRow>[] = [
 ];
 
 const copied = ref<string | null>(null);
+
+async function dial(row: ApplicantRow): Promise<void> {
+    try {
+        const result = await requestJson<{ status_label: string }>('POST', '/calls/dial', { applicant_uuid: row.uuid });
+        toast.success(`${result.status_label}: ${row.full_name}`);
+    } catch (e) {
+        toast.error((e as HttpError).message || 'Không gọi được.');
+    }
+}
 
 async function copyPhone(row: ApplicantRow): Promise<void> {
     try {
@@ -158,7 +170,8 @@ function dateTime(value: string | null): string {
                 <div class="flex items-center gap-1">
                     <InlineEditCell :uuid="row.uuid" field="phone" :value="row.phone" :can-edit="row.can_edit && !row.sensitive_masked" kind="tel" placeholder="+ Thêm SĐT" />
                     <template v-if="row.phone && !row.sensitive_masked">
-                        <a :href="`tel:${row.phone}`" class="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Gọi" data-test="call" @click.stop><Phone class="size-3.5" /></a>
+                        <button v-if="can.dial" type="button" class="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Gọi qua tổng đài" data-test="dial" @click.stop="dial(row)"><Phone class="size-3.5" /></button>
+                        <a v-else :href="`tel:${row.phone}`" class="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Gọi" data-test="call" @click.stop><Phone class="size-3.5" /></a>
                         <button type="button" class="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Chép số điện thoại" data-test="copy-phone" @click.stop="copyPhone(row)">
                             <component :is="copied === row.uuid ? Check : Copy" class="size-3.5" />
                         </button>

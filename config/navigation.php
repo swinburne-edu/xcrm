@@ -53,6 +53,7 @@ return [
             'children' => [
                 ['title' => 'Danh sách trường', 'url' => '/high-schools', 'route' => 'high-schools.index', 'permission' => 'high_school.view'],
                 ['title' => 'Người liên hệ', 'url' => '/school-contacts', 'route' => 'school-contacts.index', 'placeholder' => true],
+                ['title' => 'Bản đồ', 'url' => '/map', 'route' => 'map', 'permission' => 'report.view'],
                 ['title' => 'Hoạt động tại trường', 'url' => '/school-activities', 'route' => 'school-activities.index', 'permission' => 'school_activity.view'],
             ],
         ],
@@ -62,6 +63,7 @@ return [
             'children' => [
                 ['title' => 'Chiến dịch', 'url' => '/campaigns', 'route' => 'campaigns.index', 'permission' => 'campaign.view'],
                 ['title' => 'Form thu thập', 'url' => '/forms', 'route' => 'forms.index', 'permission' => 'form.view'],
+                ['title' => 'Cuộc gọi', 'url' => '/calls', 'route' => 'calls.index', 'permission' => 'call.view'],
                 ['title' => 'Tin nhắn đã gửi', 'url' => '/messages', 'route' => 'messages.index', 'permission' => 'message.view'],
             ],
         ],
@@ -92,6 +94,7 @@ return [
                 ['title' => 'Trường tuỳ chỉnh', 'url' => '/settings/custom-fields', 'route' => 'settings.custom-fields.index', 'permission' => 'custom_field.view'],
                 ['title' => 'Tích hợp lead ads', 'url' => '/settings/lead-integrations', 'route' => 'settings.lead-integrations.index', 'permission' => 'lead_integration.view'],
                 ['title' => 'Mẫu tin nhắn', 'url' => '/settings/message-templates', 'route' => 'settings.message-templates.index', 'permission' => 'message_template.view'],
+                ['title' => 'Tích hợp tổng đài', 'url' => '/settings/call-integrations', 'route' => 'settings.call-integrations.index', 'permission' => 'call_integration.view'],
                 ['title' => 'Workflow tự động', 'url' => '/settings/workflows', 'route' => 'settings.workflows.index', 'permission' => 'workflow.view'],
                 ['title' => 'Quy tắc phân bổ', 'url' => '/settings/assignment-rules', 'route' => 'settings.assignment-rules.index', 'permission' => 'assignment_rule.view'],
             ],

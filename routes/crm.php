@@ -15,6 +15,7 @@ use App\Http\Controllers\Applicant\ApplicantImportController;
 use App\Http\Controllers\Applicant\ApplicantMergeController;
 use App\Http\Controllers\Applicant\ApplicantScoreController;
 use App\Http\Controllers\Campaign\CampaignController;
+use App\Http\Controllers\Communication\CallController;
 use App\Http\Controllers\Communication\MessageController;
 use App\Http\Controllers\Campaign\CampaignCostController;
 use App\Http\Controllers\Campaign\CampaignPerformanceController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\Cycle\CycleRoundController;
 use App\Http\Controllers\Cycle\CycleSelectionController;
 use App\Http\Controllers\HighSchool\HighSchoolController;
 use App\Http\Controllers\Platform\HelpController;
+use App\Http\Controllers\Platform\MapController;
 use App\Http\Controllers\HighSchool\SchoolActivityController;
 use App\Http\Controllers\HighSchool\SchoolContactController;
 use App\Http\Controllers\Intake\FormController;
@@ -41,6 +43,7 @@ use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\AssignmentRuleController;
 use App\Http\Controllers\Settings\CustomFieldController;
 use App\Http\Controllers\Settings\LeadIntegrationController;
+use App\Http\Controllers\Settings\CallIntegrationController;
 use App\Http\Controllers\Settings\MessageTemplateController;
 use App\Http\Controllers\Settings\WorkflowController;
 use App\Http\Controllers\Settings\RoleController;
@@ -90,6 +93,11 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::put('workflows/{id}', [WorkflowController::class, 'update'])->whereNumber('id')->name('workflows.update');
     Route::patch('workflows/{id}/active', [WorkflowController::class, 'toggle'])->whereNumber('id')->name('workflows.toggle');
     Route::delete('workflows/{id}', [WorkflowController::class, 'destroy'])->whereNumber('id')->name('workflows.destroy');
+
+    Route::get('call-integrations', [CallIntegrationController::class, 'index'])->name('call-integrations.index');
+    Route::post('call-integrations', [CallIntegrationController::class, 'store'])->name('call-integrations.store');
+    Route::put('call-integrations/{id}', [CallIntegrationController::class, 'update'])->whereNumber('id')->name('call-integrations.update');
+    Route::delete('call-integrations/{id}', [CallIntegrationController::class, 'destroy'])->whereNumber('id')->name('call-integrations.destroy');
 
     Route::get('assignment-rules', [AssignmentRuleController::class, 'index'])->name('assignment-rules.index');
     Route::post('assignment-rules', [AssignmentRuleController::class, 'store'])->name('assignment-rules.store');
@@ -267,6 +275,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Funnel reports (task 1.16)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('map', MapController::class)->name('map');
     Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
 });
 
@@ -341,4 +350,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
     Route::post('messages/preview', [MessageController::class, 'preview'])->name('messages.preview');
     Route::post('messages/send', [MessageController::class, 'send'])->name('messages.send');
+});
+
+// Call centre (task 3.7): call log, click-to-call and the popup feed. Authorization: call.view / call.dial.
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('calls', [CallController::class, 'index'])->name('calls.index');
+    Route::get('calls/incoming', [CallController::class, 'incoming'])->name('calls.incoming');
+    Route::post('calls/dial', [CallController::class, 'dial'])->name('calls.dial');
 });

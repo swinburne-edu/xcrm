@@ -37,6 +37,8 @@ use App\Domain\Organization\Models\Team;
 use App\Domain\Platform\Models\AssignmentRule;
 use App\Domain\Communication\Models\MessageTemplate;
 use App\Domain\Communication\Policies\MessageTemplatePolicy;
+use App\Domain\Telephony\Models\CallIntegration;
+use App\Domain\Telephony\Policies\CallIntegrationPolicy;
 use App\Domain\Workflow\Models\Workflow;
 use App\Domain\Workflow\Observers\WorkflowObserver;
 use App\Domain\Workflow\Policies\WorkflowPolicy;
@@ -145,6 +147,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(LeadIntegration::class, LeadIntegrationPolicy::class);
         Gate::policy(MessageTemplate::class, MessageTemplatePolicy::class);
         Gate::policy(Workflow::class, WorkflowPolicy::class);
+        Gate::policy(CallIntegration::class, CallIntegrationPolicy::class);
         AdmissionCase::observe(WorkflowObserver::class);
         Applicant::observe(WorkflowObserver::class);
         Gate::policy(Task::class, TaskPolicy::class);

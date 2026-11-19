@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
             'currentCycle' => fn (): ?array => ($cycle = $request->user() ? app(CurrentCycle::class)->get() : null)
                 ? ['id' => $cycle->id, 'name' => $cycle->name, 'year' => $cycle->year, 'status' => $cycle->status->value, 'is_current' => $cycle->is_current]
                 : null,
+            'telephony' => fn (): bool => (bool) $request->user()?->can('call.view'),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

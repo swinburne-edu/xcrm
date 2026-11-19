@@ -36,6 +36,8 @@ final class RoleDefinitions
         'lead_integration' => ['view', 'manage'],
         'message_template' => ['view', 'manage'],
         'workflow' => ['view', 'manage'],
+        'call' => ['view', 'dial'],
+        'call_integration' => ['view', 'manage'],
         'message' => ['view', 'send'],
         'user' => ['view', 'create', 'update', 'delete'],
         'team' => ['view', 'create', 'update', 'delete'],
@@ -65,7 +67,7 @@ final class RoleDefinitions
                 'case.view', 'case.create', 'case.update', 'case.assign',
                 'application.view', 'application.update',
                 'high_school.view', 'school_contact.view', 'school_activity.view', 'major.view', 'campaign.view', 'cycle.view',
-                'task.*', 'appointment.*', 'report.view', 'user.view', 'team.view', 'catalog.view', 'message_template.view', 'message.*',
+                'task.*', 'appointment.*', 'report.view', 'user.view', 'team.view', 'catalog.view', 'message_template.view', 'message.*', 'call.*',
             ],
         ],
         'counselor' => [
@@ -76,7 +78,7 @@ final class RoleDefinitions
                 'case.view', 'case.create', 'case.update',
                 'application.view', 'application.create', 'application.update',
                 'high_school.view', 'major.view', 'campaign.view', 'cycle.view',
-                'task.*', 'appointment.*', 'catalog.view',
+                'task.*', 'appointment.*', 'catalog.view', 'call.*',
             ],
         ],
         'school_officer' => [

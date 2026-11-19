@@ -126,6 +126,17 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 3. Lưu ý: workflow hằng ngày chạy lúc 07:00 và chỉ chạy một lần trên mỗi bản ghi. Hành động do workflow làm không kích hoạt thêm workflow khác. Tin nhắn chỉ gửi cho thí sinh đã đồng ý nhận tin. Webhook chỉ gọi địa chỉ https công khai.
 4. Cần chạy hàng đợi (`php artisan queue:work`) và bộ lập lịch (`php artisan schedule:work`).
 
+## 5e. Bản đồ
+
+**Trường THPT, Bản đồ** (cần quyền xem báo cáo): chấm xanh là trường THPT đã có toạ độ (nhập lat/lng ở trang trường), vòng tròn đỏ là số liệu theo tỉnh, diện tích theo số lượng. Chọn hiển thị theo **Thí sinh**, **Hồ sơ trong mùa** hoặc **Nhập học**. Vòng tròn đặt ở tâm tỉnh (xấp xỉ), không phải ranh giới tỉnh. Bấm vào chấm xanh để xem số liệu trường và mở trang trường. Bản đồ nền tải từ OpenStreetMap nên cần có Internet.
+
+## 5f. Tổng đài
+
+1. Quản trị vào **Cài đặt, Tích hợp tổng đài**, tạo tích hợp và lưu **khoá bí mật** (chỉ hiện một lần). Cấu hình tổng đài gửi sự kiện cuộc gọi (JSON, ký HMAC-SHA256 trong header `X-Signature`) tới địa chỉ webhook; định dạng mẫu có ngay trên trang.
+2. Cuộc gọi đến từ số chưa có trong hệ thống tự tạo thí sinh mới (nguồn Hotline). Khi cuộc gọi đổ chuông, nhân viên phụ trách (theo email trong sự kiện hoặc người phụ trách hồ sơ) thấy popup góc phải màn hình, bấm **Mở hồ sơ** để xem thí sinh.
+3. Cuộc gọi kết thúc được ghi vào timeline (thời lượng, link ghi âm). Cuộc gọi đến không ai nhấc máy là **nhỡ máy** và tự tạo việc **Gọi lại khách nhỡ máy** hạn 1 giờ cho người phụ trách.
+4. Gọi đi: ở danh sách **Thí sinh** bấm biểu tượng điện thoại cạnh số để gọi qua tổng đài (ai có quyền gọi). Driver mặc định `log` chỉ ghi nhận cuộc gọi; để gọi thật đặt `TELEPHONY_DRIVER=http`, `TELEPHONY_URL`, `TELEPHONY_TOKEN` trong `.env`. Xem lịch sử ở **Marketing, Cuộc gọi**.
+
 ## Chưa có trong MVP
 
 Import danh sách trúng tuyển (giai đoạn 2 trong `docs/TASKS.md`).

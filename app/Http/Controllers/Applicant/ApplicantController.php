@@ -69,7 +69,7 @@ class ApplicantController extends Controller
             'message_templates' => $request->user()->can('message.send')
                 ? MessageTemplate::query()->where('is_active', true)->orderBy('name')->get(['id', 'name', 'channel'])->map(fn (MessageTemplate $t) => ['id' => $t->id, 'name' => $t->name, 'channel_label' => $t->channel->label()])->all()
                 : [],
-            'can' => ['create' => $request->user()->can('create', Applicant::class), 'import' => $request->user()->can('import', Applicant::class)],
+            'can' => ['create' => $request->user()->can('create', Applicant::class), 'import' => $request->user()->can('import', Applicant::class), 'dial' => $request->user()->can('call.dial')],
         ]);
     }
 
