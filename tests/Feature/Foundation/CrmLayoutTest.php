@@ -71,7 +71,7 @@ it('shares the sidebar menu in the order of the docs', function () {
             ->where('navigation.5.title', 'Đào tạo & chỉ tiêu')
             ->where('navigation.6.title', 'Báo cáo')
             ->where('navigation.7.title', 'Cài đặt')
-            ->has('navigation.7.children', 11)
+            ->has('navigation.7.children', 12)
             ->where('navigation.8.title', 'Hướng dẫn sử dụng')
             ->where('navigation.8.url', '/help'));
 });

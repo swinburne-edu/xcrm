@@ -37,6 +37,8 @@ final class RoleDefinitions
         'message_template' => ['view', 'manage'],
         'workflow' => ['view', 'manage'],
         'call' => ['view', 'dial'],
+        'webhook' => ['view', 'manage'],
+        'api_token' => ['manage'],
         'call_integration' => ['view', 'manage'],
         'message' => ['view', 'send'],
         'user' => ['view', 'create', 'update', 'delete'],

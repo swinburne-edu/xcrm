@@ -39,6 +39,9 @@ use App\Domain\Communication\Models\MessageTemplate;
 use App\Domain\Communication\Policies\MessageTemplatePolicy;
 use App\Domain\Telephony\Models\CallIntegration;
 use App\Domain\Telephony\Policies\CallIntegrationPolicy;
+use App\Domain\Api\Models\Webhook;
+use App\Domain\Api\Observers\ApplicationWebhookObserver;
+use App\Domain\Api\Policies\WebhookPolicy;
 use App\Domain\Workflow\Models\Workflow;
 use App\Domain\Workflow\Observers\WorkflowObserver;
 use App\Domain\Workflow\Policies\WorkflowPolicy;
@@ -114,6 +117,7 @@ class AppServiceProvider extends ServiceProvider
         // Ad platforms push many leads from a few addresses: a generous cap per integration, a looser one per IP.
         RateLimiter::for('portal-otp', fn (Request $request) => [Limit::perMinute(5)->by($request->ip()), Limit::perHour(20)->by((string) $request->input('phone'))]);
         RateLimiter::for('portal-public', fn (Request $request) => [Limit::perMinute(30)->by($request->ip())]);
+        RateLimiter::for('api', fn (Request $request) => Limit::perMinute(120)->by($request->user()?->id ?: $request->ip()));
         RateLimiter::for('lead-webhooks', fn (Request $request) => [
             Limit::perMinute(600)->by('webhooks:'.$request->ip()),
             Limit::perMinute(300)->by('webhooks:'.$request->route('uuid')),
@@ -149,6 +153,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(LeadIntegration::class, LeadIntegrationPolicy::class);
         Gate::policy(MessageTemplate::class, MessageTemplatePolicy::class);
         Gate::policy(Workflow::class, WorkflowPolicy::class);
+        Gate::policy(Webhook::class, WebhookPolicy::class);
+        Application::observe(ApplicationWebhookObserver::class);
         Gate::policy(CallIntegration::class, CallIntegrationPolicy::class);
         AdmissionCase::observe(WorkflowObserver::class);
         Applicant::observe(WorkflowObserver::class);

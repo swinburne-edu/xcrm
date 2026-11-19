@@ -15,7 +15,7 @@ Dành cho cán bộ tuyển sinh. Giao diện hoàn toàn tiếng Việt; thanh 
 | Marketing | Chiến dịch, Chi phí & hiệu quả, Form thu thập, Cuộc gọi, Tin nhắn đã gửi | Chiến dịch, chi phí, thu thập lead, tổng đài, gửi tin | 2, 2c, 3d, 3e, 5f |
 | Đào tạo & chỉ tiêu | Ngành, Tiến độ chỉ tiêu | Ngành, chỉ tiêu, cảnh báo thiếu/thừa | 1, 5 |
 | Báo cáo | Báo cáo | Phễu theo nguồn, chiến dịch, trường, tỉnh, ngành | 5 |
-| Cài đặt | Mùa tuyển sinh, Pipeline, Danh mục, Vùng phụ trách, Người dùng & vai trò, Trường tuỳ chỉnh, Tích hợp lead ads, Mẫu tin nhắn, Tích hợp tổng đài, Workflow tự động, Quy tắc phân bổ | Cấu hình hệ thống | 1, 1b, 2c, 3b, 3e, 5b, 5d, 5f |
+| Cài đặt | Mùa tuyển sinh, Pipeline, Danh mục, Vùng phụ trách, Người dùng & vai trò, Trường tuỳ chỉnh, Tích hợp lead ads, Mẫu tin nhắn, Tích hợp tổng đài, API & Webhook, Workflow tự động, Quy tắc phân bổ | Cấu hình hệ thống | 1, 1b, 2c, 3b, 3e, 5b, 5d, 5f, 5h |
 | Hướng dẫn sử dụng | Hướng dẫn sử dụng | Hướng dẫn theo vai trò ngay trong hệ thống | |
 
 Hai trang công khai không có trong menu cán bộ: **/tuyen-sinh** (tính điểm và gợi ý ngành) và **/cong-thi-sinh** (cổng thí sinh), xem mục 5g. Mỗi người chỉ thấy các mục mà vai trò của mình có quyền.
@@ -158,6 +158,12 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 1. Trang công khai **`/tuyen-sinh`** (không cần đăng nhập) cho học sinh nhập điểm các môn và xem điểm ước tính theo từng ngành của mùa hiện tại. Đây chỉ là ước tính, không phải kết quả xét tuyển; điểm cộng ưu tiên do học sinh tự nhập. Ai để lại họ tên, số điện thoại và đồng ý nhận tư vấn sẽ vào danh sách thí sinh (nguồn Website) như một lead bình thường. Có thể dùng địa chỉ này làm liên kết trên website nhà trường.
 2. Cổng **`/cong-thi-sinh`**: thí sinh nhập số điện thoại, nhận mã 6 số qua SMS (hiệu lực 5 phút) rồi đăng nhập. Số chưa có trong hệ thống sẽ được hỏi họ tên và tạo hồ sơ mới. Trong cổng, thí sinh xem tình trạng hồ sơ, nhập điểm trung bình lớp 12 và điểm thi THPT, thêm nguyện vọng, **Nộp**, **Rút** và **Xác nhận nhập học** khi đã trúng tuyển. Điểm thí sinh tự nhập chưa được xác minh; thư ký xét tuyển kiểm tra ở trang thí sinh như thường lệ. Việc duyệt và quyết định trúng tuyển vẫn do cán bộ làm.
 3. Cấu hình: đặt `PORTAL_ORGANIZATION_ID` trong `.env` nếu hệ thống có nhiều tổ chức (để trống thì dùng tổ chức đầu tiên). Mã OTP gửi bằng kênh SMS ở mục 3e, nên cần cấu hình cổng SMS (hoặc đặt `MESSAGE_SMS_DRIVER=log` để thử, mã sẽ nằm trong file log).
+
+## 5h. API và webhook
+
+1. **Cài đặt, API & Webhook** (quản trị, trưởng phòng): tạo **token API** để hệ thống khác đọc hoặc ghi dữ liệu tuyển sinh. Token chỉ hiện một lần, hoạt động như chính bạn (cùng quyền và phạm vi dữ liệu) và có thể thu hồi bất cứ lúc nào.
+2. Cũng ở đó, thêm **webhook** để nhận thông báo khi nguyện vọng trúng tuyển hoặc thí sinh xác nhận nhập học. Địa chỉ phải là https công khai; mỗi lần gửi được ký bằng khoá bí mật. Lần gửi lỗi tự thử lại 4 lần, sau đó bấm **Gửi lại**. Cần chạy hàng đợi (`php artisan queue:work`).
+3. Chi tiết endpoint, định dạng và ví dụ: `docs/07-api.md`.
 
 ## Chưa có trong MVP
 

@@ -39,6 +39,7 @@ Cài đặt
   ├ Tích hợp lead ads      /settings/lead-integrations
   ├ Mẫu tin nhắn           /settings/message-templates
   ├ Tích hợp tổng đài      /settings/call-integrations
+  ├ API & Webhook          /settings/api
   ├ Workflow tự động       /settings/workflows
   └ Quy tắc phân bổ        /settings/assignment-rules
 Hướng dẫn sử dụng          /help

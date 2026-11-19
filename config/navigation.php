@@ -96,6 +96,7 @@ return [
                 ['title' => 'Tích hợp lead ads', 'url' => '/settings/lead-integrations', 'route' => 'settings.lead-integrations.index', 'permission' => 'lead_integration.view'],
                 ['title' => 'Mẫu tin nhắn', 'url' => '/settings/message-templates', 'route' => 'settings.message-templates.index', 'permission' => 'message_template.view'],
                 ['title' => 'Tích hợp tổng đài', 'url' => '/settings/call-integrations', 'route' => 'settings.call-integrations.index', 'permission' => 'call_integration.view'],
+                ['title' => 'API & Webhook', 'url' => '/settings/api', 'route' => 'settings.api.index', 'permission' => 'webhook.view'],
                 ['title' => 'Workflow tự động', 'url' => '/settings/workflows', 'route' => 'settings.workflows.index', 'permission' => 'workflow.view'],
                 ['title' => 'Quy tắc phân bổ', 'url' => '/settings/assignment-rules', 'route' => 'settings.assignment-rules.index', 'permission' => 'assignment_rule.view'],
             ],

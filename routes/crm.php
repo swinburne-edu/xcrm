@@ -44,8 +44,10 @@ use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\AssignmentRuleController;
 use App\Http\Controllers\Settings\CustomFieldController;
 use App\Http\Controllers\Settings\LeadIntegrationController;
+use App\Http\Controllers\Settings\ApiTokenController;
 use App\Http\Controllers\Settings\CallIntegrationController;
 use App\Http\Controllers\Settings\MessageTemplateController;
+use App\Http\Controllers\Settings\WebhookController;
 use App\Http\Controllers\Settings\WorkflowController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TeamController;
@@ -99,6 +101,14 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::post('call-integrations', [CallIntegrationController::class, 'store'])->name('call-integrations.store');
     Route::put('call-integrations/{id}', [CallIntegrationController::class, 'update'])->whereNumber('id')->name('call-integrations.update');
     Route::delete('call-integrations/{id}', [CallIntegrationController::class, 'destroy'])->whereNumber('id')->name('call-integrations.destroy');
+
+    Route::get('api', [WebhookController::class, 'index'])->name('api.index');
+    Route::post('api/tokens', [ApiTokenController::class, 'store'])->name('api.tokens.store');
+    Route::delete('api/tokens/{id}', [ApiTokenController::class, 'destroy'])->whereNumber('id')->name('api.tokens.destroy');
+    Route::post('api/webhooks', [WebhookController::class, 'store'])->name('api.webhooks.store');
+    Route::put('api/webhooks/{id}', [WebhookController::class, 'update'])->whereNumber('id')->name('api.webhooks.update');
+    Route::delete('api/webhooks/{id}', [WebhookController::class, 'destroy'])->whereNumber('id')->name('api.webhooks.destroy');
+    Route::post('api/webhooks/{id}/deliveries/{deliveryId}/redeliver', [WebhookController::class, 'redeliver'])->whereNumber(['id', 'deliveryId'])->name('api.webhooks.redeliver');
 
     Route::get('assignment-rules', [AssignmentRuleController::class, 'index'])->name('assignment-rules.index');
     Route::post('assignment-rules', [AssignmentRuleController::class, 'store'])->name('assignment-rules.store');

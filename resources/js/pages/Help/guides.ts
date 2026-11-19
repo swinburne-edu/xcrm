@@ -574,6 +574,17 @@ export const guides: Guide[] = [
                 ],
             },
             {
+                id: 'admin-api',
+                title: 'API và webhook bàn giao',
+                steps: [
+                    'Cài đặt, API & Webhook, Tạo token: đặt tên, chọn Cho phép ghi nếu hệ thống kia cần ghi, đặt hạn. Sao chép token ngay vì chỉ hiện một lần.',
+                    'Hệ thống kia gửi header Authorization: Bearer <token>. Token làm được đúng những gì tài khoản của bạn làm được.',
+                    'Thêm webhook: nhập địa chỉ https, chọn sự kiện (nguyện vọng trúng tuyển, thí sinh xác nhận nhập học) và lưu khoá bí mật để kiểm tra chữ ký.',
+                    'Xem các lần gửi gần đây ngay dưới mỗi webhook; lần lỗi bấm Gửi lại. Tài liệu đầy đủ: docs/07-api.md.',
+                ],
+                tips: ['Thu hồi token ngay khi nghi ngờ lộ. Đổi khoá webhook sẽ làm khoá cũ hết hiệu lực.'],
+            },
+            {
                 id: 'admin-ops',
                 title: 'Vận hành và dữ liệu mẫu',
                 steps: [
