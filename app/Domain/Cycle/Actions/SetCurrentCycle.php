@@ -3,6 +3,7 @@
 namespace App\Domain\Cycle\Actions;
 
 use App\Domain\Cycle\Enums\CycleStatus;
+use App\Domain\Cycle\Jobs\CreateCasesForGraduatingApplicantsJob;
 use App\Domain\Cycle\Models\AdmissionCycle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -28,6 +29,7 @@ class SetCurrentCycle
                 ->update(['is_current' => false]);
 
             $cycle->forceFill(['is_current' => true, 'status' => CycleStatus::Active])->save();
+            CreateCasesForGraduatingApplicantsJob::dispatch($cycle->id)->afterCommit();
 
             return $cycle;
         });

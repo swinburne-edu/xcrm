@@ -25,3 +25,11 @@ Artisan::command('crm:check-sla', function () {
 })->purpose('Alert team leaders about cases past their SLA and recall idle cases to the shared pool');
 
 Schedule::command('crm:check-sla')->everyFifteenMinutes()->withoutOverlapping();
+
+// Task 2.9 (F5): cases for applicants graduating in the year of an active cycle, once a day (also dispatched when a cycle is activated).
+Artisan::command('crm:create-graduating-cases', function () {
+    \App\Domain\Cycle\Jobs\CreateCasesForGraduatingApplicantsJob::dispatchSync();
+    $this->info('Graduating applicants processed.');
+})->purpose('Open cases in every active cycle for applicants whose graduation year matches the cycle year');
+
+Schedule::command('crm:create-graduating-cases')->dailyAt('02:00')->withoutOverlapping();

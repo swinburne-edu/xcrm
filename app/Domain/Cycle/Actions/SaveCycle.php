@@ -3,6 +3,7 @@
 namespace App\Domain\Cycle\Actions;
 
 use App\Domain\Cycle\Enums\CycleStatus;
+use App\Domain\Cycle\Jobs\CreateCasesForGraduatingApplicantsJob;
 use App\Domain\Cycle\Models\AdmissionCycle;
 use Illuminate\Support\Facades\DB;
 
@@ -39,6 +40,10 @@ class SaveCycle
             }
 
             $cycle->save();
+
+            if ($cycle->status === CycleStatus::Active && ($cycle->wasRecentlyCreated || $cycle->wasChanged('status'))) {
+                CreateCasesForGraduatingApplicantsJob::dispatch($cycle->id)->afterCommit();
+            }
 
             if (! empty($data['is_current']) && ! $cycle->is_current) {
                 $this->setCurrent->handle($cycle);

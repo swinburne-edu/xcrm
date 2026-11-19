@@ -22,6 +22,10 @@ Tài khoản mẫu (mật khẩu `password`): `demo.head@example.com` (trưởng
 4. **Marketing → Chiến dịch**: tạo (nháp) → gửi duyệt → trưởng phòng duyệt thì chiến dịch chạy.
 5. Đặt mùa là *hiện tại* và trạng thái *đang diễn ra*.
 
+## 1b. Tự mở hồ sơ cho học sinh sắp tốt nghiệp (F5)
+
+Khi một mùa chuyển sang **Đang tuyển sinh**, hệ thống tự mở hồ sơ cho mọi thí sinh có **năm tốt nghiệp** trùng năm của mùa mà chưa có hồ sơ. Hồ sơ vào kho chung hoặc được giao theo luật phân bổ / vùng phụ trách. Mỗi đêm lúc 02:00 hệ thống chạy lại để lấy thêm thí sinh mới nhập sau đó. Cần chạy bộ lập lịch (`php artisan schedule:work`) và hàng đợi (`php artisan queue:work`); hoặc chạy tay bằng `php artisan crm:create-graduating-cases`.
+
 ## 2. Thu nhận thí sinh (F3)
 
 - **Form trên website**: **Marketing → Form thu thập** → tạo biểu mẫu (chọn trường cần hỏi, nguồn, chiến dịch) → nút `</>` lấy mã HTML dán vào website. Form tự gắn tham số `utm_*`; ô ẩn `hp` là chống spam, đừng xoá.
