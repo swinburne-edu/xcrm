@@ -52,7 +52,7 @@ return [
             'icon' => 'school',
             'children' => [
                 ['title' => 'Danh sách trường', 'url' => '/high-schools', 'route' => 'high-schools.index', 'permission' => 'high_school.view'],
-                ['title' => 'Người liên hệ', 'url' => '/school-contacts', 'route' => 'school-contacts.index', 'placeholder' => true],
+                ['title' => 'Người liên hệ', 'url' => '/school-contacts', 'route' => 'school-contacts.index', 'permission' => 'school_contact.view'],
                 ['title' => 'Bản đồ', 'url' => '/map', 'route' => 'map', 'permission' => 'report.view'],
                 ['title' => 'Hoạt động tại trường', 'url' => '/school-activities', 'route' => 'school-activities.index', 'permission' => 'school_activity.view'],
             ],
@@ -62,6 +62,7 @@ return [
             'icon' => 'marketing',
             'children' => [
                 ['title' => 'Chiến dịch', 'url' => '/campaigns', 'route' => 'campaigns.index', 'permission' => 'campaign.view'],
+                ['title' => 'Chi phí & hiệu quả', 'url' => '/campaigns/performance', 'route' => 'campaigns.performance', 'permission' => 'campaign.view'],
                 ['title' => 'Form thu thập', 'url' => '/forms', 'route' => 'forms.index', 'permission' => 'form.view'],
                 ['title' => 'Cuộc gọi', 'url' => '/calls', 'route' => 'calls.index', 'permission' => 'call.view'],
                 ['title' => 'Tin nhắn đã gửi', 'url' => '/messages', 'route' => 'messages.index', 'permission' => 'message.view'],

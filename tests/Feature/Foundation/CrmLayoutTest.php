@@ -32,14 +32,8 @@ it('redirects guests from menu screens to login', function (string $url) {
     $this->get($url)->assertRedirect(route('login'));
 })->with('menu urls');
 
-it('shows the under-construction page with title, phase and breadcrumbs', function () {
-    $this->actingAs(User::factory()->create())
-        ->get('/school-contacts')
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('UnderConstruction')
-            ->where('title', 'Người liên hệ')
-            ->where('phase', null)
-            ->where('breadcrumbs', [['title' => 'Trường THPT'], ['title' => 'Người liên hệ', 'href' => '/school-contacts']]));
+it('has no menu entry left on the under-construction page', function () {
+    expect(app(NavigationMenu::class)->placeholders())->toBe([]);
 });
 
 it('registers placeholder routes under the names the real screens will use', function () {

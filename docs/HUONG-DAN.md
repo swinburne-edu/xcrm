@@ -4,6 +4,22 @@ Dành cho cán bộ tuyển sinh. Giao diện hoàn toàn tiếng Việt; thanh 
 
 > Trong hệ thống có sẵn trang **Hướng dẫn sử dụng** (menu cuối cùng, `/help`): hướng dẫn từng bước theo vai trò (tư vấn viên, trưởng nhóm, trưởng phòng, thư ký xét tuyển, cán bộ trường THPT, marketing, khoa, cộng tác viên, quản trị). Nội dung sửa ở `resources/js/pages/Help/guides.ts`.
 
+## Bản đồ menu
+
+| Nhóm menu | Mục | Dùng để | Mục hướng dẫn |
+| --- | --- | --- | --- |
+| Tổng quan | Tổng quan | Phễu theo giai đoạn, chỉ tiêu, việc quá hạn | 5 |
+| Tuyển sinh | Hồ sơ tuyển sinh, Thí sinh, Có thể trùng, Nguyện vọng, Lịch hẹn | Xử lý hồ sơ từ lead đến nhập học | 2, 3, 3b, 3c, 4, 4b |
+| Công việc của tôi | Công việc của tôi | Việc cần làm và nhắc hẹn | 3 |
+| Trường THPT | Danh sách trường, Người liên hệ, Bản đồ, Hoạt động tại trường | Quan hệ với trường và điểm danh QR | 2b, 5e |
+| Marketing | Chiến dịch, Chi phí & hiệu quả, Form thu thập, Cuộc gọi, Tin nhắn đã gửi | Chiến dịch, chi phí, thu thập lead, tổng đài, gửi tin | 2, 2c, 3d, 3e, 5f |
+| Đào tạo & chỉ tiêu | Ngành, Tiến độ chỉ tiêu | Ngành, chỉ tiêu, cảnh báo thiếu/thừa | 1, 5 |
+| Báo cáo | Báo cáo | Phễu theo nguồn, chiến dịch, trường, tỉnh, ngành | 5 |
+| Cài đặt | Mùa tuyển sinh, Pipeline, Danh mục, Vùng phụ trách, Người dùng & vai trò, Trường tuỳ chỉnh, Tích hợp lead ads, Mẫu tin nhắn, Tích hợp tổng đài, Workflow tự động, Quy tắc phân bổ | Cấu hình hệ thống | 1, 1b, 2c, 3b, 3e, 5b, 5d, 5f |
+| Hướng dẫn sử dụng | Hướng dẫn sử dụng | Hướng dẫn theo vai trò ngay trong hệ thống | |
+
+Hai trang công khai không có trong menu cán bộ: **/tuyen-sinh** (tính điểm và gợi ý ngành) và **/cong-thi-sinh** (cổng thí sinh), xem mục 5g. Mỗi người chỉ thấy các mục mà vai trò của mình có quyền.
+
 ## 0. Chạy thử với dữ liệu mẫu
 
 ```bash

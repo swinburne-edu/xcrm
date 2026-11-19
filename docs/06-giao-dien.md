@@ -10,19 +10,24 @@ Tổng quan                  /dashboard
 Tuyển sinh
   ├ Hồ sơ tuyển sinh       /cases            (Kanban | Bảng)
   ├ Thí sinh               /applicants
-  ├ Nguyện vọng            /applications     (P1)
+  ├ Có thể trùng           /applicants/duplicates
+  ├ Nguyện vọng            /applications
   └ Lịch hẹn               /appointments
 Công việc của tôi          /tasks
 Trường THPT
   ├ Danh sách trường       /high-schools
   ├ Người liên hệ          /school-contacts
-  └ Hoạt động tại trường   /school-activities (Lịch | Bảng)  (P1)
+  ├ Bản đồ                 /map
+  └ Hoạt động tại trường   /school-activities (Lịch | Bảng)
 Marketing
   ├ Chiến dịch             /campaigns
-  └ Form thu thập          /forms
+  ├ Chi phí & hiệu quả     /campaigns/performance
+  ├ Form thu thập          /forms
+  ├ Cuộc gọi               /calls
+  └ Tin nhắn đã gửi        /messages
 Đào tạo & chỉ tiêu
   ├ Ngành                  /majors
-  └ Tiến độ chỉ tiêu       /quotas           (P1)
+  └ Tiến độ chỉ tiêu       /quotas
 Báo cáo                    /reports
 Cài đặt
   ├ Mùa tuyển sinh         /settings/cycles
@@ -30,8 +35,17 @@ Cài đặt
   ├ Danh mục               /settings/catalogs
   ├ Vùng phụ trách         /settings/territories
   ├ Người dùng & vai trò   /settings/users
-  ├ Trường tuỳ chỉnh       /settings/custom-fields   (P1)
-  └ Quy tắc phân bổ        /settings/assignment-rules (P1)
+  ├ Trường tuỳ chỉnh       /settings/custom-fields
+  ├ Tích hợp lead ads      /settings/lead-integrations
+  ├ Mẫu tin nhắn           /settings/message-templates
+  ├ Tích hợp tổng đài      /settings/call-integrations
+  ├ Workflow tự động       /settings/workflows
+  └ Quy tắc phân bổ        /settings/assignment-rules
+Hướng dẫn sử dụng          /help
+
+Trang công khai (không có trong menu cán bộ)
+  ├ Tính điểm & gợi ý ngành /tuyen-sinh
+  └ Cổng thí sinh (OTP)     /cong-thi-sinh
 ```
 
 ## Component dùng chung (`resources/js/components/crm/`)

@@ -25,6 +25,7 @@ use App\Http\Controllers\Cycle\CycleMethodController;
 use App\Http\Controllers\Cycle\CycleRoundController;
 use App\Http\Controllers\Cycle\CycleSelectionController;
 use App\Http\Controllers\HighSchool\HighSchoolController;
+use App\Http\Controllers\HighSchool\SchoolContactListController;
 use App\Http\Controllers\Platform\HelpController;
 use App\Http\Controllers\Platform\MapController;
 use App\Http\Controllers\HighSchool\SchoolActivityController;
@@ -174,6 +175,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('high-schools/{id}', [HighSchoolController::class, 'show'])->whereNumber('id')->name('high-schools.show');
     Route::put('high-schools/{id}', [HighSchoolController::class, 'update'])->whereNumber('id')->name('high-schools.update');
     Route::delete('high-schools/{id}', [HighSchoolController::class, 'destroy'])->whereNumber('id')->name('high-schools.destroy');
+    Route::get('school-contacts', SchoolContactListController::class)->name('school-contacts.index');
     Route::post('high-schools/{schoolId}/contacts', [SchoolContactController::class, 'store'])->whereNumber('schoolId')->name('high-schools.contacts.store');
     Route::put('high-schools/{schoolId}/contacts/{contactId}', [SchoolContactController::class, 'update'])->whereNumber(['schoolId', 'contactId'])->name('high-schools.contacts.update');
     Route::delete('high-schools/{schoolId}/contacts/{contactId}', [SchoolContactController::class, 'destroy'])->whereNumber(['schoolId', 'contactId'])->name('high-schools.contacts.destroy');

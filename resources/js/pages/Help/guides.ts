@@ -105,6 +105,17 @@ export const guides: Guide[] = [
                 ],
             },
             {
+                id: 'counselor-calls',
+                title: 'Gọi qua tổng đài và cuộc gọi đến',
+                steps: [
+                    'Ở Thí sinh, bấm biểu tượng điện thoại cạnh số để gọi qua tổng đài (nếu nhà trường đã bật). Nếu chưa, biểu tượng mở ứng dụng gọi trên máy.',
+                    'Khi có cuộc gọi đến, hộp thông báo hiện ở góc phải màn hình: bấm Mở hồ sơ để xem thí sinh. Số lạ gọi đến tự tạo thí sinh mới.',
+                    'Cuộc gọi kết thúc tự ghi vào timeline (thời lượng, ghi âm). Cuộc gọi nhỡ tạo việc Gọi lại khách nhỡ máy, hạn 1 giờ.',
+                    'Marketing, Cuộc gọi: xem lại lịch sử cuộc gọi của bạn.',
+                ],
+                tips: ['Sau khi gọi, vẫn nên ghi kết quả và hẹn gọi lại trong timeline để lần sau không quên.'],
+            },
+            {
                 id: 'counselor-stage',
                 title: 'Chuyển giai đoạn hồ sơ',
                 steps: [
@@ -174,6 +185,16 @@ export const guides: Guide[] = [
                 ],
             },
             {
+                id: 'lead-message',
+                title: 'Gửi tin cho thí sinh đang lọc',
+                steps: [
+                    'Thí sinh: lọc danh sách (trường, tỉnh, năm tốt nghiệp…) rồi bấm Gửi tin.',
+                    'Chọn mẫu tin và bấm Xem trước: hệ thống cho biết bao nhiêu người sẽ nhận và bao nhiêu người bị bỏ qua (chưa đồng ý nhận tin, thiếu số điện thoại hoặc email). Bấm Gửi để xếp hàng gửi.',
+                    'Marketing, Tin nhắn đã gửi: theo dõi từng tin, trạng thái và lỗi.',
+                ],
+                tips: ['Chỉ gửi cho thí sinh trong phạm vi nhóm của bạn. Mỗi lần tối đa 2000 người.'],
+            },
+            {
                 id: 'lead-view',
                 title: 'Theo dõi kết quả của nhóm',
                 steps: [
@@ -199,7 +220,7 @@ export const guides: Guide[] = [
         label: 'Trưởng phòng tuyển sinh',
         summary: 'Chuẩn bị mùa tuyển sinh, điều hành toàn bộ hồ sơ và theo dõi kết quả so với chỉ tiêu.',
         scope: 'Toàn bộ dữ liệu của tổ chức.',
-        menus: ['Tổng quan', 'Tiến độ chỉ tiêu', 'Báo cáo', 'Mùa tuyển sinh', 'Quy tắc phân bổ'],
+        menus: ['Tổng quan', 'Tiến độ chỉ tiêu', 'Báo cáo', 'Bản đồ', 'Chi phí & hiệu quả', 'Workflow tự động'],
         limits: ['Không tạo/sửa/xoá người dùng và nhóm (việc của quản trị hệ thống).'],
         sections: [
             {
@@ -212,6 +233,15 @@ export const guides: Guide[] = [
                     'Đặt mùa là hiện tại và trạng thái Đang diễn ra.',
                 ],
                 tips: ['Ngày bắt đầu và kết thúc của mùa cần khai báo thì cảnh báo "Thiếu chỉ tiêu" mới tính đúng.'],
+            },
+            {
+                id: 'head-workflow',
+                title: 'Workflow tự động',
+                steps: [
+                    'Cài đặt, Workflow tự động, Thêm workflow: chọn đối tượng, Khi (tạo mới, đổi trường, đổi giai đoạn, hằng ngày), Nếu (điều kiện) và Thì (giao người, tạo việc, gửi tin, cập nhật trường, gọi webhook).',
+                    'Bật hoặc tắt từng workflow. Bấm Lần chạy gần đây để xem đã làm gì với từng hồ sơ và hành động nào lỗi.',
+                ],
+                tips: ['Hành động của workflow không kích hoạt workflow khác. Tin chỉ gửi cho thí sinh đã đồng ý nhận tin.'],
             },
             {
                 id: 'head-campaign',
@@ -229,6 +259,14 @@ export const guides: Guide[] = [
                     'Hồ sơ mới từ form, import hay nhập tay được thử lần lượt với các quy tắc; không khớp thì theo vùng phụ trách, rồi vào kho chung.',
                     'Cùng trang đó bật Thu hồi tự động và đặt số ngày nếu muốn.',
                     'Cài đặt → Vùng phụ trách: gán tỉnh hoặc trường THPT cho người hay nhóm. Cài đặt → Pipeline: chỉnh giai đoạn và SLA từng giai đoạn.',
+                ],
+            },
+            {
+                id: 'head-map',
+                title: 'Bản đồ và chi phí chiến dịch',
+                steps: [
+                    'Trường THPT, Bản đồ: xem thí sinh, hồ sơ trong mùa hoặc nhập học theo tỉnh (vòng tròn đỏ) và các trường có toạ độ (chấm xanh).',
+                    'Marketing, Chi phí & hiệu quả: so sánh các mùa và từng chiến dịch về chi phí, chi phí mỗi thí sinh, chi phí mỗi nhập học, tỉ lệ chuyển đổi. Nhập doanh thu dự kiến mỗi sinh viên để xem ROI.',
                 ],
             },
             {
@@ -279,6 +317,14 @@ export const guides: Guide[] = [
                     'Xem file học bạ, CCCD… (PDF hoặc ảnh, tối đa 10 MB).',
                     'Bấm Duyệt hoặc Từ chối. Từ chối bắt buộc ghi lý do để tư vấn viên báo lại cho thí sinh.',
                     'Mỗi phương thức có danh sách giấy tờ cần nộp, hiện ngay trên nguyện vọng.',
+                ],
+            },
+            {
+                id: 'clerk-portal',
+                title: 'Thí sinh tự nộp qua cổng thí sinh',
+                steps: [
+                    'Thí sinh đăng nhập cổng bằng mã SMS, tự nhập điểm, thêm và nộp nguyện vọng. Điểm tự nhập chưa được xác minh: kiểm tra ở trang thí sinh rồi mới xét.',
+                    'Duyệt, đủ điều kiện, trúng tuyển vẫn do bạn làm như thường lệ. Thí sinh chỉ xác nhận nhập học khi hồ sơ đã trúng tuyển.',
                 ],
             },
             {
@@ -342,6 +388,14 @@ export const guides: Guide[] = [
                 tips: ['Link chỉ mở từ 2 giờ trước giờ bắt đầu đến 12 giờ sau khi kết thúc, và đóng khi hoạt động bị huỷ.'],
             },
             {
+                id: 'school-contact-map',
+                title: 'Người liên hệ và bản đồ trường',
+                steps: [
+                    'Trường THPT, Người liên hệ: tìm nhanh hiệu trưởng, tư vấn hướng nghiệp, giáo viên chủ nhiệm của mọi trường; bấm vào dòng để mở trang trường. Thêm hoặc sửa ở tab Người liên hệ của trang trường.',
+                    'Trường THPT, Bản đồ: xem trường theo vị trí. Trường chưa có toạ độ sẽ không hiện, hãy nhập lat/lng ở trang trường.',
+                ],
+            },
+            {
                 id: 'school-report',
                 title: 'Báo cáo sau hoạt động',
                 steps: [
@@ -357,7 +411,7 @@ export const guides: Guide[] = [
         label: 'Marketing',
         summary: 'Lập chiến dịch, tạo form thu thập thí sinh và đo hiệu quả theo nguồn.',
         scope: 'Xem tổng hợp toàn bộ tổ chức; không sửa hồ sơ tư vấn.',
-        menus: ['Chiến dịch', 'Form thu thập', 'Báo cáo', 'Tổng quan'],
+        menus: ['Chiến dịch', 'Chi phí & hiệu quả', 'Form thu thập', 'Tin nhắn đã gửi', 'Báo cáo'],
         limits: ['Không xử lý hồ sơ cá nhân của thí sinh (chỉ xem).'],
         sections: [
             {
@@ -379,6 +433,23 @@ export const guides: Guide[] = [
                     'Form tự gắn các tham số utm_*. Ô ẩn "hp" là chống spam, đừng xoá.',
                 ],
                 tips: ['Thí sinh gửi form được chống trùng theo số điện thoại. Người đăng ký lại chỉ được bổ sung thông tin và ghi thêm một lần tiếp xúc.'],
+            },
+            {
+                id: 'mkt-cost',
+                title: 'Ghi chi phí chiến dịch',
+                steps: [
+                    'Mở chiến dịch, mục Chi phí theo ngày, Thêm chi phí: nhập ngày, số tiền, ghi chú. Chi phí thực của chiến dịch luôn bằng tổng các dòng.',
+                    'Marketing, Chi phí & hiệu quả cho biết chiến dịch nào rẻ và hiệu quả nhất.',
+                ],
+            },
+            {
+                id: 'mkt-message',
+                title: 'Mẫu tin nhắn và trang tính điểm công khai',
+                steps: [
+                    'Cài đặt, Mẫu tin nhắn: soạn mẫu Zalo ZNS, SMS hoặc email, chèn biến như tên thí sinh. Gửi hàng loạt từ danh sách Thí sinh bằng nút Gửi tin.',
+                    'Trang công khai /tuyen-sinh cho học sinh tự tính điểm và xem gợi ý ngành, đồng thời để lại số điện thoại để được tư vấn. Dán địa chỉ này vào website hoặc quảng cáo.',
+                ],
+                tips: ['Chỉ gửi cho người đã đồng ý nhận tin.'],
             },
             {
                 id: 'mkt-report',
@@ -490,6 +561,16 @@ export const guides: Guide[] = [
                     'Vùng phụ trách: gán tỉnh hoặc trường THPT cho người hay nhóm.',
                     'Quy tắc phân bổ và Trường tuỳ chỉnh: cấu hình như hướng dẫn của Trưởng phòng tuyển sinh.',
                     'Tích hợp lead ads: Cài đặt → Tích hợp lead ads → Thêm tích hợp, chọn Facebook hoặc TikTok, nhập khoá bí mật rồi dán địa chỉ webhook (và verify token với Facebook) vào nền tảng quảng cáo. Lead gửi về tự tạo thí sinh và hồ sơ.',
+                ],
+            },
+            {
+                id: 'admin-integrations',
+                title: 'Tổng đài, tin nhắn, workflow và cổng thí sinh',
+                steps: [
+                    'Cài đặt, Tích hợp tổng đài: tạo tích hợp, lưu khoá bí mật (chỉ hiện một lần) và dán địa chỉ webhook vào tổng đài. Gọi đi cấu hình bằng TELEPHONY_DRIVER, TELEPHONY_URL, TELEPHONY_TOKEN trong .env.',
+                    'Tin nhắn: cấu hình ZALO_ZNS_ACCESS_TOKEN, SMS_API_URL, SMS_API_TOKEN, SMS_BRANDNAME. Đặt MESSAGE_SMS_DRIVER=log (tương tự cho ZNS, email) để thử mà không gửi thật.',
+                    'Cổng thí sinh dùng SMS để gửi mã đăng nhập. Đặt PORTAL_ORGANIZATION_ID nếu hệ thống có nhiều tổ chức.',
+                    'Cần chạy hàng đợi (queue:work) và bộ lập lịch (schedule:work) để gửi tin, workflow, kiểm tra SLA và tạo hồ sơ cho học sinh sắp tốt nghiệp.',
                 ],
             },
             {
