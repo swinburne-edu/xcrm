@@ -100,7 +100,7 @@ Gộp trùng `MergeApplicants::handle(Applicant $keep, Applicant $merge, array $
 
 ### Seeder hệ thống (`CatalogSeeder`)
 
-- **provinces / wards**: 34 tỉnh/thành theo địa giới mới. Seeder đọc file `database/data/provinces.json`, `wards.json` (người dùng bổ sung file; seeder phải chạy được khi file chưa có — chỉ cảnh báo).
+- **provinces / wards**: 34 tỉnh/thành theo địa giới mới. Seeder đọc file `database/data/tinh_thanh_pho.json`, `xa_phuong.json` (người dùng bổ sung file; seeder phải chạy được khi file chưa có — chỉ cảnh báo).
 - **priority_areas**: KV1 (0.75) · KV2-NT (0.5) · KV2 (0.25) · KV3 (0). Đây là giá trị tham khảo, sửa được trong cấu hình.
 - **priority_groups**: UT1 (2.0) · UT2 (1.0).
 - **subjects**: TOAN (core), VAN (core), ANH, LY, HOA, SINH, SU, DIA, GDKTPL, TIN, CNCN, CNNN.

@@ -53,7 +53,7 @@ it('feeds the dashboard and the reports', function () {
     $overview = app(FunnelReport::class)->overview($cycle, $this->head);
 
     expect($overview['kpis']['total'])->toBe(62)->and($overview['kpis']['enrolled'])->toBe(2)->and($overview['kpis']['lost'])->toBe(4)
-        ->and($overview['quotas'])->toHaveCount(5)->and($overview['top_sources'])->not->toBeEmpty();
+        ->and($overview['quotas'])->toHaveCount(2)->and($overview['top_sources'])->not->toBeEmpty();
 
     $this->actingAs($this->head)->get('/dashboard')->assertInertia(fn (Assert $p) => $p->where('data.kpis.total', 62));
     $this->get('/reports?dimension=owner')->assertInertia(fn (Assert $p) => $p->has('rows'));

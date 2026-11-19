@@ -80,7 +80,7 @@ class CatalogSeeder extends Seeder
         ['code' => '500', 'name' => 'Phương thức khác', 'score_source' => null],
     ];
 
-    /** Folder with provinces.json / wards.json / ward_mappings.json (default database/data). */
+    /** Folder with tinh_thanh_pho.json / xa_phuong.json / ward_mappings.json (default database/data). */
     public ?string $dataDirectory = null;
 
     public function run(): void
@@ -134,7 +134,7 @@ class CatalogSeeder extends Seeder
 
     private function seedAdministrativeUnits(): void
     {
-        $provinces = $this->readJson('provinces.json');
+        $provinces = $this->readJson('tinh_thanh_pho.json');
 
         if ($provinces === null) {
             return;
@@ -142,18 +142,22 @@ class CatalogSeeder extends Seeder
 
         foreach ($provinces as $row) {
             Province::query()->updateOrCreate(
-                ['code' => (string) $row['code']],
+                ['code' => (string) $row['province_code']],
                 [
-                    'name' => $row['name'],
-                    'type' => ProvinceType::tryFrom((string) ($row['type'] ?? '')),
-                    'is_active' => $row['is_active'] ?? true,
+                    'name' => self::stripPrefix($row['province_name'], ['Thành phố ', 'Tỉnh ']),
+                    'type' => match ($row['province_type'] ?? null) {
+                        'Thành phố' => ProvinceType::City,
+                        'Tỉnh' => ProvinceType::Province,
+                        default => null,
+                    },
+                    'is_active' => true,
                 ],
             );
         }
 
         $this->info(count($provinces).' tỉnh/thành phố.');
 
-        $wards = $this->readJson('wards.json');
+        $wards = $this->readJson('xa_phuong.json');
 
         if ($wards === null) {
             return;
@@ -166,17 +170,22 @@ class CatalogSeeder extends Seeder
             $provinceId = $provinceIds[(string) $row['province_code']] ?? null;
 
             if ($provinceId === null) {
-                $this->warn("Bỏ qua xã/phường {$row['code']}: không có tỉnh mã {$row['province_code']}.");
+                $this->warn("Bỏ qua xã/phường {$row['ward_code']}: không có tỉnh mã {$row['province_code']}.");
 
                 continue;
             }
 
             $rows[] = [
                 'province_id' => $provinceId,
-                'code' => (string) $row['code'],
-                'name' => $row['name'],
-                'type' => WardType::tryFrom((string) ($row['type'] ?? ''))?->value,
-                'is_active' => $row['is_active'] ?? true,
+                'code' => (string) $row['ward_code'],
+                'name' => self::stripPrefix($row['ward_name'], ['Phường ', 'Xã ', 'Đặc khu ']),
+                'type' => match ($row['ward_type'] ?? null) {
+                    'Phường' => WardType::Ward->value,
+                    'Xã' => WardType::Commune->value,
+                    'Đặc khu' => WardType::SpecialZone->value,
+                    default => null,
+                },
+                'is_active' => true,
             ];
         }
 
@@ -184,9 +193,25 @@ class CatalogSeeder extends Seeder
             Ward::query()->upsert($chunk, ['code'], ['province_id', 'name', 'type', 'is_active']);
         }
 
-        $this->info(count($rows).' xã/phường.');
+        $this->info(count($rows).' xã/phường/đặc khu.');
 
         $this->seedWardMappings();
+    }
+
+    /**
+     * "Thành phố Hà Nội" → "Hà Nội": the kind of unit lives in the `type` column.
+     *
+     * @param  list<string>  $prefixes
+     */
+    private static function stripPrefix(string $name, array $prefixes): string
+    {
+        foreach ($prefixes as $prefix) {
+            if (str_starts_with($name, $prefix)) {
+                return trim(substr($name, strlen($prefix)));
+            }
+        }
+
+        return trim($name);
     }
 
     /**

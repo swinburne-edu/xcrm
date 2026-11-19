@@ -35,6 +35,8 @@ class DatabaseSeeder extends Seeder
             // creates an organization must call this action too.
             if ($user->organization) {
                 app(SeedOrganizationCatalogs::class)->handle($user->organization);
+                app(HighSchoolSeeder::class)->seedFor($user->organization); // MOET list of schools
+                app(MajorSeeder::class)->seedFor($user->organization); // the two majors
             }
         }
     }

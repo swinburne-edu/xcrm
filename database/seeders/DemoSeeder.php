@@ -60,11 +60,6 @@ class DemoSeeder extends Seeder
         ['THPT Lê Quý Đôn', 'B'], ['THPT Phan Đình Phùng', 'B'], ['THPT Trần Phú', 'C'], ['THPT Quang Trung', 'C'],
     ];
 
-    private const MAJORS = [
-        ['7480201', 'CNTT', 'Công nghệ thông tin', 300], ['7340101', 'QTKD', 'Quản trị kinh doanh', 250], ['7340115', 'MKT', 'Marketing', 150],
-        ['7340301', 'KT', 'Kế toán', 120], ['7220201', 'NNA', 'Ngôn ngữ Anh', 100],
-    ];
-
     private const LAST = ['Nguyễn', 'Trần', 'Lê', 'Phạm', 'Hoàng', 'Vũ', 'Đặng', 'Bùi', 'Đỗ', 'Ngô'];
 
     private const MIDDLE = ['Văn', 'Thị', 'Minh', 'Ngọc', 'Quang', 'Thu', 'Hữu', 'Khánh'];
@@ -95,7 +90,7 @@ class DemoSeeder extends Seeder
                 Auth::setUser($admin);
                 mt_srand(2027);
                 $cycle = AdmissionCycle::query()->where('is_current', true)->orderByDesc('year')->first();
-                $majors = Major::query()->whereIn('admission_code', array_column(self::MAJORS, 1))->get()->all();
+                $majors = Major::query()->whereIn('admission_code', array_column(MajorSeeder::MAJORS, 'admission_code'))->get()->all();
 
                 if ($cycle !== null && $majors !== []) {
                     $this->admission($org, $cycle, $majors);
@@ -170,29 +165,34 @@ class DemoSeeder extends Seeder
     /** @return list<Major> */
     private function majors(Organization $org, AdmissionCycle $cycle): array
     {
-        $majors = [];
+        $majors = app(MajorSeeder::class)->seedFor($org);
 
-        foreach (self::MAJORS as [$moet, $code, $name, $quota]) {
-            $major = Major::query()->firstOrCreate(
-                ['organization_id' => $org->id, 'admission_code' => $code],
-                ['moet_code' => $moet, 'name' => $name, 'program_type' => 'standard', 'level' => 'university', 'duration_years' => 4, 'is_active' => true],
-            );
+        foreach ($majors as $i => $major) {
+            $quota = [200, 150][$i] ?? 100;
             MajorQuota::query()->firstOrCreate(['organization_id' => $org->id, 'major_id' => $major->id, 'cycle_id' => $cycle->id], ['quota_total' => $quota, 'quota_direct' => (int) ($quota * 0.1), 'tuition_fee' => 25000000]);
-            $majors[] = $major;
         }
 
         return $majors;
     }
 
-    /** @return list<HighSchool> */
+    /**
+     * Real Hà Nội schools from the MOET list (HighSchoolSeeder); a school missing from the list is created.
+     *
+     * @return list<HighSchool>
+     */
     private function schools(Organization $org): array
     {
+        app(HighSchoolSeeder::class)->seedFor($org);
+
         $province = Province::query()->where('name', 'like', '%Hà Nội%')->first();
 
-        return array_map(fn (array $s) => HighSchool::query()->firstOrCreate(
-            ['organization_id' => $org->id, 'name' => $s[0]],
-            ['code' => 'DEMO'.str_pad((string) (++$this->seq), 3, '0', STR_PAD_LEFT), 'type' => 'public', 'tier' => $s[1], 'partnership_status' => $s[1] === 'A' ? 'partner' : 'not_contacted', 'province_id' => $province?->id],
-        ), self::SCHOOLS);
+        return array_map(function (array $s) use ($org, $province): HighSchool {
+            $school = HighSchool::query()->where('province_id', $province?->id)->where('name', $s[0])->first()
+                ?? HighSchool::query()->create(['organization_id' => $org->id, 'code' => 'DEMO'.str_pad((string) (++$this->seq), 3, '0', STR_PAD_LEFT), 'name' => $s[0], 'type' => 'public', 'province_id' => $province?->id]);
+            $school->update(['tier' => $s[1], 'partnership_status' => $s[1] === 'A' ? 'partner' : 'not_contacted']);
+
+            return $school;
+        }, self::SCHOOLS);
     }
 
     private function campaign(Organization $org, AdmissionCycle $cycle, User $owner): Campaign

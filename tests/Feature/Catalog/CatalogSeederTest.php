@@ -74,14 +74,15 @@ it('skips administrative units when the data files are missing', function () {
 it('loads provinces, wards and ward mappings from JSON files', function () {
     $dir = sys_get_temp_dir().'/xcrm-catalog-'.uniqid();
     File::ensureDirectoryExists($dir);
-    File::put("{$dir}/provinces.json", json_encode([
-        ['code' => '01', 'name' => 'Hà Nội', 'type' => 'thanh_pho'],
-        ['code' => '40', 'name' => 'Nghệ An', 'type' => 'tinh'],
+    File::put("{$dir}/tinh_thanh_pho.json", json_encode([
+        ['province_code' => '01', 'province_name' => 'Thành phố Hà Nội', 'province_type' => 'Thành phố'],
+        ['province_code' => '40', 'province_name' => 'Tỉnh Nghệ An', 'province_type' => 'Tỉnh'],
     ]));
-    File::put("{$dir}/wards.json", json_encode([
-        ['code' => '00004', 'name' => 'Ba Đình', 'type' => 'phuong', 'province_code' => '01'],
-        ['code' => '16681', 'name' => 'Vinh Phú', 'type' => 'phuong', 'province_code' => '40'],
-        ['code' => '99999', 'name' => 'Không có tỉnh', 'type' => 'xa', 'province_code' => '77'],
+    File::put("{$dir}/xa_phuong.json", json_encode([
+        ['ward_code' => '00004', 'ward_name' => 'Phường Ba Đình', 'ward_type' => 'Phường', 'province_code' => '01'],
+        ['ward_code' => '16681', 'ward_name' => 'Xã Vinh Phú', 'ward_type' => 'Xã', 'province_code' => '40'],
+        ['ward_code' => '16682', 'ward_name' => 'Đặc khu Cồn Cỏ', 'ward_type' => 'Đặc khu', 'province_code' => '40'],
+        ['ward_code' => '99999', 'ward_name' => 'Xã Không có tỉnh', 'ward_type' => 'Xã', 'province_code' => '77'],
     ]));
     File::put("{$dir}/ward_mappings.json", json_encode([
         ['old_province_name' => 'Hà Nội', 'old_district_name' => 'Quận Ba Đình', 'old_ward_name' => 'Phường Phúc Xá', 'new_ward_code' => '00004'],
@@ -91,12 +92,25 @@ it('loads provinces, wards and ward mappings from JSON files', function () {
     seedCatalogs($dir); // idempotent
 
     expect(Province::count())->toBe(2)
+        ->and(Province::where('code', '01')->first()->name)->toBe('Hà Nội')
         ->and(Province::where('code', '01')->first()->type)->toBe(ProvinceType::City)
-        ->and(Ward::count())->toBe(2)
+        ->and(Province::where('code', '40')->first()->type)->toBe(ProvinceType::Province)
+        ->and(Ward::count())->toBe(3)
         ->and(Ward::where('code', '16681')->first()->province->name)->toBe('Nghệ An')
+        ->and(Ward::where('code', '16681')->first()->name)->toBe('Vinh Phú')
+        ->and(Ward::where('code', '16681')->first()->type)->toBe(WardType::Commune)
+        ->and(Ward::where('code', '16682')->first()->type)->toBe(WardType::SpecialZone)
         ->and(Ward::where('code', '00004')->first()->type)->toBe(WardType::Ward)
         ->and(WardMapping::count())->toBe(1)
         ->and(WardMapping::first()->newWard->name)->toBe('Ba Đình');
 
     File::deleteDirectory($dir);
+});
+
+it('loads the real provinces and wards shipped in database/data', function () {
+    seedCatalogs(database_path('data'));
+
+    expect(Province::count())->toBe(34)->and(Ward::count())->toBe(3321)
+        ->and(Ward::where('code', '00004')->first()->name)->toBe('Ba Đình')
+        ->and(Ward::where('code', '00004')->first()->province->name)->toBe('Hà Nội');
 });
