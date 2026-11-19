@@ -69,10 +69,13 @@ function open(row: CampaignRow): void {
                     <template v-else>Chưa có mùa tuyển sinh. Tạo mùa ở Cài đặt trước khi tạo chiến dịch.</template>
                 </p>
             </div>
-            <Button v-if="can.create" data-test="create" @click="formOpen = true">
-                <Plus class="size-4" />
-                Thêm chiến dịch
-            </Button>
+            <div class="flex gap-2">
+                <Button variant="outline" as-child><Link href="/campaigns/performance" data-test="performance-link">Chi phí và hiệu quả</Link></Button>
+                <Button v-if="can.create" data-test="create" @click="formOpen = true">
+                    <Plus class="size-4" />
+                    Thêm chiến dịch
+                </Button>
+            </div>
         </div>
 
         <DataTable :list="campaigns" :query="query" :columns="columns" row-clickable storage-key="campaigns" @row-click="open">

@@ -62,6 +62,12 @@ Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển s
 3. Cạnh số điện thoại có nút **Gọi** (mở ứng dụng gọi trên điện thoại/máy tính) và **Chép số**. Người chỉ thấy số đã che không sửa được số tại chỗ và không có hai nút này; dùng nút bút chì ở cuối dòng để mở form đầy đủ.
 4. Danh sách có thêm cột **Giai đoạn**, **Người phụ trách** và **Hoạt động gần nhất** của hồ sơ mùa mới nhất. Chỉ sửa được thí sinh thuộc phạm vi dữ liệu của bạn và khi bạn có quyền sửa thí sinh.
 
+## 3d. Chi phí chiến dịch
+
+1. Mở một chiến dịch, mục **Chi phí theo ngày**: bấm **Thêm chi phí**, nhập ngày, số tiền (₫) và ghi chú. Sửa hoặc xoá bằng nút bên phải mỗi dòng. **Chi phí thực** của chiến dịch luôn bằng tổng các dòng này.
+2. Ghi được chi phí ở mọi trạng thái (kể cả chiến dịch đã kết thúc), trừ mùa tuyển sinh đã đóng. Cần quyền sửa chiến dịch.
+3. Ở danh sách chiến dịch bấm **Chi phí và hiệu quả** để xem chi phí, số thí sinh, số nhập học, chi phí mỗi thí sinh, chi phí mỗi nhập học, tỉ lệ chuyển đổi, so sánh giữa các mùa và từng chiến dịch của mùa đang chọn. Nhập **doanh thu dự kiến mỗi sinh viên nhập học** để xem ROI = (doanh thu − chi phí) / chi phí.
+
 ## 3b. Phân bổ hồ sơ và SLA
 
 - **Cài đặt → Quy tắc phân bổ**: mỗi quy tắc có *độ ưu tiên* (số nhỏ chạy trước), *điều kiện* (nguồn, chiến dịch, tỉnh, trường THPT, hạng trường, ngành — để trống là áp dụng mọi hồ sơ) và *cách phân bổ*: **cố định** một người, **xoay vòng** (người nhận hồ sơ cách đây lâu nhất), **theo tải** (ít hồ sơ đang mở nhất) hoặc **theo vùng phụ trách**. Có thể chọn danh sách người hoặc một nhóm (lấy thành viên). Hồ sơ mới từ form, import hay nhập tay (không chọn người) được thử lần lượt với các quy tắc; quy tắc đầu tiên khớp và tìm được người nhận sẽ quyết định, không có thì dùng vùng phụ trách, rồi kho chung. Người đã ngừng hoạt động bị bỏ qua.

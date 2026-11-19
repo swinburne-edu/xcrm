@@ -36,6 +36,12 @@ class CampaignPolicy extends ResourcePolicy
         return parent::delete($user, $model) && $model->status === CampaignStatus::Draft && ! $this->cycleClosed($model);
     }
 
+    /** Record or fix daily costs: allowed at any status (even after the campaign ended), but not in a closed cycle. */
+    public function manageCosts(User $user, Campaign $campaign): bool
+    {
+        return $this->allows($user, 'update') && $this->visible($user, $campaign) && ! $this->cycleClosed($campaign);
+    }
+
     /** Whether $user may move the campaign to $to right now. */
     public function transition(User $user, Campaign $campaign, CampaignStatus $to): bool
     {

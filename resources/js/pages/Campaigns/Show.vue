@@ -2,6 +2,8 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ArrowLeft, Pencil, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
+import CampaignCosts from '@/components/campaigns/CampaignCosts.vue';
+import type { CostRow } from '@/components/campaigns/CampaignCosts.vue';
 import CampaignFormDialog from '@/components/campaigns/CampaignFormDialog.vue';
 import { money } from '@/components/campaigns/types';
 import type { CampaignOptions, CampaignRow, Kpi, Transition } from '@/components/campaigns/types';
@@ -21,9 +23,10 @@ const props = defineProps<{
     campaign: CampaignRow;
     children: { id: number; code: string; name: string; status: string; status_label: string }[];
     kpi: Kpi;
+    costs: CostRow[];
     transitions: Transition[];
     options: CampaignOptions;
-    can: { update: boolean; delete: boolean };
+    can: { update: boolean; delete: boolean; costs: boolean };
 }>();
 
 const tones: Record<string, BadgeTone> = {
@@ -114,6 +117,8 @@ function progress(actual: number | null, target: number | null | undefined): str
                 Số liệu thí sinh và nhập học tính từ hồ sơ tuyển sinh gắn với chiến dịch (kể cả chiến dịch con).
             </p>
         </section>
+
+        <CampaignCosts :campaign-id="campaign.id" :costs="costs" :can-edit="can.costs" />
 
         <section class="grid max-w-3xl gap-3 text-sm" data-test="details">
             <p v-if="campaign.start_date || campaign.end_date">

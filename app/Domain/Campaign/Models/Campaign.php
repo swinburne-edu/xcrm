@@ -111,6 +111,14 @@ class Campaign extends Model
     }
 
     /**
+     * @return HasMany<CampaignCost, $this>
+     */
+    public function costs(): HasMany
+    {
+        return $this->hasMany(CampaignCost::class);
+    }
+
+    /**
      * @return HasMany<CampaignTarget, $this>
      */
     public function targets(): HasMany

@@ -15,6 +15,8 @@ use App\Http\Controllers\Applicant\ApplicantImportController;
 use App\Http\Controllers\Applicant\ApplicantMergeController;
 use App\Http\Controllers\Applicant\ApplicantScoreController;
 use App\Http\Controllers\Campaign\CampaignController;
+use App\Http\Controllers\Campaign\CampaignCostController;
+use App\Http\Controllers\Campaign\CampaignPerformanceController;
 use App\Http\Controllers\Catalog\CatalogController;
 use App\Http\Controllers\Cycle\CycleController;
 use App\Http\Controllers\Cycle\CycleMethodController;
@@ -157,12 +159,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Campaigns (task 1.9). Authorization: CampaignPolicy (approval flow, closed cycle read-only).
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('campaigns/performance', CampaignPerformanceController::class)->name('campaigns.performance');
     Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
     Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
     Route::get('campaigns/{id}', [CampaignController::class, 'show'])->whereNumber('id')->name('campaigns.show');
     Route::put('campaigns/{id}', [CampaignController::class, 'update'])->whereNumber('id')->name('campaigns.update');
     Route::delete('campaigns/{id}', [CampaignController::class, 'destroy'])->whereNumber('id')->name('campaigns.destroy');
     Route::post('campaigns/{id}/transition', [CampaignController::class, 'transition'])->whereNumber('id')->name('campaigns.transition');
+    Route::post('campaigns/{id}/costs', [CampaignCostController::class, 'store'])->whereNumber('id')->name('campaigns.costs.store');
+    Route::put('campaigns/{id}/costs/{costId}', [CampaignCostController::class, 'update'])->whereNumber(['id', 'costId'])->name('campaigns.costs.update');
+    Route::delete('campaigns/{id}/costs/{costId}', [CampaignCostController::class, 'destroy'])->whereNumber(['id', 'costId'])->name('campaigns.costs.destroy');
 });
 
 // Applicants (task 1.10). Authorization: ApplicantPolicy + data scope; phone / citizen id masked without view_sensitive.

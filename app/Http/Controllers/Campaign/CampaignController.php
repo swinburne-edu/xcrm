@@ -8,6 +8,7 @@ use App\Domain\Campaign\Enums\CampaignChannel;
 use App\Domain\Campaign\Enums\CampaignStatus;
 use App\Domain\Campaign\Enums\CampaignType;
 use App\Domain\Campaign\Models\Campaign;
+use App\Domain\Campaign\Models\CampaignCost;
 use App\Domain\Campaign\Services\CampaignKpi;
 use App\Domain\Cycle\Services\CurrentCycle;
 use App\Domain\Organization\Services\TerritoryTargets;
@@ -107,8 +108,10 @@ class CampaignController extends Controller
             'children' => $campaign->children->map(fn (Campaign $c) => ['id' => $c->id, 'code' => $c->code, 'name' => $c->name, 'status' => $c->status->value, 'status_label' => $c->status->label()])->all(),
             'kpi' => $kpi->for($campaign),
             'transitions' => $transitions,
+            'costs' => $campaign->costs()->orderByDesc('date')->orderByDesc('id')->get()->map(fn (CampaignCost $c) => ['id' => $c->id, 'date' => $c->date->format('Y-m-d'), 'amount' => (int) $c->amount, 'note' => $c->note])->all(),
             'options' => $this->options(),
             'can' => [
+                'costs' => $user->can('manageCosts', $campaign),
                 'update' => $user->can('update', $campaign),
                 'delete' => $user->can('delete', $campaign),
             ],
