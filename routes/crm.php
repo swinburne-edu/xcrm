@@ -27,12 +27,14 @@ use App\Http\Controllers\Intake\FormController;
 use App\Http\Controllers\Major\MajorController;
 use App\Http\Controllers\Major\QuotaController;
 use App\Http\Controllers\Platform\ComponentsDemoController;
+use App\Http\Controllers\Platform\CustomDataController;
 use App\Http\Controllers\Platform\GlobalSearchController;
 use App\Http\Controllers\Platform\ImportTemplateController;
 use App\Http\Controllers\Platform\LookupController;
 use App\Http\Controllers\Platform\NotificationController;
 use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\AssignmentRuleController;
+use App\Http\Controllers\Settings\CustomFieldController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\TerritoryController;
@@ -66,6 +68,11 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::put('assignment-rules/settings', [AssignmentRuleController::class, 'settings'])->name('assignment-rules.settings');
     Route::put('assignment-rules/{id}', [AssignmentRuleController::class, 'update'])->whereNumber('id')->name('assignment-rules.update');
     Route::delete('assignment-rules/{id}', [AssignmentRuleController::class, 'destroy'])->whereNumber('id')->name('assignment-rules.destroy');
+    // Custom field definitions (task 2.5). Authorization: CustomFieldDefinitionPolicy.
+    Route::get('custom-fields', [CustomFieldController::class, 'index'])->name('custom-fields.index');
+    Route::post('custom-fields', [CustomFieldController::class, 'store'])->name('custom-fields.store');
+    Route::put('custom-fields/{id}', [CustomFieldController::class, 'update'])->whereNumber('id')->name('custom-fields.update');
+    Route::delete('custom-fields/{id}', [CustomFieldController::class, 'destroy'])->whereNumber('id')->name('custom-fields.destroy');
     // Responsibility areas (task 1.4). Authorization: TerritoryPolicy.
     Route::get('territories', [TerritoryController::class, 'index'])->name('territories.index');
     Route::post('territories', [TerritoryController::class, 'store'])->name('territories.store');
@@ -277,6 +284,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('notifications', [NotificationController::class, 'index'])->middleware('throttle:120,1')->name('notifications.index');
     Route::post('notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
     Route::post('notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
+
+    // Inline edit of custom field values (task 2.5); the record's own policy decides.
+    Route::put('custom-data/{object}/{id}', [CustomDataController::class, 'update'])->whereNumber('id')->name('custom-data.update');
 
     // Global search dialog (Ctrl+K): applicants + high schools.
     Route::get('search', GlobalSearchController::class)->middleware('throttle:120,1')->name('search');

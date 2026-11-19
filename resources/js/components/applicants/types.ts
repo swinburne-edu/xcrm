@@ -1,3 +1,6 @@
+import type { CustomField } from '@/components/custom/types';
+import type { FilterDefinition } from '@/types';
+
 export type Option = { value: string; label: string };
 
 export type ApplicantOptions = {
@@ -9,9 +12,12 @@ export type ApplicantOptions = {
     sources: Option[];
     priorityGroups: Option[];
     priorityAreas: Option[];
+    customFields: CustomField[];
+    customFilters: FilterDefinition[];
 };
 
 export type ApplicantRow = {
+    custom_data?: Record<string, unknown> | null;
     id: string;
     uuid: string;
     code: string;

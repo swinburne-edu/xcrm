@@ -10,6 +10,8 @@ import type { BadgeTone } from '@/components/crm/ToneBadge.vue';
 import ContactFormDialog from '@/components/highschools/ContactFormDialog.vue';
 import SchoolFormDialog from '@/components/highschools/SchoolFormDialog.vue';
 import type { ContactRow, SchoolOptions, SchoolRow } from '@/components/highschools/types';
+import CustomFieldsCard from '@/components/custom/CustomFieldsCard.vue';
+import type { CustomPanel } from '@/components/custom/types';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -22,6 +24,7 @@ import {
 
 const props = defineProps<{
     school: SchoolRow;
+    custom_fields: CustomPanel;
     contacts: ContactRow[];
     applicants: { total: number; items: { uuid: string; code: string; full_name: string; graduation_year: number | null; class_name: string | null }[] };
     options: SchoolOptions;
@@ -139,6 +142,7 @@ const tabClass = (name: string): string =>
             <div><dt class="text-muted-foreground">Website</dt><dd>{{ school.website || '—' }}</dd></div>
         </dl>
         <p v-if="school.note" class="whitespace-pre-line text-sm text-muted-foreground">{{ school.note }}</p>
+        <CustomFieldsCard :panel="custom_fields" :can-edit="can.update" />
 
         <div class="flex gap-1 border-b">
             <button type="button" class="-mb-px border-b-2 px-3 py-2 text-sm" :class="tabClass('contacts')" data-test="tab-contacts" @click="tab = 'contacts'">

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admission;
 
+use App\Domain\Platform\Enums\CustomFieldObject;
+use App\Domain\Platform\Services\CustomFields;
 use App\Domain\Admission\Actions\AssignCase;
 use App\Domain\Admission\Actions\BulkCaseAction;
 use App\Domain\Admission\Actions\ClaimCase;
@@ -84,6 +86,7 @@ class CaseController extends Controller
         $applicant = $case->applicant;
 
         return response()->json(['case' => $this->card($case) + [
+            'custom_fields' => app(CustomFields::class)->panel(CustomFieldObject::AdmissionCases, $case),
             'applicant_uuid' => $applicant?->uuid,
             'phone' => $this->sensitive->phone($applicant?->phone, $user),
             'email' => $applicant?->email,
@@ -214,6 +217,7 @@ class CaseController extends Controller
                 'sources' => LeadSource::query()->where('is_active', true)->orderBy('name')->get(['id', 'name'])->map(fn ($s) => ['value' => (string) $s->id, 'label' => $s->name])->all(),
                 'temperatures' => array_map(fn ($t) => ['value' => $t->value, 'label' => $t->label()], Temperature::cases()),
                 'statuses' => array_map(fn ($s) => ['value' => $s->value, 'label' => $s->label()], CaseStatus::cases()),
+                'customFilters' => app(CustomFields::class)->filterDefinitions(CustomFieldObject::AdmissionCases),
                 'tags' => Tag::query()->orderBy('name')->get(['id', 'name'])->map(fn ($t) => ['value' => (string) $t->id, 'label' => $t->name])->all(),
                 'lostReasons' => LostReason::query()->where('is_active', true)->orderBy('sort_order')->get(['id', 'name'])->map(fn ($r) => ['value' => (string) $r->id, 'label' => $r->name])->all(),
                 'stages' => $this->pipelineFor($cycle)?->stages->map(fn ($s) => ['value' => (string) $s->id, 'label' => $s->name, 'type' => $s->type->value])->all() ?? [],
@@ -266,6 +270,7 @@ class CaseController extends Controller
                 Filter::callback('overdue', fn (Builder $q) => $q->where('admission_cases.status', 'open')->where('admission_cases.next_action_at', '<', now()),
                     fn (mixed $v) => in_array($v, ['1', 1, true, 'true'], true) ? true : null),
             )
+            ->filters(...app(CustomFields::class)->filters(CustomFieldObject::AdmissionCases))
             ->sorts(['last_activity_at', 'created_at', 'next_action_at', 'score'])
             ->defaultSort('-last_activity_at');
     }

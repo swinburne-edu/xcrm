@@ -16,6 +16,9 @@ use App\Domain\HighSchool\Models\HighSchool;
 use App\Domain\HighSchool\Models\SchoolActivity;
 use App\Domain\HighSchool\Models\SchoolContact;
 use App\Domain\HighSchool\Services\SchoolStatistics;
+use App\Domain\Platform\Actions\SaveCustomData;
+use App\Domain\Platform\Enums\CustomFieldObject;
+use App\Domain\Platform\Services\CustomFields;
 use App\Domain\Shared\Support\Listing\Filter;
 use App\Domain\Shared\Support\Listing\ListQuery;
 use App\Http\Controllers\Controller;
@@ -44,6 +47,7 @@ class HighSchoolController extends Controller
                 Filter::exact('partnership_status'),
                 Filter::exact('type'),
                 Filter::exact('owner_id'),
+                ...app(CustomFields::class)->filters(CustomFieldObject::HighSchools),
             )
             ->sorts(['name', 'code', 'tier', 'grade12_students', 'created_at'])
             ->defaultSort('name')
@@ -67,7 +71,9 @@ class HighSchoolController extends Controller
         $user = $request->user();
 
         return Inertia::render('HighSchools/Show', [
+            'custom_fields' => app(CustomFields::class)->panel(CustomFieldObject::HighSchools, $school),
             'school' => $this->row($school) + [
+                'custom_data' => $school->custom_data ?? (object) [],
                 'ward_id' => $school->ward_id,
                 'ward_name' => $school->ward?->name,
                 'address' => $school->address,
@@ -133,6 +139,7 @@ class HighSchoolController extends Controller
     public function store(HighSchoolRequest $request, SaveHighSchool $save): RedirectResponse
     {
         $school = $save->handle(null, $request->validated());
+        $this->saveCustom($school, $request);
 
         return $this->toast("Đã thêm trường {$school->name}.", "/high-schools/{$school->id}");
     }
@@ -141,6 +148,7 @@ class HighSchoolController extends Controller
     {
         $school = HighSchool::query()->findOrFail($id);
         $save->handle($school, $request->validated());
+        $this->saveCustom($school, $request);
 
         return $this->toast("Đã cập nhật trường {$school->name}.");
     }
@@ -199,6 +207,8 @@ class HighSchoolController extends Controller
             'priorityAreas' => PriorityArea::query()->orderBy('code')->get(['id', 'code', 'name'])
                 ->map(fn (PriorityArea $a) => ['value' => (string) $a->id, 'label' => trim($a->code.' '.$a->name)])->all(),
             'combinations' => SubjectCombination::query()->where('is_active', true)->orderBy('code')->pluck('code')->all(),
+            'customFields' => app(CustomFields::class)->fields(CustomFieldObject::HighSchools),
+            'customFilters' => app(CustomFields::class)->filterDefinitions(CustomFieldObject::HighSchools),
         ];
     }
 
@@ -209,6 +219,13 @@ class HighSchoolController extends Controller
     private static function enumOptions(string $enum): array
     {
         return array_map(fn ($case) => ['value' => (string) $case->value, 'label' => $case->label()], $enum::cases());
+    }
+
+    private function saveCustom(HighSchool $school, HighSchoolRequest $request): void
+    {
+        if ($request->has('custom')) {
+            app(SaveCustomData::class)->handle($school, CustomFieldObject::HighSchools, (array) $request->validated('custom', []));
+        }
     }
 
     private function toast(string $message, ?string $to = null): RedirectResponse

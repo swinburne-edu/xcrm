@@ -1,3 +1,6 @@
+import type { CustomField } from '@/components/custom/types';
+import type { FilterDefinition } from '@/types';
+
 export type Option = { value: string; label: string };
 
 export type SchoolOptions = {
@@ -7,9 +10,12 @@ export type SchoolOptions = {
     priorityAreas: Option[];
     combinations: string[];
     contactRoles?: Option[];
+    customFields: CustomField[];
+    customFilters: FilterDefinition[];
 };
 
 export type SchoolRow = {
+    custom_data?: Record<string, unknown> | null;
     id: number;
     code: string | null;
     name: string;

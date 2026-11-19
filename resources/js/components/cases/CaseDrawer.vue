@@ -2,6 +2,8 @@
 import { router } from '@inertiajs/vue3';
 import { Inbox } from '@lucide/vue';
 import { ref, watch } from 'vue';
+import CustomFieldsCard from '@/components/custom/CustomFieldsCard.vue';
+import type { CustomPanel } from '@/components/custom/types';
 import EntityPicker from '@/components/crm/EntityPicker.vue';
 import RecordDrawer from '@/components/crm/RecordDrawer.vue';
 import TemperatureBadge from '@/components/crm/TemperatureBadge.vue';
@@ -246,6 +248,8 @@ function claim(): void {
                 </div>
                 <div><Button :disabled="processing" data-test="save-case" @click="save">Lưu thay đổi</Button></div>
             </section>
+
+            <CustomFieldsCard :panel="detail.custom_fields" :can-edit="detail.can.update" @saved="load" />
 
             <section v-if="detail.history.length" class="grid gap-2" data-test="history">
                 <h3 class="font-medium">Lịch sử giai đoạn</h3>

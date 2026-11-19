@@ -19,6 +19,9 @@ use App\Domain\Catalog\Models\LeadSource;
 use App\Domain\Catalog\Models\PriorityArea;
 use App\Domain\Catalog\Models\PriorityGroup;
 use App\Domain\Catalog\Models\Subject;
+use App\Domain\Platform\Actions\SaveCustomData;
+use App\Domain\Platform\Enums\CustomFieldObject;
+use App\Domain\Platform\Services\CustomFields;
 use App\Domain\Shared\Services\SensitiveData;
 use App\Domain\Shared\Support\Listing\Filter;
 use App\Domain\Shared\Support\Listing\ListQuery;
@@ -56,6 +59,7 @@ class ApplicantController extends Controller
                 Filter::exact('current_grade'),
                 Filter::exact('first_source_id'),
                 Filter::exact('first_campaign_id'),
+                ...app(CustomFields::class)->filters(CustomFieldObject::Applicants),
             )
             ->sorts(['full_name', 'code', 'graduation_year', 'created_at'])
             ->defaultSort('-created_at')
@@ -68,7 +72,7 @@ class ApplicantController extends Controller
         ]);
     }
 
-    public function show(Request $request, string $uuid, ApplicationPanel $panel, CurrentCycle $currentCycle): Response
+    public function show(Request $request, string $uuid, ApplicationPanel $panel, CurrentCycle $currentCycle, CustomFields $customFields): Response
     {
         $applicant = Applicant::query()->where('uuid', $uuid)
             ->with(['province:id,name', 'ward:id,name', 'highSchool:id,name', 'priorityArea:id,code', 'priorityGroup:id,code', 'firstSource:id,name', 'firstCampaign:id,name', 'referrer:id,name', 'guardians', 'scores', 'certificates'])
@@ -84,6 +88,7 @@ class ApplicantController extends Controller
                 'dob' => $applicant->dob?->format('Y-m-d'),
                 'citizen_id' => $this->sensitive->citizenId($applicant->citizen_id, $user, $applicant),
                 'sensitive_masked' => ! $this->sensitive->canView($user),
+                'custom_data' => $applicant->custom_data ?? (object) [],
                 'zalo_id' => $applicant->zalo_id,
                 'facebook_id' => $applicant->facebook_id,
                 'province_id' => $applicant->province_id,
@@ -103,6 +108,7 @@ class ApplicantController extends Controller
                 'referrer_name' => $applicant->referrer?->name,
                 'consent_marketing' => $applicant->consent_marketing,
             ],
+            'custom_fields' => $customFields->panel(CustomFieldObject::Applicants, $applicant),
             'guardians' => $applicant->guardians->map(fn (Guardian $g) => [
                 'id' => $g->id,
                 'full_name' => $g->full_name,
@@ -161,6 +167,7 @@ class ApplicantController extends Controller
     public function store(ApplicantRequest $request, SaveApplicant $save): RedirectResponse
     {
         $applicant = $save->handle(null, $request->validated(), $request->user());
+        $this->saveCustom($applicant, $request);
 
         return $this->toast("Đã thêm thí sinh {$applicant->full_name} ({$applicant->code}).", "/applicants/{$applicant->uuid}");
     }
@@ -169,6 +176,7 @@ class ApplicantController extends Controller
     {
         $applicant = $request->applicant() ?? abort(404);
         $save->handle($applicant, $request->validated(), $request->user());
+        $this->saveCustom($applicant, $request);
 
         return $this->toast("Đã cập nhật thí sinh {$applicant->full_name}.");
     }
@@ -247,7 +255,16 @@ class ApplicantController extends Controller
             'sources' => LeadSource::query()->where('is_active', true)->orderBy('name')->get(['id', 'name'])->map(fn ($s) => ['value' => (string) $s->id, 'label' => $s->name])->all(),
             'priorityGroups' => PriorityGroup::query()->orderBy('code')->get(['id', 'code', 'name'])->map(fn ($g) => ['value' => (string) $g->id, 'label' => trim($g->code.' '.$g->name)])->all(),
             'priorityAreas' => PriorityArea::query()->orderBy('code')->get(['id', 'code', 'name'])->map(fn ($a) => ['value' => (string) $a->id, 'label' => trim($a->code.' '.$a->name)])->all(),
+            'customFields' => app(CustomFields::class)->fields(CustomFieldObject::Applicants),
+            'customFilters' => app(CustomFields::class)->filterDefinitions(CustomFieldObject::Applicants),
         ];
+    }
+
+    private function saveCustom(Applicant $applicant, ApplicantRequest $request): void
+    {
+        if ($request->has('custom')) {
+            app(SaveCustomData::class)->handle($applicant, CustomFieldObject::Applicants, (array) $request->validated('custom', []));
+        }
     }
 
     private function toast(string $message, ?string $to = null): RedirectResponse

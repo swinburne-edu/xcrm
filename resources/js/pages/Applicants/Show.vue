@@ -18,6 +18,8 @@ import type {
     ScoreRow,
     SubjectRow,
 } from '@/components/applicants/types';
+import CustomFieldsCard from '@/components/custom/CustomFieldsCard.vue';
+import type { CustomPanel } from '@/components/custom/types';
 import { Button } from '@/components/ui/button';
 import { formatDateTime } from '@/lib/format';
 import {
@@ -38,6 +40,7 @@ const props = defineProps<{
     subjects: SubjectRow[];
     application_panel: ApplicationPanelProps;
     document_panel: DocumentPanelProps;
+    custom_fields: CustomPanel;
     options: ApplicantOptions;
     can: { update: boolean; delete: boolean };
 }>();
@@ -144,6 +147,7 @@ const tabClass = (key: string): string => (tab.value === key ? 'border-primary f
                     <div v-if="applicant.referrer_name"><dt class="text-muted-foreground">Người giới thiệu</dt><dd>{{ applicant.referrer_name }}</dd></div>
                     <div><dt class="text-muted-foreground">Đồng ý nhận tin</dt><dd>{{ applicant.consent_marketing ? 'Có' : 'Không' }}</dd></div>
                 </dl>
+                <CustomFieldsCard :panel="custom_fields" :can-edit="can.update" />
 
                 <section class="grid gap-2" data-test="guardians">
                     <div class="flex items-center justify-between">

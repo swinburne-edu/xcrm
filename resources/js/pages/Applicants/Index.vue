@@ -37,6 +37,7 @@ const filters = computed<FilterDefinition[]>(() => [
     },
     { key: 'first_source_id', label: 'Nguồn', type: 'select', options: props.options.sources },
     { key: 'first_campaign_id', label: 'Chiến dịch', type: 'entity', entity: 'campaigns' },
+    ...props.options.customFilters,
 ]);
 
 const columns: CrmColumn<ApplicantRow>[] = [

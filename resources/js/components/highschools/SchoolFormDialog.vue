@@ -15,6 +15,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import CustomFieldInput from '@/components/custom/CustomFieldInput.vue';
+import { blankValues } from '@/components/custom/types';
+import type { CustomValues } from '@/components/custom/types';
 import { Spinner } from '@/components/ui/spinner';
 import { selectClass, textareaClass } from './types';
 import type { SchoolOptions, SchoolRow } from './types';
@@ -51,12 +54,15 @@ const form = ref({
     note: '',
 });
 
+const custom = ref<CustomValues>({});
+
 watch(open, (isOpen) => {
     if (!isOpen) {
         return;
     }
 
     errors.value = {};
+    custom.value = blankValues(props.options.customFields, props.record?.custom_data);
     const r = props.record;
     form.value = {
         code: r?.code ?? '',
@@ -98,7 +104,7 @@ function submit(): void {
 
     router.visit(isEdit.value ? `/high-schools/${props.record!.id}` : '/high-schools', {
         method: isEdit.value ? 'put' : 'post',
-        data: data as never,
+        data: { ...data, custom: custom.value } as never,
         preserveScroll: true,
         preserveState: true,
         onStart: () => (processing.value = true),
@@ -248,6 +254,10 @@ function submit(): void {
                     <Label for="s-note">Ghi chú</Label>
                     <textarea id="s-note" v-model="form.note" rows="3" :class="textareaClass" />
                     <InputError :message="errors.note" />
+                </div>
+
+                <div v-if="options.customFields.length" class="grid gap-3 border-t pt-4 sm:grid-cols-2" data-test="custom-form">
+                    <CustomFieldInput v-for="f in options.customFields" :key="f.key" v-model="custom[f.key]" :field="f" :error="errors[`custom.${f.key}`]" id-prefix="cff" />
                 </div>
 
                 <DialogFooter>

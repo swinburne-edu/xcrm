@@ -1,3 +1,5 @@
+import type { CustomPanel } from '@/components/custom/types';
+import type { FilterDefinition } from '@/types';
 export type Option = { value: string; label: string };
 
 export type CaseCardData = {
@@ -24,6 +26,7 @@ export type CaseCardData = {
 };
 
 export type CaseDetail = CaseCardData & {
+    custom_fields: CustomPanel;
     applicant_uuid: string | null;
     phone: string | null;
     email: string | null;
@@ -59,6 +62,7 @@ export type CaseOptions = {
     temperatures: Option[];
     statuses: Option[];
     tags: Option[];
+    customFilters: FilterDefinition[];
     lostReasons: Option[];
     stages: (Option & { type: string })[];
 };

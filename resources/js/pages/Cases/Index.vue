@@ -53,6 +53,7 @@ const filters = computed<FilterDefinition[]>(() => [
     { key: 'primary_major_id', label: 'Ngành', type: 'entity', entity: 'majors' },
     { key: 'tag_id', label: 'Tag', type: 'select', options: props.options.tags },
     { key: 'overdue', label: 'Quá hạn hành động', type: 'boolean', trueLabel: 'Quá hạn', falseLabel: 'Không' },
+    ...props.options.customFilters,
 ]);
 
 const ownerValue = computed(() => String(query.filters.value.owner ?? 'all'));

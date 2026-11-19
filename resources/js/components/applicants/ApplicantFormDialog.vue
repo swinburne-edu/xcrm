@@ -16,6 +16,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import CustomFieldInput from '@/components/custom/CustomFieldInput.vue';
+import { blankValues } from '@/components/custom/types';
+import type { CustomValues } from '@/components/custom/types';
 import { Spinner } from '@/components/ui/spinner';
 import { selectClass } from './types';
 import type { ApplicantOptions, ApplicantRow, DuplicateMatch } from './types';
@@ -58,12 +61,15 @@ const form = ref({
     consent_marketing: false,
 });
 
+const custom = ref<CustomValues>({});
+
 watch(open, (isOpen) => {
     if (!isOpen) {
         return;
     }
 
     errors.value = {};
+    custom.value = blankValues(props.options.customFields, props.record?.custom_data);
     duplicates.value = [];
     const r = props.record;
     const m = r?.sensitive_masked === true;
@@ -151,7 +157,7 @@ function submit(): void {
 
     router.visit(isEdit.value ? `/applicants/${props.record!.uuid}` : '/applicants', {
         method: isEdit.value ? 'put' : 'post',
-        data: data as never,
+        data: { ...data, custom: custom.value } as never,
         preserveScroll: true,
         preserveState: true,
         onStart: () => (processing.value = true),
@@ -341,6 +347,10 @@ function submit(): void {
                     <input v-model="form.consent_marketing" type="checkbox" class="size-4" data-test="consent" />
                     Đồng ý nhận thông tin tuyển sinh
                 </label>
+
+                <div v-if="options.customFields.length" class="grid gap-3 border-t pt-4 sm:grid-cols-2" data-test="custom-form">
+                    <CustomFieldInput v-for="f in options.customFields" :key="f.key" v-model="custom[f.key]" :field="f" :error="errors[`custom.${f.key}`]" id-prefix="cff" />
+                </div>
 
                 <DialogFooter>
                     <Button type="button" variant="outline" @click="open = false">Huỷ</Button>

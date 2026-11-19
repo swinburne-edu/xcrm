@@ -30,6 +30,7 @@ const filters = computed<FilterDefinition[]>(() => [
     { key: 'partnership_status', label: 'Hợp tác', type: 'select', options: props.options.partnership },
     { key: 'type', label: 'Loại hình', type: 'select', options: props.options.types },
     { key: 'owner_id', label: 'Người phụ trách', type: 'entity', entity: 'users' },
+    ...props.options.customFilters,
 ]);
 
 const columns: CrmColumn<SchoolRow>[] = [

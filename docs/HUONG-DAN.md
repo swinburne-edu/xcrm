@@ -72,6 +72,13 @@ Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển s
 
 Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên: hồ sơ của mình; trưởng nhóm: nhóm/khu vực; trưởng phòng: tất cả).
 
+## 5b. Trường tuỳ chỉnh
+
+1. **Cài đặt → Trường tuỳ chỉnh → Thêm trường**: chọn đối tượng (thí sinh, hồ sơ, trường THPT, ngành, chiến dịch, người liên hệ), tên hiển thị, mã trường (chữ thường không dấu, không đổi được sau khi tạo) và kiểu dữ liệu: văn bản, số, ngày, có/không, chọn một, chọn nhiều, URL, số điện thoại, email. Kiểu chọn cần nhập các lựa chọn, mỗi dòng một lựa chọn.
+2. Trường hiện ngay trong form thêm/sửa thí sinh và trường THPT (bắt buộc nếu bạn đánh dấu), và thành thẻ **Trường tuỳ chỉnh** ở trang chi tiết thí sinh, trường THPT và ngăn xem nhanh hồ sơ. Bấm **Sửa** trên thẻ để nhập nhanh tại chỗ.
+3. Trường đánh dấu "cho phép lọc" xuất hiện trong bộ lọc của danh sách thí sinh, trường THPT và hồ sơ.
+4. Xoá trường chỉ ẩn nó đi; dữ liệu đã nhập vẫn được giữ và hiện lại nếu tạo lại trường cùng mã.
+
 ## Chưa có trong MVP
 
-Import danh sách trúng tuyển, webhook Facebook Lead Ads, trường tuỳ chỉnh, saved view (giai đoạn 2 trong `docs/TASKS.md`).
+Import danh sách trúng tuyển, webhook Facebook Lead Ads, saved view (giai đoạn 2 trong `docs/TASKS.md`).

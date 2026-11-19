@@ -8,6 +8,8 @@ use App\Domain\HighSchool\Enums\SchoolTier;
 use App\Domain\HighSchool\Enums\SchoolType;
 use App\Domain\HighSchool\Models\HighSchool;
 use App\Domain\Shared\Services\CurrentOrganization;
+use App\Domain\Platform\Enums\CustomFieldObject;
+use App\Domain\Platform\Services\CustomFields;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -66,6 +68,7 @@ class HighSchoolRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'website' => ['nullable', 'string', 'max:255'],
             'note' => ['nullable', 'string', 'max:10000'],
+            ...app(CustomFields::class)->rules(CustomFieldObject::HighSchools),
         ];
     }
 
@@ -99,6 +102,7 @@ class HighSchoolRequest extends FormRequest
             'ward_id' => 'xã/phường', 'priority_area_id' => 'khu vực ưu tiên', 'grade12_students' => 'số học sinh khối 12',
             'grade12_classes' => 'số lớp khối 12', 'strong_combinations' => 'tổ hợp mạnh', 'tier' => 'hạng',
             'partnership_status' => 'trạng thái hợp tác', 'mou_signed_at' => 'ngày ký MOU', 'owner_id' => 'người phụ trách',
+            ...app(CustomFields::class)->attributes(CustomFieldObject::HighSchools),
         ];
     }
 }

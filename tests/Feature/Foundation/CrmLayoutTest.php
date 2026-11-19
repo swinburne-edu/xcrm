@@ -34,22 +34,11 @@ it('redirects guests from menu screens to login', function (string $url) {
 
 it('shows the under-construction page with title, phase and breadcrumbs', function () {
     $this->actingAs(User::factory()->create())
-        ->get('/settings/custom-fields')
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('UnderConstruction')
-            ->where('title', 'Trường tuỳ chỉnh')
-            ->where('phase', 'P1')
-            ->where('breadcrumbs', [
-                ['title' => 'Cài đặt'],
-                ['title' => 'Trường tuỳ chỉnh', 'href' => '/settings/custom-fields'],
-            ]));
-});
-
-it('uses a section breadcrumb for placeholder screens in a menu group', function () {
-    $this->actingAs(User::factory()->create())
         ->get('/school-contacts')
         ->assertInertia(fn (Assert $page) => $page
             ->component('UnderConstruction')
+            ->where('title', 'Người liên hệ')
+            ->where('phase', null)
             ->where('breadcrumbs', [['title' => 'Trường THPT'], ['title' => 'Người liên hệ', 'href' => '/school-contacts']]));
 });
 

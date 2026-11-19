@@ -6,6 +6,8 @@ use App\Domain\Applicant\Enums\Gender;
 use App\Domain\Applicant\Models\Applicant;
 use App\Domain\Applicant\Services\ApplicantDeduplicator;
 use App\Domain\Catalog\Models\Ward;
+use App\Domain\Platform\Enums\CustomFieldObject;
+use App\Domain\Platform\Services\CustomFields;
 use App\Domain\Shared\Services\CurrentOrganization;
 use App\Domain\Shared\Services\PhoneNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
@@ -70,6 +72,7 @@ class ApplicantRequest extends FormRequest
             'first_campaign_id' => ['nullable', 'integer', $inOrganization('campaigns')],
             'referred_by_user_id' => ['nullable', 'integer', Rule::exists('users', 'id')->where('organization_id', $organizationId)],
             'consent_marketing' => ['boolean'],
+            ...app(CustomFields::class)->rules(CustomFieldObject::Applicants),
         ];
     }
 
@@ -108,6 +111,7 @@ class ApplicantRequest extends FormRequest
             'province_id' => 'tỉnh/thành phố', 'ward_id' => 'xã/phường', 'high_school_id' => 'trường THPT', 'current_grade' => 'khối lớp',
             'graduation_year' => 'năm tốt nghiệp', 'priority_area_id' => 'khu vực ưu tiên', 'priority_group_id' => 'đối tượng ưu tiên',
             'first_source_id' => 'nguồn', 'first_campaign_id' => 'chiến dịch', 'referred_by_user_id' => 'người giới thiệu',
+            ...app(CustomFields::class)->attributes(CustomFieldObject::Applicants),
         ];
     }
 
