@@ -110,7 +110,7 @@ function isGroupActive(item: CrmNavItem): boolean {
                 <Collapsible
                     v-else
                     as-child
-                    :default-open="true"
+                    :default-open="isGroupActive(item)"
                     class="group/collapsible"
                 >
                     <SidebarMenuItem>
