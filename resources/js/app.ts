@@ -16,6 +16,8 @@ void createInertiaApp({
                 return null;
             case name.startsWith('Checkin/'): // public check-in page of a school activity: its own bare shell
                 return null;
+            case name.startsWith('Portal/'): // public score page and applicant portal: their own shell
+                return null;
             case name.startsWith('auth/'):
                 return AuthLayout;
             case name.startsWith('settings/'):

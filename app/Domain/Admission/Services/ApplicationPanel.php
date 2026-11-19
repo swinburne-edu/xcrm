@@ -111,7 +111,7 @@ class ApplicationPanel
     }
 
     /** @return array<string, mixed> choices of the add / edit dialog */
-    private function options(AdmissionCycle $cycle): array
+    public function options(AdmissionCycle $cycle): array
     {
         $majors = Major::query()
             ->where('is_active', true)

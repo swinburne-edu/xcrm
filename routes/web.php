@@ -16,4 +16,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/crm.php';
+require __DIR__.'/portal.php';
 require __DIR__.'/settings.php';

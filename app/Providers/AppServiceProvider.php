@@ -112,6 +112,8 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         // Ad platforms push many leads from a few addresses: a generous cap per integration, a looser one per IP.
+        RateLimiter::for('portal-otp', fn (Request $request) => [Limit::perMinute(5)->by($request->ip()), Limit::perHour(20)->by((string) $request->input('phone'))]);
+        RateLimiter::for('portal-public', fn (Request $request) => [Limit::perMinute(30)->by($request->ip())]);
         RateLimiter::for('lead-webhooks', fn (Request $request) => [
             Limit::perMinute(600)->by('webhooks:'.$request->ip()),
             Limit::perMinute(300)->by('webhooks:'.$request->route('uuid')),

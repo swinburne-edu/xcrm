@@ -137,6 +137,12 @@ Số liệu luôn theo phạm vi dữ liệu của người xem (tư vấn viên
 3. Cuộc gọi kết thúc được ghi vào timeline (thời lượng, link ghi âm). Cuộc gọi đến không ai nhấc máy là **nhỡ máy** và tự tạo việc **Gọi lại khách nhỡ máy** hạn 1 giờ cho người phụ trách.
 4. Gọi đi: ở danh sách **Thí sinh** bấm biểu tượng điện thoại cạnh số để gọi qua tổng đài (ai có quyền gọi). Driver mặc định `log` chỉ ghi nhận cuộc gọi; để gọi thật đặt `TELEPHONY_DRIVER=http`, `TELEPHONY_URL`, `TELEPHONY_TOKEN` trong `.env`. Xem lịch sử ở **Marketing, Cuộc gọi**.
 
+## 5g. Cổng thí sinh và trang Tính điểm
+
+1. Trang công khai **`/tuyen-sinh`** (không cần đăng nhập) cho học sinh nhập điểm các môn và xem điểm ước tính theo từng ngành của mùa hiện tại. Đây chỉ là ước tính, không phải kết quả xét tuyển; điểm cộng ưu tiên do học sinh tự nhập. Ai để lại họ tên, số điện thoại và đồng ý nhận tư vấn sẽ vào danh sách thí sinh (nguồn Website) như một lead bình thường. Có thể dùng địa chỉ này làm liên kết trên website nhà trường.
+2. Cổng **`/cong-thi-sinh`**: thí sinh nhập số điện thoại, nhận mã 6 số qua SMS (hiệu lực 5 phút) rồi đăng nhập. Số chưa có trong hệ thống sẽ được hỏi họ tên và tạo hồ sơ mới. Trong cổng, thí sinh xem tình trạng hồ sơ, nhập điểm trung bình lớp 12 và điểm thi THPT, thêm nguyện vọng, **Nộp**, **Rút** và **Xác nhận nhập học** khi đã trúng tuyển. Điểm thí sinh tự nhập chưa được xác minh; thư ký xét tuyển kiểm tra ở trang thí sinh như thường lệ. Việc duyệt và quyết định trúng tuyển vẫn do cán bộ làm.
+3. Cấu hình: đặt `PORTAL_ORGANIZATION_ID` trong `.env` nếu hệ thống có nhiều tổ chức (để trống thì dùng tổ chức đầu tiên). Mã OTP gửi bằng kênh SMS ở mục 3e, nên cần cấu hình cổng SMS (hoặc đặt `MESSAGE_SMS_DRIVER=log` để thử, mã sẽ nằm trong file log).
+
 ## Chưa có trong MVP
 
 Import danh sách trúng tuyển (giai đoạn 2 trong `docs/TASKS.md`).
