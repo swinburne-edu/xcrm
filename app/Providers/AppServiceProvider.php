@@ -35,6 +35,8 @@ use App\Domain\Major\Policies\MajorPolicy;
 use App\Domain\Organization\Models\Organization;
 use App\Domain\Organization\Models\Team;
 use App\Domain\Platform\Models\AssignmentRule;
+use App\Domain\Communication\Models\MessageTemplate;
+use App\Domain\Communication\Policies\MessageTemplatePolicy;
 use App\Domain\Intake\Models\LeadIntegration;
 use App\Domain\Intake\Policies\LeadIntegrationPolicy;
 use App\Domain\Platform\Models\CustomFieldDefinition;
@@ -138,6 +140,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(SavedView::class, SavedViewPolicy::class);
         Gate::policy(CustomFieldDefinition::class, CustomFieldDefinitionPolicy::class);
         Gate::policy(LeadIntegration::class, LeadIntegrationPolicy::class);
+        Gate::policy(MessageTemplate::class, MessageTemplatePolicy::class);
         Gate::policy(Task::class, TaskPolicy::class);
         Gate::policy(Appointment::class, AppointmentPolicy::class);
         Gate::policy(Pipeline::class, PipelinePolicy::class);

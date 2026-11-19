@@ -79,6 +79,13 @@ Hệ thống tự: chuẩn hoá SĐT, chống trùng, tạo **hồ sơ tuyển s
 - **Thu hồi tự động** (tắt mặc định): bật trong cùng trang, đặt số ngày; hồ sơ không có hoạt động trong N ngày về **kho chung** của nhóm, người phụ trách cũ và trưởng nhóm được báo. Không động tới hồ sơ đã nhập học/thất bại, mùa đã đóng, hay hồ sơ có ngày hành động tiếp theo trong tương lai.
 - Thông báo hiện ở **biểu tượng chuông** trên cùng. Việc kiểm tra SLA chạy mỗi 15 phút nhờ lịch của Laravel: chạy `php artisan schedule:work` (hoặc cron `php artisan schedule:run` mỗi phút); kiểm tra ngay bằng `php artisan crm:check-sla`.
 
+## 3e. Gửi tin nhắn hàng loạt
+
+1. **Cài đặt, Mẫu tin nhắn**: tạo mẫu theo kênh (Zalo ZNS, SMS, email). Bấm tên biến (vd. `applicant.first_name`) để chèn vào nội dung. Mẫu ZNS cần mã mẫu đã được Zalo duyệt; email cần tiêu đề.
+2. Ở **Thí sinh**, lọc danh sách rồi bấm **Gửi tin**, chọn mẫu và **Xem trước**: hệ thống cho biết bao nhiêu người sẽ nhận, bao nhiêu người bị bỏ qua (chưa đồng ý nhận tin, thiếu SĐT/email) và một tin mẫu. Bấm **Gửi** để xếp hàng gửi. Tối đa 2000 người mỗi lần.
+3. **Marketing, Tin nhắn đã gửi** cho thấy từng tin, trạng thái và lỗi nếu có. Tin gửi thành công cũng hiện trong timeline của thí sinh.
+4. Quản trị cấu hình nhà cung cấp trong `.env` (`ZALO_ZNS_ACCESS_TOKEN`, `SMS_API_URL`, `SMS_API_TOKEN`, `SMS_BRANDNAME`). Đặt `MESSAGE_SMS_DRIVER=log` (tương tự cho ZNS, email) để thử mà không gửi thật. Cần chạy hàng đợi (`php artisan queue:work`).
+
 ## 4. Gộp thí sinh trùng (F6)
 
 **Thí sinh → Có thể trùng** liệt kê các hồ sơ cùng họ tên + cùng trường THPT hoặc dùng chung SĐT phụ huynh. Bấm **Gộp vào …** để mở màn so sánh: với mỗi trường khác nhau, chọn giá trị muốn giữ (ô trống tự lấy từ bản kia), có nút **Đổi chiều** để chọn bản giữ lại. Khi gộp, phụ huynh, điểm, hồ sơ, lịch sử và việc của bản kia chuyển sang bản giữ; bản kia bị ẩn khỏi danh sách. Cần quyền *Gộp thí sinh*.

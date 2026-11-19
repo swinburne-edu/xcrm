@@ -15,6 +15,7 @@ use App\Http\Controllers\Applicant\ApplicantImportController;
 use App\Http\Controllers\Applicant\ApplicantMergeController;
 use App\Http\Controllers\Applicant\ApplicantScoreController;
 use App\Http\Controllers\Campaign\CampaignController;
+use App\Http\Controllers\Communication\MessageController;
 use App\Http\Controllers\Campaign\CampaignCostController;
 use App\Http\Controllers\Campaign\CampaignPerformanceController;
 use App\Http\Controllers\Catalog\CatalogController;
@@ -40,6 +41,7 @@ use App\Http\Controllers\Report\ReportController;
 use App\Http\Controllers\Settings\AssignmentRuleController;
 use App\Http\Controllers\Settings\CustomFieldController;
 use App\Http\Controllers\Settings\LeadIntegrationController;
+use App\Http\Controllers\Settings\MessageTemplateController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TeamController;
 use App\Http\Controllers\Settings\TerritoryController;
@@ -76,6 +78,11 @@ Route::middleware(['auth', 'verified'])->prefix('settings')->name('settings.')->
     Route::post('lead-integrations', [LeadIntegrationController::class, 'store'])->name('lead-integrations.store');
     Route::put('lead-integrations/{id}', [LeadIntegrationController::class, 'update'])->whereNumber('id')->name('lead-integrations.update');
     Route::delete('lead-integrations/{id}', [LeadIntegrationController::class, 'destroy'])->whereNumber('id')->name('lead-integrations.destroy');
+
+    Route::get('message-templates', [MessageTemplateController::class, 'index'])->name('message-templates.index');
+    Route::post('message-templates', [MessageTemplateController::class, 'store'])->name('message-templates.store');
+    Route::put('message-templates/{id}', [MessageTemplateController::class, 'update'])->whereNumber('id')->name('message-templates.update');
+    Route::delete('message-templates/{id}', [MessageTemplateController::class, 'destroy'])->whereNumber('id')->name('message-templates.destroy');
 
     Route::get('assignment-rules', [AssignmentRuleController::class, 'index'])->name('assignment-rules.index');
     Route::post('assignment-rules', [AssignmentRuleController::class, 'store'])->name('assignment-rules.store');
@@ -320,4 +327,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     if (app()->environment(['local', 'testing'])) {
         Route::get('dev/components', ComponentsDemoController::class)->name('dev.components');
     }
+});
+
+// Messaging (task 3.1): log and bulk send. Authorization: message.view / message.send (+ the applicant data scope).
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::post('messages/preview', [MessageController::class, 'preview'])->name('messages.preview');
+    Route::post('messages/send', [MessageController::class, 'send'])->name('messages.send');
 });

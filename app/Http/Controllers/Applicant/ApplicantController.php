@@ -13,6 +13,8 @@ use App\Domain\Applicant\Enums\Gender;
 use App\Domain\Applicant\Enums\GuardianRelationship;
 use App\Domain\Applicant\Enums\ScoreType;
 use App\Domain\Applicant\Models\Applicant;
+use App\Domain\Applicant\Services\ApplicantFilters;
+use App\Domain\Communication\Models\MessageTemplate;
 use App\Domain\Applicant\Models\ApplicantCertificate;
 use App\Domain\Applicant\Models\ApplicantScore;
 use App\Domain\Applicant\Models\Guardian;
@@ -55,16 +57,7 @@ class ApplicantController extends Controller
             Applicant::query()->whereNull('merged_into_id')->with(['province:id,name', 'highSchool:id,name', 'latestCase.stage:id,name,color', 'latestCase.owner:id,name']),
             $request,
         )
-            ->filters(
-                Filter::search('q', ['full_name', 'code', 'email', 'phone', 'phone_normalized']),
-                Filter::exact('province_id'),
-                Filter::exact('high_school_id'),
-                Filter::exact('graduation_year'),
-                Filter::exact('current_grade'),
-                Filter::exact('first_source_id'),
-                Filter::exact('first_campaign_id'),
-                ...app(CustomFields::class)->filters(CustomFieldObject::Applicants),
-            )
+            ->filters(...ApplicantFilters::all())
             ->sorts(['full_name', 'code', 'graduation_year', 'created_at'])
             ->defaultSort('-created_at')
             ->toProps(fn (Applicant $a) => $this->row($a, $request));
@@ -73,6 +66,9 @@ class ApplicantController extends Controller
             'applicants' => $applicants,
             'saved_views' => app(SavedViews::class)->for(SavedViewObject::Applicants, $request->user()),
             'options' => $this->options(),
+            'message_templates' => $request->user()->can('message.send')
+                ? MessageTemplate::query()->where('is_active', true)->orderBy('name')->get(['id', 'name', 'channel'])->map(fn (MessageTemplate $t) => ['id' => $t->id, 'name' => $t->name, 'channel_label' => $t->channel->label()])->all()
+                : [],
             'can' => ['create' => $request->user()->can('create', Applicant::class), 'import' => $request->user()->can('import', Applicant::class)],
         ]);
     }

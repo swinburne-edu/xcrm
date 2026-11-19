@@ -34,6 +34,8 @@ final class RoleDefinitions
         'custom_field' => ['view', 'manage'],
         'saved_view' => ['manage'],
         'lead_integration' => ['view', 'manage'],
+        'message_template' => ['view', 'manage'],
+        'message' => ['view', 'send'],
         'user' => ['view', 'create', 'update', 'delete'],
         'team' => ['view', 'create', 'update', 'delete'],
         'role' => ['view'],
@@ -62,7 +64,7 @@ final class RoleDefinitions
                 'case.view', 'case.create', 'case.update', 'case.assign',
                 'application.view', 'application.update',
                 'high_school.view', 'school_contact.view', 'school_activity.view', 'major.view', 'campaign.view', 'cycle.view',
-                'task.*', 'appointment.*', 'report.view', 'user.view', 'team.view', 'catalog.view',
+                'task.*', 'appointment.*', 'report.view', 'user.view', 'team.view', 'catalog.view', 'message_template.view', 'message.*',
             ],
         ],
         'counselor' => [
@@ -89,7 +91,7 @@ final class RoleDefinitions
             'label' => 'Marketing',
             'scope' => DataScopeLevel::All,
             'permissions' => [
-                'campaign.*', 'form.*', 'report.*', 'applicant.view', 'case.view', 'high_school.view',
+                'campaign.*', 'form.*', 'report.*', 'message_template.*', 'message.*', 'applicant.view', 'case.view', 'high_school.view',
                 'major.view', 'cycle.view', 'catalog.view',
             ],
         ],

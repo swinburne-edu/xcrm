@@ -70,7 +70,7 @@ Ký hiệu tham chiếu: M = module (03-tinh-nang.md), R = ràng buộc (04-data
 
 ## Giai đoạn 3 — P2
 
-- [ ] **3.1 Truyền thông** — message_templates, message_logs, driver Zalo ZNS / SMS / email (interface `MessageChannel`), gửi hàng loạt theo bộ lọc.
+- [x] **3.1 Truyền thông** — message_templates, message_logs, driver Zalo ZNS / SMS / email (interface `MessageChannel`), gửi hàng loạt theo bộ lọc. _Đã làm: bảng `message_templates` / `message_logs`; interface `MessageChannel` với driver Zalo ZNS, SMS (cổng JSON), email và driver `log` cho môi trường dev (cấu hình `config/communication.php`); mẫu tin có biến `{{applicant.full_name}}`…; nút "Gửi tin" ở danh sách thí sinh gửi cho toàn bộ thí sinh khớp bộ lọc (xem trước rồi gửi, chỉ người đã đồng ý nhận tin và có SĐT/email, tối đa 2000 người/lần); gửi qua queue, ghi log và timeline; trang Mẫu tin nhắn (Cài đặt) và Tin nhắn đã gửi (Marketing)._
 - [ ] **3.2 Workflow** — workflows, workflow_runs, engine trigger/condition/action chạy qua queue, UI dựng workflow đơn giản.
 - [ ] **3.3 Đối soát dữ liệu Bộ** — import danh sách trúng tuyển/xác nhận nhập học, khớp CCCD/SĐT, báo cáo chênh lệch.
 - [ ] **3.4 Cổng thí sinh** — đăng nhập OTP, nộp hồ sơ xét sớm, tra cứu, xác nhận nhập học; trang "Tính điểm & gợi ý ngành".

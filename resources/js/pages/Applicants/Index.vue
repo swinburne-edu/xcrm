@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Check, Copy, Pencil, Phone, Plus, Upload } from '@lucide/vue';
+import { Check, Copy, Pencil, Phone, Plus, Send, Upload } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import ApplicantImportWizard from '@/components/applicants/ImportWizard.vue';
 import ApplicantFormDialog from '@/components/applicants/ApplicantFormDialog.vue';
 import InlineEditCell from '@/components/applicants/InlineEditCell.vue';
 import type { ApplicantOptions, ApplicantRow } from '@/components/applicants/types';
 import DataTable from '@/components/crm/DataTable.vue';
+import SendMessageDialog from '@/components/messages/SendMessageDialog.vue';
 import StageBadge from '@/components/crm/StageBadge.vue';
 import FilterBar from '@/components/crm/FilterBar.vue';
 import SavedViewMenu from '@/components/crm/SavedViewMenu.vue';
@@ -20,8 +21,11 @@ const props = defineProps<{
     applicants: ListResult<ApplicantRow>;
     saved_views: SavedViewsProps;
     options: ApplicantOptions;
+    message_templates: { id: number; name: string; channel_label: string }[];
     can: { create: boolean; import: boolean };
 }>();
+
+const messageOpen = ref(false);
 
 const query = useListQuery(() => props.applicants, { only: ['applicants'] });
 
@@ -122,6 +126,10 @@ function dateTime(value: string | null): string {
                 </p>
             </div>
             <div class="flex gap-2">
+            <Button v-if="message_templates.length" variant="outline" data-test="send-message" @click="messageOpen = true">
+                <Send class="size-4" />
+                Gửi tin
+            </Button>
             <Button v-if="can.import" variant="outline" data-test="import" @click="importOpen = true">
                 <Upload class="size-4" />
                 Nhập Excel
@@ -184,6 +192,7 @@ function dateTime(value: string | null): string {
         </DataTable>
     </div>
 
+    <SendMessageDialog v-model:open="messageOpen" :templates="message_templates" :filters="query.filters.value" />
     <ApplicantFormDialog v-model:open="formOpen" :record="null" :options="options" />
     <ApplicantFormDialog v-model:open="editOpen" :record="editing" :options="options" />
     <ApplicantImportWizard v-model:open="importOpen" />
